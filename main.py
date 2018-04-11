@@ -82,8 +82,8 @@ if pair in placed_orders:
 spread = get_change(lowest_ask_price, highest_bid_price)
 
 if spread > MIN_SPREAD:
-    bid_price = highest_bid_price + highest_bid_price * 0.02  # increase by 2 percent
-    ask_price = lowest_ask_price - lowest_ask_price * 0.02  # decrease by 2 percent
+    bid_price = highest_bid_price + 0.000001  # increase by 2 percent -> this is too much, just increase the order by the minimum amount, for eth it would be 0.000001
+    ask_price = lowest_ask_price - 0.000001  # decrease by 2 percent
 
     bid_id = lykke.create_limit_buy_order(pair, buy_amount, bid_price)
     ask_id = lykke.create_limit_sell_order(pair, sell_amount, ask_price)
@@ -92,6 +92,7 @@ if spread > MIN_SPREAD:
         "bid": Order(bid_id),
         "ask": Order(ask_id, is_ask=True)
     }
+
 
 while True:
     balance = lykke.fetch_balance()
