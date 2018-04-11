@@ -3,7 +3,7 @@ from time import sleep
 import ccxt
 
 API_KEY = ""
-PAIRS = ['WAX/ETH']  # ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
+PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 MIN_SPREAD = 10
 PERIOD = 30
 BALANCE_USED_PART = 0.5
