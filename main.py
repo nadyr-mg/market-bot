@@ -6,7 +6,7 @@ API_KEY = ""
 PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 MIN_SPREAD = 10
 PERIOD = 30
-BALANCE_USED_PART = 0.5
+BALANCE_USED_PART = 0.2
 
 COIN_IDS = {
     "ETH": "ETH",
@@ -24,26 +24,42 @@ if not val2:
 return ((val1 - val2) / val2) * 100.0
 
 
-class Order:
-    def __init__(self, order_id: str, is_ask
+class Orders:
+    def __init__(self, bid_id: str, ask_id
 
-    : bool = False) -> None:
-    self.id = order_id
-    self.is_ask = is_ask
+    : str) -> None:
+    self.bid_id = bid_id
+    self.ask_id = ask_id
 
-    self.is_cancelled = False
+    self.were_cancelled = False
 
 
-def is_relevant(self, cur_price: float, best_price
+@staticmethod
+def is_irrelevant(bid_price: float, ask_price
 
-: float) -> bool:
-if self.is_ask:
-    if cur_price > best_price:
-        return False
-else:
-    if cur_price < best_price:
-        return False
-return True  # initialization
+: float,
+  highest_bid_price: float, lowest_ask_price: float) -> bool:
+return bid_price < highest_bid_price or ask_price > lowest_ask_price
+
+
+def cancel(self, lykke: ccxt.lykke
+
+) -> None:
+lykke.cancel_order(self.bid_id)
+lykke.cancel_order(self.ask_id)
+
+self.were_cancelled = True
+
+
+def partial_cancel(self, lykke: ccxt.lykke, bid_status
+
+: str, ask_status: str) -> None:
+if bid_status == "open":
+    lykke.cancel_order(self.bid_id)
+if ask_status == "open":
+    lykke.cancel_order(self.ask_id)
+
+self.were_cancelled = True  # initialization
 lykke = ccxt.lykke({
     'apiKey': API_KEY,
 })
@@ -62,43 +78,58 @@ if not book["bids"] or not book["asks"]:
 highest_bid_price = book["bids"][0][0]
 lowest_ask_price = book["asks"][0][0]
 
-# remove order from dict if it's closed; close the order if it's opened and it's not relevant
-if pair in placed_orders:
-    for order, best_price in ((placed_orders[pair]["bid"], highest_bid_price),
-                              (placed_orders[pair]["ask"], lowest_ask_price)):
-        order_info = lykke.fetch_order(order.id)
-
-        if order_info["status"] == "closed":
-            # check if round was successful
-            del placed_orders[pair]
-        elif order_info["status"] == "open":  # close order if it's not relevant
-            if not order.is_relevant(order_info["price"], best_price) and not order.is_cancelled:
-                lykke.cancel_order(order.id)
-                order.is_cancelled = True
-            return
-        else:
-            return
-
 spread = get_change(lowest_ask_price, highest_bid_price)
 
-if spread > MIN_SPREAD:
-    bid_price = highest_bid_price + 0.000001  # increase by 2 percent -> this is too much, just increase the order by the minimum amount, for eth it would be 0.000001
-    ask_price = lowest_ask_price - 0.000001  # decrease by 2 percent
+cur_orders = placed_orders.get(pair, None)  # type: Orders
 
-    bid_id = lykke.create_limit_buy_order(pair, buy_amount, bid_price)
+if cur_orders:
+    bid_order = lykke.fetch_order(cur_orders.bid_id)
+    ask_order = lykke.fetch_order(cur_orders.ask_id)
+
+    bid_status = bid_order["status"]
+    ask_status = ask_order["status"]
+
+    if bid_status == "open" and ask_status == "open":
+        if spread <= MIN_SPREAD or cur_orders.is_irrelevant(bid_order["price"], ask_order["price"],
+                                                            highest_bid_price, lowest_ask_price):
+            cur_orders.cancel(lykke)
+            return
+    elif bid_status == "closed" and ask_status == "closed":
+        del placed_orders[pair]
+
+        if not cur_orders.were_cancelled:
+            # check if round was successful
+            print("Pair: {}; End of round")
+
+            snd_currency = pair.partition("/")[2]  # for now it's always 'ETH'
+            print("Spent {} {} for buy order".format(bid_order["cost"], snd_currency))
+            print("Gained {} {} for sell order".format(ask_order["cost"], snd_currency))
+
+            if bid_order["cost"] < ask_order["cost"]:
+                print("Round ended successful")
+            else:
+                print("Round ended unsuccessful")
+
+            return
+    else:
+        cur_orders.partial_cancel(lykke, bid_status, ask_status)
+        return  # wait until orders will be closed
+
+if spread > MIN_SPREAD:
+    bid_price = highest_bid_price + 0.000001  # just increase the order by the minimum amount, for eth it would be 0.000001
+    ask_price = lowest_ask_price - 0.000001
+
+    bid_id = lykke.create_limit_buy_order(pair, buy_amount, bid_price)  # TODO: convert buy amount in WAX/LOC/CVC
     ask_id = lykke.create_limit_sell_order(pair, sell_amount, ask_price)
 
-    placed_orders[pair] = {
-        "bid": Order(bid_id),
-        "ask": Order(ask_id, is_ask=True)
-    }
+    placed_orders[pair] = Orders(bid_id, ask_id)
 
 
 while True:
     balance = lykke.fetch_balance()
     for pair in PAIRS:
         coins = pair.split("/")
-        amounts = []  # first amount is what you sell, second - what you buy
+        amounts = []  # first amount is what you spend to sell, second - what you spend to buy
 
         for coin in coins:
             occur_cnt = sum([1 for pair in PAIRS if coin in pair])
