@@ -1,4 +1,5 @@
 from time import sleep
+from typing import Dict, Tuple
 
 import ccxt
 
@@ -6,7 +7,7 @@ API_KEY = ""
 PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 MIN_SPREAD = 10
 PERIOD = 30
-BALANCE_USED_PART = 0.2
+BALANCE_USED_PART = 0.6
 
 COIN_IDS = {
     "ETH": "ETH",
@@ -27,9 +28,10 @@ return ((val1 - val2) / val2) * 100.0
 class Orders:
     def __init__(self, bid_id: str, ask_id
 
-    : str) -> None:
+    : str, last_balance_pair: Tuple[float, float]) -> None:
     self.bid_id = bid_id
     self.ask_id = ask_id
+    self.last_balance_pair = last_balance_pair
 
     self.were_cancelled = False
 
@@ -42,24 +44,32 @@ def is_irrelevant(bid_price: float, ask_price
 return bid_price < highest_bid_price or ask_price > lowest_ask_price
 
 
-def cancel(self, lykke: ccxt.lykke
+def cancel(self, market: ccxt.lykke
 
 ) -> None:
-lykke.cancel_order(self.bid_id)
-lykke.cancel_order(self.ask_id)
+market.cancel_order(self.bid_id)
+market.cancel_order(self.ask_id)
 
 self.were_cancelled = True
 
 
-def partial_cancel(self, lykke: ccxt.lykke, bid_status
+def partial_cancel(self, market: ccxt.lykke, bid_status
 
 : str, ask_status: str) -> None:
 if bid_status == "open":
-    lykke.cancel_order(self.bid_id)
+    market.cancel_order(self.bid_id)
 if ask_status == "open":
-    lykke.cancel_order(self.ask_id)
+    market.cancel_order(self.ask_id)
 
-self.were_cancelled = True  # initialization
+self.were_cancelled = True
+
+
+class CoinInfo:
+    def __init__(self, spend_amount: float, balance
+
+    : float) -> None:
+    self.spend_amount = spend_amount
+    self.balance = balance  # initialization
 lykke = ccxt.lykke({
     'apiKey': API_KEY,
 })
@@ -67,10 +77,11 @@ lykke = ccxt.lykke({
 placed_orders = {}
 
 
-def place_orders(lykke: ccxt.lykke, placed_orders
+def place_orders(market: ccxt.lykke, placed_orders
 
-: dict, buy_amount: float, sell_amount: float, pair: str) -> None:
-book = lykke.fetch_order_book(pair)
+: Dict[str, Orders], balance_pair: Tuple[float, float],
+                                   buy_amount: float, sell_amount: float, pair: str) -> None:
+book = market.fetch_order_book(pair)
 
 if not book["bids"] or not book["asks"]:
     return
@@ -83,8 +94,8 @@ spread = get_change(lowest_ask_price, highest_bid_price)
 cur_orders = placed_orders.get(pair, None)  # type: Orders
 
 if cur_orders:
-    bid_order = lykke.fetch_order(cur_orders.bid_id)
-    ask_order = lykke.fetch_order(cur_orders.ask_id)
+    bid_order = market.fetch_order(cur_orders.bid_id)
+    ask_order = market.fetch_order(cur_orders.ask_id)
 
     bid_status = bid_order["status"]
     ask_status = ask_order["status"]
@@ -92,53 +103,69 @@ if cur_orders:
     if bid_status == "open" and ask_status == "open":
         if spread <= MIN_SPREAD or cur_orders.is_irrelevant(bid_order["price"], ask_order["price"],
                                                             highest_bid_price, lowest_ask_price):
-            cur_orders.cancel(lykke)
+            cur_orders.cancel(market)
             return
     elif bid_status == "closed" and ask_status == "closed":
         del placed_orders[pair]
 
         if not cur_orders.were_cancelled:
-            # check if round was successful
             print("Pair: {}; End of round")
 
-            snd_currency = pair.partition("/")[2]  # for now it's always 'ETH'
-            print("Spent {} {} for buy order".format(bid_order["cost"], snd_currency))
-            print("Gained {} {} for sell order".format(ask_order["cost"], snd_currency))
+            last_balance_pair = cur_orders.last_balance_pair
+            coins = pair.split("/")
 
-            if bid_order["cost"] < ask_order["cost"]:
-                print("Round ended successful")
+            print("Balance before round: {} - {}; {} - {}".format(coins[0], last_balance_pair[0],
+                                                                  coins[1], last_balance_pair[1]))
+            print("Balance after round: {} - {}; {} - {}".format(coins[0], balance_pair[0],
+                                                                 coins[1], balance_pair[1]))
+
+            # check if round was successful
+            last_amount = convert_to_one(last_balance_pair, highest_bid_price)
+            cur_amount = convert_to_one(balance_pair, highest_bid_price)
+            if last_amount < cur_amount:
+                print("Round ended successfully")
             else:
-                print("Round ended unsuccessful")
+                print("Round ended unsuccessfully")
 
             return
     else:
-        cur_orders.partial_cancel(lykke, bid_status, ask_status)
+        cur_orders.partial_cancel(market, bid_status, ask_status)
         return  # wait until orders will be closed
 
 if spread > MIN_SPREAD:
     bid_price = highest_bid_price + 0.000001  # just increase the order by the minimum amount, for eth it would be 0.000001
     ask_price = lowest_ask_price - 0.000001
 
-    bid_id = lykke.create_limit_buy_order(pair, buy_amount, bid_price)  # TODO: convert buy amount in WAX/LOC/CVC
-    ask_id = lykke.create_limit_sell_order(pair, sell_amount, ask_price)
+    converted_buy_amount = int(buy_amount / bid_price)
+    bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)
+    ask_id = market.create_limit_sell_order(pair, sell_amount, ask_price)
 
-    placed_orders[pair] = Orders(bid_id, ask_id)
+    placed_orders[pair] = Orders(bid_id, ask_id, balance_pair)
+
+
+def convert_to_one(balance_pair, convert_price):
+    return balance_pair[0] + int(balance_pair[1] / convert_price)
 
 
 while True:
     balance = lykke.fetch_balance()
+
+    coins_info = {}  # type: Dict[str, CoinInfo]
+    for coin, coin_id in COIN_IDS.items():
+        occur_cnt = sum([1 for pair in PAIRS if coin in pair])
+
+        coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
+
+        amount = coin_balance / occur_cnt
+        coins_info[coin] = CoinInfo(amount, coin_balance)
+
     for pair in PAIRS:
         coins = pair.split("/")
-        amounts = []  # first amount is what you spend to sell, second - what you spend to buy
+        coin1_info, coin2_info = coins_info[coins[0]], coins_info[coins[1]]
 
-        for coin in coins:
-            occur_cnt = sum([1 for pair in PAIRS if coin in pair])
-            coin_id = COIN_IDS[coin]
+        balance_pair = (coin1_info.balance, coin2_info.balance)
 
-            coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
-            amount = coin_balance / occur_cnt
-            amounts.append(amount)
-
-        place_orders(lykke, placed_orders, amounts[1], amounts[0], pair)
+        # first amount is what you spend to sell, second - what you spend to buy
+        place_orders(lykke, placed_orders, balance_pair, coin2_info.spend_amount, coin1_info.spend_amount, pair)
 
     sleep(PERIOD)
