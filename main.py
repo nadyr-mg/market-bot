@@ -3,17 +3,23 @@ from typing import Dict, Tuple
 
 import ccxt
 
-API_KEY = ""
-PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
+API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
+PAIRS = ['WAX/ETH']
+# PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 MIN_SPREAD = 10
 PERIOD = 30
 BALANCE_USED_PART = 0.6
 
+# COIN_IDS = {
+#    "ETH": "ETH",
+#    "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
+#    "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
+#    "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b"
+#}
+
 COIN_IDS = {
     "ETH": "ETH",
-    "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
-    "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
-    "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b"
+    "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5"
 }
 
 
@@ -77,13 +83,15 @@ lykke = ccxt.lykke({
 placed_orders = {}
 
 
+# are you checking whether you already have placed orders or not ?
 def place_orders(market: ccxt.lykke, placed_orders
 
 : Dict[str, Orders], balance_pair: Tuple[float, float],
                                    buy_amount: float, sell_amount: float, pair: str) -> None:
 book = market.fetch_order_book(pair)
 
-if not book["bids"] or not book["asks"]:
+if not book["bids"] or not book[
+    "asks"]:  # what is this doing ? checking whether we have bid or ask orders in the orderbook ? If the orderbook is empty it quites the function ?
     return
 
 highest_bid_price = book["bids"][0][0]
@@ -94,6 +102,7 @@ spread = get_change(lowest_ask_price, highest_bid_price)
 cur_orders = placed_orders.get(pair, None)  # type: Orders
 
 if cur_orders:
+    print(cur_orders.bid_id, " <- cur_orders.bid_id")
     bid_order = market.fetch_order(cur_orders.bid_id)
     ask_order = market.fetch_order(cur_orders.ask_id)
 
@@ -138,10 +147,11 @@ if spread > MIN_SPREAD:
 
     converted_buy_amount = int(buy_amount / bid_price)
     bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)
+    # print(bid_id['info']," <- Bid ID") # --> 'info' contains the id, this is the root cause for the issue --> should be fixed
     ask_id = market.create_limit_sell_order(pair, sell_amount, ask_price)
 
-    placed_orders[pair] = Orders(bid_id, ask_id, balance_pair)
-
+    placed_orders[pair] = Orders(bid_id['info'], ask_id['info'],
+                                 balance_pair)  # using ['info'] is a workaround --> should be fixed
 
 def convert_to_one(balance_pair, convert_price):
     return balance_pair[0] + int(balance_pair[1] / convert_price)
@@ -167,5 +177,8 @@ while True:
 
         # first amount is what you spend to sell, second - what you spend to buy
         place_orders(lykke, placed_orders, balance_pair, coin2_info.spend_amount, coin1_info.spend_amount, pair)
+        ##
+        ## => Bot keeps adding orders to the same pair -> It does not recognis its own orders so it keeps adding up Orders
+
 
     sleep(PERIOD)
