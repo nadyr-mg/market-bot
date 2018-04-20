@@ -14,73 +14,73 @@ def place_orders(market: ccxt.lykke, placed_orders
 
 : Dict[str, Orders],
   buy_amount: float, sell_amount: float, pair: str) -> None:
-print("Entering place_orders func, pair: {}".format(pair))
+logging.info("Entering place_orders func, pair: {}".format(pair))
 
 book = market.fetch_order_book(pair)
 
 if not book["bids"] or not book["asks"]:
-    print('Bid/Ask orders are missing => We cannot place an orders')
+    logging.info('Bid/Ask orders are missing => We cannot place an orders')
     return
 
 highest_bid_price = book["bids"][0][0]
 lowest_ask_price = book["asks"][0][0]
 
 spread = get_change(lowest_ask_price, highest_bid_price)
-print('Spread between best bid and best ask:{0}\n'.format(spread))
+logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
 
 cur_orders = placed_orders.get(pair, None)  # type: Orders
 
 balance_pair = get_balance_pair(market, pair)
 
 if cur_orders:
-    print("Found placed orders")
+    logging.info("Found placed orders")
 
     bid_order = market.fetch_order(cur_orders.bid_id)
     ask_order = market.fetch_order(cur_orders.ask_id)
 
     bid_status = bid_order["status"]
     ask_status = ask_order["status"]
-    print('checking current bid status {0} : {1}\nand ask status {2} : {3} \n'
-          .format(cur_orders.bid_id, bid_status, cur_orders.ask_id, ask_status))
+    logging.info('checking current bid status {0} : {1}\nand ask status {2} : {3} \n'
+                 .format(cur_orders.bid_id, bid_status, cur_orders.ask_id, ask_status))
     if bid_status == ask_status == "open":
         if spread <= MIN_SPREAD or cur_orders.is_irrelevant(bid_order["price"], ask_order["price"],
                                                             highest_bid_price, lowest_ask_price):
-            print("Orders are opened and irrelevant. Cancellation...")
+            logging.info("Orders are opened and irrelevant. Cancellation...")
             cur_orders.cancel(market)
     elif (bid_status == "closed" or bid_status == "canceled") and \
             (ask_status == "closed" or ask_status == "canceled"):
-        print("Orders are already closed. Deleting from dict 'placed_orders'...")
+        logging.info("Orders are already closed. Deleting from dict 'placed_orders'...")
         del placed_orders[pair]
 
         if bid_status == ask_status == "closed":
-            print("Pair: {}; End of round")
+            logging.info("Pair: {}; End of round")
 
             if cur_orders.last_balance_pair is None:
-                print("Last balance pair was lost, can't define successful round")
+                logging.info("Last balance pair was lost, can't define successful round")
             else:
                 last_balance_pair = cur_orders.last_balance_pair
                 coins = pair.split("/")
 
-                print("Balance before round: {} - {}; {} - {}".format(coins[0], last_balance_pair[0],
-                                                                      coins[1], last_balance_pair[1]))
-                print("Balance after round: {} - {}; {} - {}".format(coins[0], balance_pair[0],
-                                                                     coins[1], balance_pair[1]))
+                logging.info("Balance before round: {} - {}; {} - {}".format(coins[0], last_balance_pair[0],
+                                                                             coins[1], last_balance_pair[1]))
+                logging.info("Balance after round: {} - {}; {} - {}".format(coins[0], balance_pair[0],
+                                                                            coins[1], balance_pair[1]))
 
                 # check if round was successful
                 last_amount = convert_to_one(last_balance_pair, highest_bid_price)
                 cur_amount = convert_to_one(balance_pair, highest_bid_price)
                 if last_amount < cur_amount:
-                    print("Round ended successfully")
+                    logging.info("Round ended successfully")
                 else:
-                    print("Round ended unsuccessfully")
+                    logging.info("Round ended unsuccessfully")
     else:
-        print("One of the orders is closed and one is opened. Cancellation...")
+        logging.info("One of the orders is closed and one is opened. Cancellation...")
         cur_orders.partial_cancel(market, bid_status, ask_status)
 
         return  # wait until orders will be closed
 
 if spread > MIN_SPREAD:
-    print("No orders were found. Placing orders...")
+    logging.info("No orders were found. Placing orders...")
 
     bid_price = highest_bid_price + 0.000001  # just increase the order by the minimum amount, for eth it would be 0.000001
     ask_price = lowest_ask_price - 0.000001
@@ -115,5 +115,5 @@ while True:
         # first amount is what you spend to sell, second - what you spend to buy
         place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
 
-    print('going to sleep for: {0}'.format(PERIOD))
+    logging.info('going to sleep for: {0}'.format(PERIOD))
     sleep(PERIOD)

@@ -19,14 +19,14 @@ def is_irrelevant(bid_price: float, ask_price
 
 : float,
   highest_bid_price: float, lowest_ask_price: float) -> bool:
-print('checking whether bid price:{0} and ask price:{1} are relevant'.format(bid_price, ask_price))
+logging.info('checking whether bid price:{0} and ask price:{1} are relevant'.format(bid_price, ask_price))
 return bid_price < highest_bid_price or ask_price > lowest_ask_price
 
 
 def cancel(self, market: ccxt.lykke
 
 ) -> None:
-print('try to cancel bid order:{0} \n and ask order: {1}'.format(self.bid_id, self.ask_id))
+logging.info('try to cancel bid order:{0} \n and ask order: {1}'.format(self.bid_id, self.ask_id))
 market.cancel_order(self.bid_id)
 market.cancel_order(self.ask_id)
 
@@ -34,12 +34,12 @@ market.cancel_order(self.ask_id)
 def partial_cancel(self, market: ccxt.lykke, bid_status
 
 : str, ask_status: str) -> None:
-print('try to partialy cancel open bid/ask orders:')
+logging.info('try to partialy cancel open bid/ask orders:')
 if bid_status == "open":
-    print('try to partialy cancel open bid order:{0}\n'.format(self.bid_id))
+    logging.info('try to partialy cancel open bid order:{0}\n'.format(self.bid_id))
     market.cancel_order(self.bid_id)
 if ask_status == "open":
-    print('try to partialy cancel open ask order:{0}\n'.format(self.ask_id))
+    logging.info('try to partialy cancel open ask order:{0}\n'.format(self.ask_id))
     market.cancel_order(self.ask_id)
 
 
@@ -78,9 +78,12 @@ def init_placed_orders(market: ccxt.lykke
 
 ) -> Dict[str, Orders]:
 orders = market.fetch_open_orders()
-grouped_orders = {pair: {"bid": None, "ask": None} for pair in PAIRS}  # type: Dict[str, Dict]
+grouped_orders = {}  # type: Dict[str, Dict]
 for order in orders:
     pair = order["symbol"]
+    if pair not in grouped_orders:
+        grouped_orders[pair] = {}
+
     order_type = "bid" if order["amount"] > 0 else "ask"
     grouped_orders[pair][order_type] = order["id"]
 
