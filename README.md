@@ -21,6 +21,54 @@ II)Order is relevant:
 - 2) And if our buy/sell is better than current reference market with at least 5% --> Todo
 
 
+
+Mapping for Coins/Ref.Markets:
+AE/ETH    --> IDAX, or Binance if first not in ccxt api
+AE/BTC    --> Binance
+AGI/ETH   --> kucoin
+AGI/BTC   --> kucoin
+APPC/ETH  --> Binance
+APPC/BTC  --> Binance
+BNT/ETH   --> Bancor Network, or Binance
+BNT/BTC   --> Binance
+CAN/ETH   --> kucoin
+CAN/BTC   --> kucoin
+EVX/ETH   --> Binance
+EVX/BTC   --> Binance
+GNT/ETH   --> Bittrex
+GNT/BTC   --> Bittrex
+HCP       --> No ref market
+HGT/ETH   --> COSS
+HGT/BTC   --> COSS
+HMQ/ETH   --> Bittrex
+HMQ/BTC   --> Bittrex
+KEY/ETH   --> Kucoin
+KEY/BTC   --> Kucoin
+LC        --> No ref market
+LRC/ETH   --> IDAX, or Binance
+LRC/BTC   --> Binance
+LTC/ETH   --> Binance
+LTC/BTC   --> Binance
+MCO/ETH   --> Binance
+MCO/BTC   --> Binance
+OMG/ETH   --> Binance
+OMG/BTC   --> Binance
+PKT/ETH   --> hitbtc
+PKT/BTC   --> hitbtc
+POW/ETH   --> Binance
+POW/BTC   --> Binance
+PPT/ETH   --> Binance
+REP/ETH   --> Bittex
+REP/BTC   --> Bittex
+SLR/BTC   --> Bittrex Note: only BTC no SLR/ETH
+SNM/ETH   --> Binance
+SNM/BTC   --> Binance
+ZRX/ETH   --> Binance
+ZRX/BTC   --> Binance
+
+
+
+
 III)Mapping for smallest trade amount:
 We cannot trade a volume that is smaller than the min order size.
 Todo:
