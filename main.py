@@ -103,10 +103,10 @@ while True:
 
         coins_spend_amount[coin] = coin_balance / occur_cnt
 
-    coins_spend_amount = {  # Debug: Minimal amounts
-        "WAX": 2.5,
-        "ETH": 0.0019,
-    }
+    # coins_spend_amount = {  # Debug: Minimal amounts
+    #     "WAX": 2.5,
+    #     "ETH": 0.0019,
+    # }
 
     for pair in PAIRS:
         coins = pair.split("/")
