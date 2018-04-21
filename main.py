@@ -3,9 +3,7 @@ from time import sleep
 from common import *
 
 # initialization
-lykke = ccxt.lykke({
-    'apiKey': API_KEY,
-})
+lykke = ccxt.lykke({'apiKey': API_KEY})
 
 placed_orders = init_placed_orders(lykke)
 
@@ -16,17 +14,16 @@ def place_orders(market: ccxt.lykke, placed_orders
   buy_amount: float, sell_amount: float, pair: str) -> None:
 logging.info("Entering place_orders func, pair: {}".format(pair))
 
-book = market.fetch_order_book(pair)
-
-if not book["bids"] or not book["asks"]:
-    logging.info('Bid/Ask orders are missing => We cannot place an orders')
+if pair not in REF_MARKETS:
+    logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
     return
+ref_market = getattr(ccxt, REF_MARKETS[pair])()
+ref_book = ref_market.fetch_order_book(pair)
 
-highest_bid_price = book["bids"][0][0]
-lowest_ask_price = book["asks"][0][0]
+highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
 
-spread = get_change(lowest_ask_price, highest_bid_price)
-logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
+situation_relevant = is_situation_relevant(ref_book, highest_bid_price, lowest_ask_price)
+logging.info('Is situation relevant?: {}\n'.format(situation_relevant))
 
 cur_orders = placed_orders.get(pair, None)  # type: Orders
 
@@ -40,11 +37,11 @@ if cur_orders:
 
     bid_status = bid_order["status"]
     ask_status = ask_order["status"]
-    logging.info('checking current bid status {0} : {1}\nand ask status {2} : {3} \n'
+    logging.info('checking current bid status {} : {}\nand ask status {} : {} \n'
                  .format(cur_orders.bid_id, bid_status, cur_orders.ask_id, ask_status))
     if bid_status == ask_status == "open":
-        if spread <= MIN_SPREAD or cur_orders.is_irrelevant(bid_order["price"], ask_order["price"],
-                                                            highest_bid_price, lowest_ask_price):
+        if not situation_relevant or cur_orders.are_irrelevant(bid_order["price"], ask_order["price"],
+                                                               highest_bid_price, lowest_ask_price):
             logging.info("Orders are opened and irrelevant. Cancellation...")
             cur_orders.cancel(market)
     elif (bid_status == "closed" or bid_status == "canceled") and \
@@ -79,13 +76,17 @@ if cur_orders:
 
         return  # wait until orders will be closed
 
-if spread > MIN_SPREAD:
+if situation_relevant:
     logging.info("No orders were found. Placing orders...")
 
-    bid_price = highest_bid_price + 0.000001  # just increase the order by the minimum amount, for eth it would be 0.000001
+    bid_price = highest_bid_price + 0.000001
     ask_price = lowest_ask_price - 0.000001
 
     converted_buy_amount = int(buy_amount / bid_price)
+    # amount you spend to sell - first coin, amount you spend to buy -  second coin
+    if not check_min_size(pair, sell_amount, converted_buy_amount):
+        return
+
     bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)['info']
     ask_id = market.create_limit_sell_order(pair, sell_amount, ask_price)['info']
 

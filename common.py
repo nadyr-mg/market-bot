@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import ccxt
 
@@ -15,7 +15,7 @@ class Orders:
 
 
 @staticmethod
-def is_irrelevant(bid_price: float, ask_price
+def are_irrelevant(bid_price: float, ask_price
 
 : float,
   highest_bid_price: float, lowest_ask_price: float) -> bool:
@@ -92,3 +92,58 @@ for pair, orders_pair in grouped_orders.items():
     placed_orders[pair] = Orders(orders_pair["bid"], orders_pair["ask"])
 
 return placed_orders
+
+
+def get_best_prices(market: ccxt.lykke, ref_book
+
+: Dict, pair: str) -> Tuple[float, float]:
+book = market.fetch_order_book(pair)
+
+
+def _get_best_price(order_type: str
+
+) -> float:
+if book[order_type]:
+    return book[order_type][0][0]
+else:
+    price = ref_book[order_type][0][0]
+    addition = price * REF_PRICE_DEVIATION
+    return price + addition if order_type == "asks" else price - addition
+
+return _get_best_price("bids"), _get_best_price("asks")
+
+
+def is_situation_relevant(ref_book: Dict, highest_bid_price
+
+: float, lowest_ask_price: float) -> bool:
+spread = get_change(lowest_ask_price, highest_bid_price)
+logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
+
+ref_highest_bid_price = ref_book["bids"][0][0]
+ref_lowest_ask_price = ref_book["asks"][0][0]
+
+ref_bid_deviation = ref_highest_bid_price * REF_PRICE_DEVIATION
+ref_ask_deviation = ref_lowest_ask_price * REF_PRICE_DEVIATION
+
+return ref_highest_bid_price - highest_bid_price >= ref_bid_deviation and \
+       lowest_ask_price - ref_lowest_ask_price >= ref_ask_deviation and \
+       spread > MIN_SPREAD
+
+
+def check_min_size(pair: str, coin1_amount
+
+: float, coin2_amount: float) -> bool:
+coins = pair.split("/")
+if coins[0] not in MIN_AMOUNTS or coins[1] not in MIN_AMOUNTS:
+    logging.warning("Coins: ['{}', '{}']; some coins are not found in the min amounts mapping".format(*coins))
+    return False
+
+all_ok = True
+if coin1_amount < MIN_AMOUNTS[coins[0]] or coin2_amount < MIN_AMOUNTS[coins[1]]:
+    logging.info("Too small amount to place")
+    logging.info("{coin}: {amount} - {min}".format(coin=coins[0], amount=coin1_amount, min=MIN_AMOUNTS[coins[0]]))
+    logging.info("{coin}: {amount} - {min}".format(coin=coins[1], amount=coin2_amount, min=MIN_AMOUNTS[coins[1]]))
+
+    all_ok = False
+
+return all_ok
