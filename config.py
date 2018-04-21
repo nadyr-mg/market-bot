@@ -1,4 +1,5 @@
 import logging
+from json import load
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 PAIRS = ['WAX/ETH']
@@ -13,6 +14,12 @@ COIN_IDS = {
     "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
 }
+
+with open("reference_markets.json") as file:
+    REF_MARKETS = load(file)
+
+with open("min_amounts.json") as file:
+    MIN_AMOUNTS = load(file)
 
 # setup default logging level
 logging.basicConfig(level=logging.INFO)
