@@ -35,6 +35,8 @@
   "SLR/BTC": "bittrex",
   "SNM/ETH": "binance",
   "SNM/BTC": "binance",
+  "WAX/ETH": "bittrex",
+  "WAX/BTC": "bittrex",
   "ZRX/ETH": "binance",
   "ZRX/BTC": "binance",
   "HCP": null,
