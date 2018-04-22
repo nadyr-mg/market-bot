@@ -3,8 +3,10 @@
 Bug #1:
 Cause: too many requests sent to a ref exchange in a short period of time
 Solution:
--1) reduce the calls to the ref exchange. Checking the price for the ref exchange every 5 min is fine.
--2) Handle the thrown exception -> log msg " Too many request sent to #exchangeName" => Retry after randomtime between 3min and 5min. If after second try we get same error increase wait time +2 min. Always do that until the request is sucessful
+-1) reduce the calls to the ref exchange. Checking the price for the ref exchange every 5 min is fine. You can get the price for the reference markets, save it, and use it for the next 5min. Then you can request the price again and update it.
+This should not affect the spread checking. Spread checking should be done in shorter period.
+
+-2) Handle the thrown exception -> log msg " Too many requests sent to #exchangeName" => Retry after randometime between 3min and 5min. If after second try we get same error increase wait time +2 min. Always do that until the request is successful
 ==> Use this error handling for all api request, also for Lykke. The program should keep working even after such errors!
 		
 
