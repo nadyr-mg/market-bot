@@ -95,3 +95,67 @@ ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public
 
 
 
+Bug#2:
+Cause: If sell order is already placed -> Then start the program -> it will lead to the following error:
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+Traceback (most recent call last):
+  File "main.py", line 8, in <module>
+    placed_orders = init_placed_orders(lykke)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 73, in init_placed_orders
+    placed_orders[pair] = Orders(orders_pair["bid"], orders_pair["ask"])
+KeyError: 'bid'
+
+Cause 2: If buy order is placed:
+
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+Traceback (most recent call last):
+  File "main.py", line 8, in <module>
+    placed_orders = init_placed_orders(lykke)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 73, in init_placed_orders
+    placed_orders[pair] = Orders(orders_pair["bid"], orders_pair["ask"])
+KeyError: 'ask'
+
+
+
+
+
+Bug3#:
+
+Cause:If Balance not enough:
+Solution: Check Balance before putting orders
+          - And error handling. Program should not exit!
+
+Bug error msg:
+
+INFO:root:Is situation relevant?: True
+
+INFO:root:No orders were found. Placing orders...
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 364, in fetch
+    response.raise_for_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/models.py", line 935, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://hft-api.lykke.com/api/Orders/limit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 115, in <module>
+    place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
+  File "main.py", line 88, in place_orders
+    bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)['info']
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 1220, in create_limit_buy_order
+    return self.create_order(symbol, 'limit', 'buy', *args)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 132, in create_order
+    result = getattr(self, method)(self.extend(query, params))
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 306, in request
+    return self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 303, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 377, in fetch
+    self.handle_rest_errors(e, response.status_code, self.last_http_response, url, method)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 406, in handle_rest_errors
+    self.raise_error(error, url, method, exception if exception else http_status_code, response)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.ExchangeNotAvailable: lykke https://hft-api.lykke.com/api/Orders/limit POST 400 Client Error: Bad Request for url: https://hft-api.lykke.com/api/Orders/limit {"Error":{"Code":"Dust","Field":null,"Message":"The amount should be higher than minimal order size 2.5 WAX"}}
