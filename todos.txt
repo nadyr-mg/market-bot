@@ -17,6 +17,14 @@ The new buy order can be put on our current buy order with same price, no need t
 -Same for buying. If for example you have a buy order for 100 WAX, but you only buy 10 WAX. => You put an sell order to sell the 10 WAX
 
 
+
+
+
+2) Rename function are_irrelevant to are_relevant and also return value to a relevant value.
+- Please as general rule don't use negation in function names.
+
+
+
 #DONE TODOS - A finished todo goes here
 
 #VERIFIED
