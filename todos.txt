@@ -24,6 +24,7 @@ The new buy order can be put on our current buy order with same price, no need t
 - Please as general rule don't use negation in function names.
 
 
+3) Check my question on the function: place_orders, it is added as comment 
 
 #DONE TODOS - A finished todo goes here
 
