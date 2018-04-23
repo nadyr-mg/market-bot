@@ -18,9 +18,14 @@ if pair not in REF_MARKETS:
     logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
     return
 ref_market = getattr(ccxt, REF_MARKETS[pair])()
+logging.info("Getting reference market order book for: {0}".format(pair))
 ref_book = ref_market.fetch_order_book(pair)
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
+logging.info("Best bid price: {0}".format(
+    highest_bid_price))  ## We are getting here the best price for lykke market, is that what we need here ? Shouldnt it be from the ref market ?
+logging.info("Best ask price: {0}".format(
+    lowest_ask_price))  ## We are getting here the best price for lykke market, is that what we need here ? Shouldnt it be from the ref market ?
 
 situation_relevant = is_situation_relevant(ref_book, highest_bid_price, lowest_ask_price)
 logging.info('Is situation relevant?: {}\n'.format(situation_relevant))
@@ -30,7 +35,7 @@ cur_orders = placed_orders.get(pair, None)  # type: Orders
 balance_pair = get_balance_pair(market, pair)
 
 if cur_orders:
-    logging.info("Found placed orders")
+    logging.info("Found placed orders on trading market")
 
     bid_order = market.fetch_order(cur_orders.bid_id)
     ask_order = market.fetch_order(cur_orders.ask_id)
@@ -94,6 +99,8 @@ if situation_relevant:
 
 
 while True:
+    logging.info('Starting Bot ...')
+    logging.info('Fetching free balance ...')
     balance = lykke.fetch_balance()
 
     coins_spend_amount = {}  # type: Dict[str, float]
@@ -101,8 +108,9 @@ while True:
         occur_cnt = sum([1 for pair in PAIRS if coin in pair])
 
         coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
-
+        logging.info('+{0} : {1}'.format(coin, balance[coin_id]["free"]))
         coins_spend_amount[coin] = coin_balance / occur_cnt
+        logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
 
     # coins_spend_amount = {  # Debug: Minimal amounts
     #     "WAX": 2.5,
