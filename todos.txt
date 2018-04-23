@@ -1,0 +1,22 @@
+#CURRENT TODOS
+1) Partially executed orders are still open, but you cannot get them with fetch_open_orders()
+-> They will not appear in that list.
+Instead you will have to use fetch_orders() and filter them out. You can find them with the status 'Processing'. Here is an example:
+
+>>> orders = exchange.fetch_orders()
+>>> for i in range(0,len(orders)):
+...     if orders[i]['info']['Status'] == 'Processing' :
+...             print(orders[i])
+
+Example:
+-A partially executed sell order: Sell order of 100 WAX, but only 10 WAX are sold.
+90 WAX are still open, but the api will tell you that they are 'Processing'.
+-> Now 10 WAX are sold for x ETH. => You can make a new order to buy WAX with x ETH.
+The new buy order can be put on our current buy order with same price, no need to cancel the old order. But if it is easier to implement	cancelation of old buy order, and then put a new buy order you can also do that.
+
+-Same for buying. If for example you have a buy order for 100 WAX, but you only buy 10 WAX. => You put an sell order to sell the 10 WAX
+
+
+#DONE TODOS - A finished todo goes here
+
+#VERIFIED
