@@ -106,8 +106,11 @@ def _get_best_price(order_type: str
 if book[order_type]:
     return book[order_type][0][0]
 else:
+    logging.info("There are no {0} in the orderbook ".format(order_type))
     price = ref_book[order_type][0][0]
-    addition = price * REF_PRICE_DEVIATION
+    logging.info("Getting the best price for {0} from the referece orderbook".format(order_type))
+    addition = price * REF_PRICE_DEVIATION  ##Note @Said: We will use a price deviation depending on the coin. I will add mapping for that later on.
+    logging.info("Calculating our best price for {0} with a derivation of: ".format(REF_PRICE_DEVIATION))
     return price + addition if order_type == "asks" else price - addition
 
 return _get_best_price("bids"), _get_best_price("asks")
