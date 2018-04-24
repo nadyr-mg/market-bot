@@ -1,5 +1,6 @@
 import logging
 from json import load
+from typing import Dict
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 PAIRS = ['WAX/ETH']
@@ -18,10 +19,12 @@ COIN_IDS = {
 }
 
 with open("reference_markets.json") as file:
-    REF_MARKETS = load(file)
+    REF_MARKETS = load(file)  # type: Dict
+
+USED_REF_MARKETS = {market for market in REF_MARKETS.values() if market}
 
 with open("min_amounts.json") as file:
-    MIN_AMOUNTS = load(file)
+    MIN_AMOUNTS = load(file)  # type: Dict
 
 # setup default logging level
 logging.basicConfig(level=logging.INFO)

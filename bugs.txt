@@ -95,6 +95,7 @@ ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public
 
 
 
+# Fixed: if bid order is placed and ask order is not or vice versa, then that one order is canceled and deleted from dict
 Bug#2:
 Cause: If sell order is already placed -> Then start the program -> it will lead to the following error:
 Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
@@ -118,9 +119,11 @@ KeyError: 'ask'
 
 
 
-
+# The problem was in placing order with amount that's below minimal size
+# Fixed function check_min_size
+# Balance is always divided to the parts, and each part is used to place order, so problem with insufficiency of money
+# on balance shouldn't arise
 Bug3#:
-
 Cause:If Balance not enough:
 Solution: Check Balance before putting orders
           - And error handling. Program should not exit!

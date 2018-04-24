@@ -6,6 +6,9 @@ from common import *
 lykke = ccxt.lykke({'apiKey': API_KEY})
 
 placed_orders = init_placed_orders(lykke)
+cancel_half_opened_orders(lykke, placed_orders)
+
+opened_ref_markets = {market_name: getattr(ccxt, market_name)() for market_name in USED_REF_MARKETS}  # type: Dict
 
 
 def place_orders(market: ccxt.lykke, placed_orders
@@ -17,7 +20,8 @@ logging.info("Entering place_orders func, pair: {}".format(pair))
 if pair not in REF_MARKETS:
     logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
     return
-ref_market = getattr(ccxt, REF_MARKETS[pair])()
+ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
+
 logging.info("Getting reference market order book for: {0}".format(pair))
 ref_book = ref_market.fetch_order_book(pair)
 
@@ -43,8 +47,9 @@ if cur_orders:
     logging.info('checking current bid status {} : {}\nand ask status {} : {} \n'
                  .format(cur_orders.bid_id, bid_status, cur_orders.ask_id, ask_status))
     if bid_status == ask_status == "open":
-        if not situation_relevant or cur_orders.are_irrelevant(bid_order["price"], ask_order["price"],
-                                                               highest_bid_price, lowest_ask_price):
+        relevant_value = cur_orders.are_relevant(bid_order["price"], ask_order["price"],
+                                                 highest_bid_price, lowest_ask_price)
+        if not situation_relevant or not relevant_value:
             logging.info("Orders are opened and irrelevant. Cancellation...")
             cur_orders.cancel(market)
     elif (bid_status == "closed" or bid_status == "canceled") and \
@@ -86,8 +91,8 @@ if situation_relevant:
     ask_price = lowest_ask_price - 0.000001
 
     converted_buy_amount = int(buy_amount / bid_price)
-    # amount you spend to sell - first coin, amount you spend to buy -  second coin
-    if not check_min_size(pair, sell_amount, converted_buy_amount):
+    if not is_above_min_size(pair, converted_buy_amount) or \
+            not is_above_min_size(pair, sell_amount):
         return
 
     bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)['info']

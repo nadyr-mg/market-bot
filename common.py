@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 import ccxt
 
@@ -15,10 +15,9 @@ class Orders:
 
 
 @staticmethod
-def are_irrelevant(bid_price: float, ask_price
+def are_relevant(bid_price: float, ask_price
 
-: float,
-  highest_bid_price: float, lowest_ask_price: float) -> bool:
+: float, highest_bid_price: float, lowest_ask_price: float) -> bool:
 logging.info('checking whether bid price:{0} and ask price:{1} are relevant'.format(bid_price, ask_price))
 return bid_price < highest_bid_price or ask_price > lowest_ask_price
 
@@ -82,7 +81,7 @@ grouped_orders = {}  # type: Dict[str, Dict]
 for order in orders:
     pair = order["symbol"]
     if pair not in grouped_orders:
-        grouped_orders[pair] = {}
+        grouped_orders[pair] = {"bid": None, "ask": None}
 
     order_type = "bid" if order["amount"] > 0 else "ask"
     grouped_orders[pair][order_type] = order["id"]
@@ -92,6 +91,19 @@ for pair, orders_pair in grouped_orders.items():
     placed_orders[pair] = Orders(orders_pair["bid"], orders_pair["ask"])
 
 return placed_orders
+
+
+def cancel_half_opened_orders(market: ccxt.lykke, placed_orders
+
+: Dict[str, Orders]) -> None:
+for pair, orders in placed_orders.items():
+    if orders.bid_id is None or orders.ask_id is None:
+        logging.info("Found half opened orders")
+        statuses = [None if order_id is None else "open"
+                    for order_id in (orders.bid_id, orders.ask_id)]
+
+        orders.partial_cancel(market, *statuses)
+        del placed_orders[pair]
 
 
 def get_best_prices(market: ccxt.lykke, ref_book
@@ -133,19 +145,20 @@ return ref_highest_bid_price - highest_bid_price >= ref_bid_deviation and \
        spread > MIN_SPREAD
 
 
-def check_min_size(pair: str, coin1_amount
+def is_above_min_size(pair: str, amount
 
-: float, coin2_amount: float) -> bool:
-coins = pair.split("/")
-if coins[0] not in MIN_AMOUNTS or coins[1] not in MIN_AMOUNTS:
-    logging.warning("Coins: ['{}', '{}']; some coins are not found in the min amounts mapping".format(*coins))
+: float) -> bool:
+coin_to_spend = pair.partition("/")[0]
+if coin_to_spend not in MIN_AMOUNTS:
+    logging.warning("Coin: '{}'; coin is not found in the min amounts mapping".format(coin_to_spend))
     return False
 
+min_amount = MIN_AMOUNTS[coin_to_spend]
+
 all_ok = True
-if coin1_amount < MIN_AMOUNTS[coins[0]] or coin2_amount < MIN_AMOUNTS[coins[1]]:
+if amount < min_amount:
     logging.info("Too small amount to place")
-    logging.info("{coin}: {amount} - {min}".format(coin=coins[0], amount=coin1_amount, min=MIN_AMOUNTS[coins[0]]))
-    logging.info("{coin}: {amount} - {min}".format(coin=coins[1], amount=coin2_amount, min=MIN_AMOUNTS[coins[1]]))
+    logging.info("{coin}: {amount} - {min}".format(coin=coin_to_spend, amount=amount, min=min_amount))
 
     all_ok = False
 
