@@ -22,10 +22,8 @@ logging.info("Getting reference market order book for: {0}".format(pair))
 ref_book = ref_market.fetch_order_book(pair)
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
-logging.info("Best bid price: {0}".format(
-    highest_bid_price))  ## We are getting here the best price for lykke market, is that what we need here ? Shouldnt it be from the ref market ?
-logging.info("Best ask price: {0}".format(
-    lowest_ask_price))  ## We are getting here the best price for lykke market, is that what we need here ? Shouldnt it be from the ref market ?
+logging.info("Getting/calculating best bid price: {0}".format(highest_bid_price))
+logging.info("Getting/calculating best ask price: {0}".format(lowest_ask_price))
 
 situation_relevant = is_situation_relevant(ref_book, highest_bid_price, lowest_ask_price)
 logging.info('Is situation relevant?: {}\n'.format(situation_relevant))
