@@ -116,8 +116,8 @@ while True:
         logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
 
     # coins_spend_amount = {  # Debug: Minimal amounts
-    #     "WAX": 2.5,
-    #     "ETH": 0.0019,
+    #     "WAX": MIN_AMOUNTS["WAX"],
+    #     "ETH": MIN_AMOUNTS["ETH"],
     # }
 
     for pair in PAIRS:

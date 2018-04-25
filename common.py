@@ -69,7 +69,7 @@ for coin in coins:
 
     balance_pair.append(coin_balance)
 
-# balance_pair = [2.5, 0.0019]  # Debug: Minimal balances
+# balance_pair = [MIN_AMOUNTS[coins[0]], MIN_AMOUNTS[coins[1]]]  # Debug: Minimal balances
 return balance_pair
 
 
