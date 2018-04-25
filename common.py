@@ -19,7 +19,7 @@ def are_relevant(bid_price: float, ask_price
 
 : float, highest_bid_price: float, lowest_ask_price: float) -> bool:
 logging.info('checking whether bid price:{0} and ask price:{1} are relevant'.format(bid_price, ask_price))
-return bid_price < highest_bid_price or ask_price > lowest_ask_price
+return bid_price >= highest_bid_price and ask_price <= lowest_ask_price
 
 
 def cancel(self, market: ccxt.lykke
