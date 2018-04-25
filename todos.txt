@@ -1,4 +1,13 @@
 #CURRENT TODOS
+
+#DONE TODOS - A finished todo goes here
+3) Check my question on the function: place_orders, it is added as comment
+=> Clarified
+#VERIFIED
+
+2) Rename function are_irrelevant to are_relevant and also return value to a relevant value.
+- Please as general rule don't use negation in function names.
+
 1) Partially executed orders are still open, but you cannot get them with fetch_open_orders()
 -> They will not appear in that list.
 Instead you will have to use fetch_orders() and filter them out. You can find them with the status 'Processing'. Here is an example:
@@ -12,16 +21,7 @@ Example:
 -A partially executed sell order: Sell order of 100 WAX, but only 10 WAX are sold.
 90 WAX are still open, but the api will tell you that they are 'Processing'.
 -> Now 10 WAX are sold for x ETH. => You can make a new order to buy WAX with x ETH.
-The new buy order can be put on our current buy order with same price, no need to cancel the old order. But if it is easier to implement	cancelation of old buy order, and then put a new buy order you can also do that.
+The new buy order can be put on our current buy order with same price, no need to cancel the old order. But if it is easier to implement cancelation of old buy order, and then put a new buy order you can also do that.
+# Yes it's much easier to cancel standalone order, and put a new pair of orders.
 
 -Same for buying. If for example you have a buy order for 100 WAX, but you only buy 10 WAX. => You put an sell order to sell the 10 WAX
-
-
-
-#DONE TODOS - A finished todo goes here
-3) Check my question on the function: place_orders, it is added as comment
-=> Clarified
-#VERIFIED
-
-2) Rename function are_irrelevant to are_relevant and also return value to a relevant value.
-- Please as general rule don't use negation in function names.

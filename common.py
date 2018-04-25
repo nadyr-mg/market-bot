@@ -76,15 +76,16 @@ return balance_pair
 def init_placed_orders(market: ccxt.lykke
 
 ) -> Dict[str, Orders]:
-orders = market.fetch_open_orders()
+orders = market.fetch_orders()
 grouped_orders = {}  # type: Dict[str, Dict]
 for order in orders:
-    pair = order["symbol"]
-    if pair not in grouped_orders:
-        grouped_orders[pair] = {"bid": None, "ask": None}
+    if order["status"] == "open" or order["info"]["Status"] == "Processing":
+        pair = order["symbol"]
+        if pair not in grouped_orders:
+            grouped_orders[pair] = {"bid": None, "ask": None}
 
-    order_type = "bid" if order["amount"] > 0 else "ask"
-    grouped_orders[pair][order_type] = order["id"]
+        order_type = "bid" if order["amount"] > 0 else "ask"
+        grouped_orders[pair][order_type] = order["id"]
 
 placed_orders = {}  # type: Dict[str, Orders]
 for pair, orders_pair in grouped_orders.items():
