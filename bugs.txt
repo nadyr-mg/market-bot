@@ -1,5 +1,5 @@
 
-
+# Fixed: added sleep for rateLimit milliseconds after every call to market
 Bug #1:
 Cause: too many requests sent to a ref exchange in a short period of time
 Solution:

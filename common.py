@@ -1,8 +1,32 @@
-from typing import List, Tuple
+from typing import List, Tuple, Callable
+from time import sleep
 
-import ccxt
+from ccxt.base.exchange import Exchange
 
 from config import *
+
+
+class Market:
+    def __init__(self, market: Exchange
+
+    ) -> None:
+    self.market = market
+    self.rate_limit = market.rateLimit / 1000
+
+
+def __getattr__(self, item: str
+
+):
+attr = getattr(self.market, item)
+if isinstance(attr, Callable):
+    def method(*args, **kwargs):
+        sleep(self.rate_limit)
+        return attr(*args, **kwargs)
+
+
+    return method
+else:
+    return attr
 
 
 class Orders:
@@ -22,7 +46,7 @@ logging.info('checking whether bid price:{0} and ask price:{1} are relevant'.for
 return bid_price >= highest_bid_price and ask_price <= lowest_ask_price
 
 
-def cancel(self, market: ccxt.lykke
+def cancel(self, market: Market
 
 ) -> None:
 logging.info('try to cancel bid order:{0} \n and ask order: {1}'.format(self.bid_id, self.ask_id))
@@ -30,7 +54,7 @@ market.cancel_order(self.bid_id)
 market.cancel_order(self.ask_id)
 
 
-def partial_cancel(self, market: ccxt.lykke, bid_status
+def partial_cancel(self, market: Market, bid_status
 
 : str, ask_status: str) -> None:
 logging.info('try to partialy cancel open bid/ask orders:')
@@ -56,7 +80,7 @@ def convert_to_one(balance_pair: List[float], convert_price
 return balance_pair[0] + int(balance_pair[1] / convert_price)
 
 
-def get_balance_pair(market: ccxt.lykke, pair
+def get_balance_pair(market: Market, pair
 
 : str) -> List[float]:
 balance = market.fetch_balance()
@@ -73,7 +97,7 @@ for coin in coins:
 return balance_pair
 
 
-def init_placed_orders(market: ccxt.lykke
+def init_placed_orders(market: Market
 
 ) -> Dict[str, Orders]:
 orders = market.fetch_orders()
@@ -94,7 +118,7 @@ for pair, orders_pair in grouped_orders.items():
 return placed_orders
 
 
-def cancel_half_opened_orders(market: ccxt.lykke, placed_orders
+def cancel_half_opened_orders(market: Market, placed_orders
 
 : Dict[str, Orders]) -> None:
 for pair, orders in placed_orders.items():
@@ -107,7 +131,7 @@ for pair, orders in placed_orders.items():
         del placed_orders[pair]
 
 
-def get_best_prices(market: ccxt.lykke, ref_book
+def get_best_prices(market: Market, ref_book
 
 : Dict, pair: str) -> Tuple[float, float]:
 book = market.fetch_order_book(pair)

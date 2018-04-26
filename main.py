@@ -1,17 +1,20 @@
-from time import sleep
+import ccxt
 
 from common import *
 
 # initialization
-lykke = ccxt.lykke({'apiKey': API_KEY})
+logging.info('Starting Bot ...')
+
+lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 
 placed_orders = init_placed_orders(lykke)
 cancel_half_opened_orders(lykke, placed_orders)
 
-opened_ref_markets = {market_name: getattr(ccxt, market_name)() for market_name in USED_REF_MARKETS}  # type: Dict
+opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
+                      for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
 
 
-def place_orders(market: ccxt.lykke, placed_orders
+def place_orders(market: Market, placed_orders
 
 : Dict[str, Orders],
   buy_amount: float, sell_amount: float, pair: str) -> None:
@@ -102,7 +105,6 @@ if situation_relevant:
 
 
 while True:
-    logging.info('Starting Bot ...')
     logging.info('Fetching free balance ...')
     balance = lykke.fetch_balance()
 
@@ -127,5 +129,5 @@ while True:
         # first amount is what you spend to sell, second - what you spend to buy
         place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
 
-    logging.info('going to sleep for: {0}'.format(PERIOD))
+    logging.info('going to sleep for: {}\n'.format(PERIOD))
     sleep(PERIOD)
