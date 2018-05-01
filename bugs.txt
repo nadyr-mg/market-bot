@@ -95,6 +95,117 @@ ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public
 
 
 
+
+Bug #1#:
+Still getting this error:
+
+
+
+INFO:root:Found placed orders on trading market
+INFO:root:checking current bid status 5e5025bc-e544-4eae-84c4-c661b910bbfe : open
+and ask status 9888ff96-6312-4467-b2de-f64c6258244d : open 
+
+INFO:root:checking whether bid price:0.000432 and ask price:0.038995 are relevant
+INFO:root:going to sleep for: 15
+
+INFO:root:Fetching free balance ...
+INFO:root:+ETH : 0.045893130000000004
+INFO:root:Order size for ETH: 0.022946565000000002
+INFO:root:+WAX : 12.56
+INFO:root:Order size for WAX: 6.28
+INFO:root:Entering place_orders func, pair: WAX/ETH
+INFO:root:Getting reference market order book for: WAX/ETH
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 2, in raise_from
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 383, in _make_request
+    httplib_response = conn.getresponse()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 258, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 1009, in recv_into
+    return self.read(nbytes, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 871, in read
+    return self._sslobj.read(len, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 631, in read
+    v = self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 440, in send
+    timeout=timeout
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 639, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/util/retry.py", line 357, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/packages/six.py", line 686, in reraise
+    raise value
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 389, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 309, in _raise_timeout
+    raise ReadTimeoutError(self, url, "Read timed out. (read timeout=%s)" % timeout_value)
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='bittrex.com', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 357, in fetch
+    proxies=self.proxies
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 521, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='bittrex.com', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 128, in <module>
+    place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
+  File "main.py", line 27, in place_orders
+    ref_book = ref_market.fetch_order_book(pair)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 19, in method
+    return attr(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/bittrex.py", line 241, in fetch_order_book
+    }, params))
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/bittrex.py", line 680, in request
+    response = self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 303, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 367, in fetch
+    self.raise_error(RequestTimeout, method, url, e)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public/getorderbook?market=ETH-WAX&type=both HTTPSConnectionPool(host='bittrex.com', port=443): Read timed out. (read timeout=10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Fixed: if bid order is placed and ask order is not or vice versa, then that one order is canceled and deleted from dict
 Bug#2:
 Cause: If sell order is already placed -> Then start the program -> it will lead to the following error:
