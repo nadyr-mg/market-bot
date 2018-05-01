@@ -11,12 +11,21 @@ BALANCE_USED_PART = 0.5
 
 REF_PRICE_DEVIATION = 0.05
 
+## how to get the new coin ids:
+## lykke_markets = lykke.fetch_markets()
+## for market, asset  in lykke_markets.items():
+##     print("{0} : {1}".format(market, asset['base']))
+
 COIN_IDS = {
     "ETH": "ETH",
-    # "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
-    "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
+    "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
+    # "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
+    # "WTC": "168f13bf-bfea-4931-91ff-e449850d694e",
+    # "PPT": "98385941-89b3-45c2-ae8e-b64c6f3bbac9",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
 }
+
+
 
 with open("reference_markets.json") as file:
     REF_MARKETS = load(file)  # type: Dict
