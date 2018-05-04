@@ -7,9 +7,12 @@ PAIRS = ['WAX/ETH']
 # PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 MIN_SPREAD = 10
 PERIOD = 15
-BALANCE_USED_PART = 0.5
+BALANCE_REMAIN_PART = 0.5
 
 REF_PRICE_DEVIATION = 0.05
+
+INIT_FAIL_WAIT_TIME = 3 * 60  # 3 minutes
+INC_WAIT_TIME = 2 * 60
 
 ## how to get the new coin ids:
 ## lykke_markets = lykke.fetch_markets()
@@ -24,8 +27,6 @@ COIN_IDS = {
     # "PPT": "98385941-89b3-45c2-ae8e-b64c6f3bbac9",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
 }
-
-
 
 with open("reference_markets.json") as file:
     REF_MARKETS = load(file)  # type: Dict

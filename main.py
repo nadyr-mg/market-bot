@@ -1,4 +1,7 @@
+from random import randint
+
 import ccxt
+from ccxt.base.errors import RequestTimeout
 
 from common import *
 
@@ -103,6 +106,7 @@ if situation_relevant:
 
     placed_orders[pair] = Orders(bid_id, ask_id, balance_pair)
 
+fail_wait_time = INIT_FAIL_WAIT_TIME
 
 while True:
     logging.info('Fetching free balance ...')
@@ -112,22 +116,30 @@ while True:
     for coin, coin_id in COIN_IDS.items():
         occur_cnt = sum([1 for pair in PAIRS if coin in pair])
 
-        coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
-        logging.info('+{0} : {1}'.format(coin, balance[coin_id]["free"]))
+        remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
+        coin_balance = balance[coin_id]["free"] - remaining_balance
+        logging.info('+{0} : {1}'.format(coin, coin_balance))
+
         coins_spend_amount[coin] = coin_balance / occur_cnt
         logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
-
-    # coins_spend_amount = {  # Debug: Minimal amounts
-    #     "WAX": MIN_AMOUNTS["WAX"],
-    #     "ETH": MIN_AMOUNTS["ETH"],
-    # }
 
     for pair in PAIRS:
         coins = pair.split("/")
         coin1_spend_amount, coin2_spend_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 
-        # first amount is what you spend to sell, second - what you spend to buy
-        place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
+        try:
+            # first amount is what you spend to sell, second - what you spend to buy
+            place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
+        except RequestTimeout as err:
+            logging.warning('error occurred: {}'.format(err))
+
+            cur_wait_time = randint(fail_wait_time, fail_wait_time + 2 * 60)
+            fail_wait_time += INC_WAIT_TIME
+            logging.warning('going to sleep for: {:.2f} minutes'.format(cur_wait_time / 60))
+            sleep(cur_wait_time)
+
+        # placed orders successfully, restore initial wait time
+        fail_wait_time = INIT_FAIL_WAIT_TIME
 
     logging.info('going to sleep for: {}\n'.format(PERIOD))
     sleep(PERIOD)

@@ -89,11 +89,12 @@ coins = pair.split("/")
 balance_pair = []  # type: List[float]
 for coin in coins:
     coin_id = COIN_IDS[coin]
-    coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
+
+    remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
+    coin_balance = balance[coin_id]["free"] - remaining_balance
 
     balance_pair.append(coin_balance)
 
-# balance_pair = [MIN_AMOUNTS[coins[0]], MIN_AMOUNTS[coins[1]]]  # Debug: Minimal balances
 return balance_pair
 
 
