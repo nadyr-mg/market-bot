@@ -42,8 +42,19 @@ If we don't have balance for a coin -> Just put buy order then.
 
 
 8) 01.05
-Priority: low
-Current Behaviour:
+Priority: normal
+Current Behaviour: Rename and redefine "Round" to a "Trade".
+- A complete Trade is: a buy of x coins and sell x of these coins.
+- A complete Trade also could be: a sell of x coins and buy x of these coins back.
+ -> Trade Check: 	- 1st Check: Balance > Balance before a complete Trade
+			- 2nd Check: Compare expected Profit with actual profit, should approximately be the same
+			expected profit = (sell_price - buy_price) * number of coins traded
+ 			actual profit = current_balance - before_trade_started_balance
+- A partial trade is: Buy of x coins and sell of y coins were y<x
+- A partial trade is: Sell of x coins and buy of y coins were y<x
+ -> Trade Check: 	- Only the 2nd check: Compare expected Profit with actual profit, should approximately be the same
+			expected profit = (sell_price - buy_price) * (number of coins traded) => min(number of bought, number of sold)
+ 			actual profit = after_bought_after_sold_balance - after_bought_before_sold_balance
 Expected Behaviour:
 
 
