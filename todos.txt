@@ -54,8 +54,16 @@ Current Behaviour: Rename and redefine "Round" to a "Trade".
 - A partial trade is: Sell of x coins and buy of y coins were y<x
  -> Trade Check: 	- Only the 2nd check: Compare expected Profit with actual profit, should approximately be the same
 			expected profit = (sell_price - buy_price) * (number of coins traded) => min(number of bought, number of sold)
- 			actual profit = after_bought_after_sold_balance - after_bought_before_sold_balance
-Expected Behaviour:
+ 			actual profit = after_bought_after_partially_sold_balance - before_bought_before_sold_balance * ( number_of_coins_partially_sold / total_number_of_coins_initialy bought)
+			example:
+				- Total bought 1000 XYZCoins for 1 ETH -> before_bought_before_sold_balance = 1 ETH and after_bought_before_sold_balance = 0 ETH
+				- Partially Sold 500 XYCoins for 0.6 ETH -> after_partially_sold_balance = 0.6 ETH
+				=> Therefore: after_bought_after_partially_sold_balance - before_bought_before_sold_balance * ( number_of_coins_partially_sold / total_number_of_coins_initialy bought)
+				-> 		0.6 ETH - 1 ETH * ( 500 / 1000)  --> Partial Profit would be in our case 0.1 ETH
+
+			Note: We cannot really calculate the actual profit since our total balance after a partial trade might still be lower then before the trade
+
+
 
 
 #DONE TODOS - Finished todo goes here
