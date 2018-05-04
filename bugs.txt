@@ -1,5 +1,7 @@
 
 # Fixed: added sleep for rateLimit milliseconds after every call to market
+# Added caching of order books for ref exchanges. Order book's relevancy is defined by constant variable REF_BOOK_RELEVANCE_TIME
+# Added handling of RequestTimeout exceptions
 Bug #1:
 Cause: too many requests sent to a ref exchange in a short period of time
 Solution:

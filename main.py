@@ -15,6 +15,7 @@ cancel_half_opened_orders(lykke, placed_orders)
 
 opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
                       for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
+cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARKETS}  # type: Dict[str, CachedObject]
 
 
 def place_orders(market: Market, placed_orders
@@ -29,7 +30,10 @@ if pair not in REF_MARKETS:
 ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
 
 logging.info("Getting reference market order book for: {0}".format(pair))
-ref_book = ref_market.fetch_order_book(pair)
+cached_ref_book = cached_ref_books[REF_MARKETS[pair]]
+if cached_ref_book.get_downtime() > REF_BOOK_RELEVANCE_TIME:
+    cached_ref_book.update_value(ref_market.fetch_order_book(pair))
+ref_book = cached_ref_book.get_value()
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
 logging.info("Getting/calculating best bid price: {0}".format(highest_bid_price))
@@ -106,6 +110,7 @@ if situation_relevant:
 
     placed_orders[pair] = Orders(bid_id, ask_id, balance_pair)
 
+
 fail_wait_time = INIT_FAIL_WAIT_TIME
 
 while True:
@@ -137,9 +142,9 @@ while True:
             fail_wait_time += INC_WAIT_TIME
             logging.warning('going to sleep for: {:.2f} minutes'.format(cur_wait_time / 60))
             sleep(cur_wait_time)
-
-        # placed orders successfully, restore initial wait time
-        fail_wait_time = INIT_FAIL_WAIT_TIME
+        else:
+            # placed orders successfully, restore initial wait time
+            fail_wait_time = INIT_FAIL_WAIT_TIME
 
     logging.info('going to sleep for: {}\n'.format(PERIOD))
     sleep(PERIOD)

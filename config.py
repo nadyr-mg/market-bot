@@ -11,8 +11,12 @@ BALANCE_REMAIN_PART = 0.5
 
 REF_PRICE_DEVIATION = 0.05
 
-INIT_FAIL_WAIT_TIME = 3 * 60  # 3 minutes
-INC_WAIT_TIME = 2 * 60
+MINUTE = 60
+
+INIT_FAIL_WAIT_TIME = 3 * MINUTE
+INC_WAIT_TIME = 2 * MINUTE
+
+REF_BOOK_RELEVANCE_TIME = 5 * MINUTE
 
 ## how to get the new coin ids:
 ## lykke_markets = lykke.fetch_markets()

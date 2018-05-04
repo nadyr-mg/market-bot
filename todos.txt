@@ -1,6 +1,7 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other, especially 6 and 7 -> Please take a quick look at ALL todos and then start implementing a solution.  
 
+# Added handling of RequestTimeout exceptions
 4) 01.05
 Priority: Highest
 Current Behaviour: If timeout exception occurs -> program crashes and stop working
@@ -13,6 +14,7 @@ Current Behaviour:
 Expected Behaviour:
 - If one order is no longer on the top, for example the buy order -> Than only cancel the buy order and replace it on top again.
 Note: Replacing the order should be done after a random time from 3min to 7min
+
 
 6) 01.05
 Priority: normal
@@ -37,8 +39,6 @@ KeyError: '98385941-89b3-45c2-ae8e-b64c6f3bbac9'
 
 Expected Behaviour:
 If we don't have balance for a coin -> Just put buy order then.
-
-
 
 
 8) 01.05

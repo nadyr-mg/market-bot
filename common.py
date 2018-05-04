@@ -1,5 +1,7 @@
 from typing import List, Tuple, Callable
 from time import sleep
+from timeit import default_timer
+from sys import maxsize
 
 from ccxt.base.exchange import Exchange
 
@@ -64,6 +66,33 @@ if bid_status == "open":
 if ask_status == "open":
     logging.info('try to partialy cancel open ask order:{0}\n'.format(self.ask_id))
     market.cancel_order(self.ask_id)
+
+
+class CachedObject:
+    def __init__(self, value=None) ->
+
+    None:
+    self._value = value
+
+    if value:
+        self._last_update = default_timer()
+    else:
+        self._last_update = -maxsize
+
+
+def update_value(self, value) ->
+
+
+None:
+self.__init__(value)
+
+
+def get_value(self):
+    return self._value
+
+
+def get_downtime(self):
+    return default_timer() - self._last_update
 
 
 def get_change(val1: float, val2
