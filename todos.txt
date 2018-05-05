@@ -16,34 +16,14 @@ Expected Behaviour:
 Note: Replacing the order should be done after a random time from 3min to 7min
 
 
-6) 01.05
-Priority: normal
-Current Behaviour:
-If an order is partially filled, nothing happens.
-Expected Behaviour:
-If an order is partially filled, for example we have bought some 5 WAX coins -> then those 5 WAX coins should be put to sell.
-There are two ways to handle that:
-	- Put a new sell order. In that case we would have the old sell order plus this new order. This means, every time we buy some coins, we will have to put them to sell -> In the end we could have many sell order on top of each other.
-	- Or you just cancel the old order and put all the coins (the ones we already had + the new ones we just bought) in a new sell order
-Note: You can choose option that is easier to implement. I would prefer the first one.
-Note: In the example I only mentioned the case for buying coins, but the implementation should be for buying and also selling. Means in the case we sold some coins we should put buy orders.
 
-
-7) 01.05
-Priority: normal
-Current Behaviour: In the case we don't have any coins left. For example we sold all WAX. We get an error, for example:
-Traceback (most recent call last):
-  File "main.py", line 113, in <module>
-    coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
-KeyError: '98385941-89b3-45c2-ae8e-b64c6f3bbac9'
-
-Expected Behaviour:
-If we don't have balance for a coin -> Just put buy order then.
 
 
 8) 01.05
 Priority: normal
 Current Behaviour: Rename and redefine "Round" to a "Trade".
+
+
 - A complete Trade is: a buy of x coins and sell x of these coins.
 - A complete Trade also could be: a sell of x coins and buy x of these coins back.
  -> Trade Check: 	- 1st Check: Balance > Balance before a complete Trade
@@ -91,3 +71,33 @@ The new buy order can be put on our current buy order with same price, no need t
 # Yes it's much easier to cancel standalone order, and put a new pair of orders.
 
 -Same for buying. If for example you have a buy order for 100 WAX, but you only buy 10 WAX. => You put an sell order to sell the 10 WAX
+
+
+# Added new strategy:
+# at each moment of time, for each pair (e.g. WAX/eth) there will be:
+# n bid orders placed and m ask orders placed (n >= 0; m >= 0)
+# If an order is partially filled, for example, we have bought some 5 WAX coins, then there will be m+1-th ask order to be placed. (similarly if we sold some coins)
+6) 01.05
+Priority: normal
+Current Behaviour:
+If an order is partially filled, nothing happens.
+Expected Behaviour:
+If an order is partially filled, for example we have bought some 5 WAX coins -> then those 5 WAX coins should be put to sell.
+There are two ways to handle that:
+	- Put a new sell order. In that case we would have the old sell order plus this new order. This means, every time we buy some coins, we will have to put them to sell -> In the end we could have many sell order on top of each other.
+	- Or you just cancel the old order and put all the coins (the ones we already had + the new ones we just bought) in a new sell order
+Note: You can choose option that is easier to implement. I would prefer the first one.
+Note: In the example I only mentioned the case for buying coins, but the implementation should be for buying and also selling. Means in the case we sold some coins we should put buy orders.
+
+
+# Program now will spend money to place order even if we can only place one order (bid or ask)
+7) 01.05
+Priority: normal
+Current Behaviour: In the case we don't have any coins left. For example we sold all WAX. We get an error, for example:
+Traceback (most recent call last):
+  File "main.py", line 113, in <module>
+    coin_balance = balance[coin_id]["free"] * BALANCE_USED_PART
+KeyError: '98385941-89b3-45c2-ae8e-b64c6f3bbac9'
+
+Expected Behaviour:
+If we don't have balance for a coin -> Just put buy order then.

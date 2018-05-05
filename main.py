@@ -11,7 +11,6 @@ logging.info('Starting Bot ...')
 lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 
 placed_orders = init_placed_orders(lykke)
-cancel_half_opened_orders(lykke, placed_orders)
 
 opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
                       for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
@@ -20,20 +19,13 @@ cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARK
 
 def place_orders(market: Market, placed_orders
 
-: Dict[str, Orders],
+: Dict[str, Dict[str, List[Order]]],
   buy_amount: float, sell_amount: float, pair: str) -> None:
 logging.info("Entering place_orders func, pair: {}".format(pair))
 
-if pair not in REF_MARKETS:
-    logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
+ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
+if ref_book is None:
     return
-ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
-
-logging.info("Getting reference market order book for: {0}".format(pair))
-cached_ref_book = cached_ref_books[REF_MARKETS[pair]]
-if cached_ref_book.get_downtime() > REF_BOOK_RELEVANCE_TIME:
-    cached_ref_book.update_value(ref_market.fetch_order_book(pair))
-ref_book = cached_ref_book.get_value()
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
 logging.info("Getting/calculating best bid price: {0}".format(highest_bid_price))
@@ -42,73 +34,53 @@ logging.info("Getting/calculating best ask price: {0}".format(lowest_ask_price))
 situation_relevant = is_situation_relevant(ref_book, highest_bid_price, lowest_ask_price)
 logging.info('Is situation relevant?: {}\n'.format(situation_relevant))
 
-cur_orders = placed_orders.get(pair, None)  # type: Orders
+cur_orders = placed_orders[pair]  # type: Dict[str, List[Order]]
 
-balance_pair = get_balance_pair(market, pair)
-
-if cur_orders:
+if cur_orders["bid"] or cur_orders["ask"]:
     logging.info("Found placed orders on trading market")
 
-    bid_order = market.fetch_order(cur_orders.bid_id)
-    ask_order = market.fetch_order(cur_orders.ask_id)
+    for order_type in cur_orders:
+        for order_idx, order in reverse_enum(cur_orders[order_type]):
+            order_info = market.fetch_order(order.id)
 
-    bid_status = bid_order["status"]
-    ask_status = ask_order["status"]
-    logging.info('checking current bid status {} : {}\nand ask status {} : {} \n'
-                 .format(cur_orders.bid_id, bid_status, cur_orders.ask_id, ask_status))
-    if bid_status == ask_status == "open":
-        relevant_value = cur_orders.are_relevant(bid_order["price"], ask_order["price"],
-                                                 highest_bid_price, lowest_ask_price)
-        if not situation_relevant or not relevant_value:
-            logging.info("Orders are opened and irrelevant. Cancellation...")
-            cur_orders.cancel(market)
-    elif (bid_status == "closed" or bid_status == "canceled") and \
-            (ask_status == "closed" or ask_status == "canceled"):
-        logging.info("Orders are already closed. Deleting from dict 'placed_orders'...")
-        del placed_orders[pair]
-
-        if bid_status == ask_status == "closed":
-            logging.info("Pair: {}; End of round")
-
-            if cur_orders.last_balance_pair is None:
-                logging.info("Last balance pair was lost, can't define successful round")
+            status = order_info["status"]
+            best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
+            logging.info("checking current {} status '{}': {}\n".format(order_type, status, order.id))
+            if status == "open":
+                relevant_value = order.is_relevant(order_info["price"], best_price)
+                if not situation_relevant or not relevant_value:
+                    logging.info("Order is opened and irrelevant. Cancellation...")
+                    order.cancel(market)
             else:
-                last_balance_pair = cur_orders.last_balance_pair
-                coins = pair.split("/")
+                logging.info("Order is already closed. Deleting from dict 'placed_orders'...")
+                del cur_orders[order_type][order_idx]
 
-                logging.info("Balance before round: {} - {}; {} - {}".format(coins[0], last_balance_pair[0],
-                                                                             coins[1], last_balance_pair[1]))
-                logging.info("Balance after round: {} - {}; {} - {}".format(coins[0], balance_pair[0],
-                                                                            coins[1], balance_pair[1]))
-
-                # check if round was successful
-                last_amount = convert_to_one(last_balance_pair, highest_bid_price)
-                cur_amount = convert_to_one(balance_pair, highest_bid_price)
-                if last_amount < cur_amount:
-                    logging.info("Round ended successfully")
-                else:
-                    logging.info("Round ended unsuccessfully")
-    else:
-        logging.info("One of the orders is closed and one is opened. Cancellation...")
-        cur_orders.partial_cancel(market, bid_status, ask_status)
-
-        return  # wait until orders will be closed
+                # TODO: define successful round
 
 if situation_relevant:
-    logging.info("No orders were found. Placing orders...")
+    for order_type in ("bid", "ask"):
+        # we don't want to place an order that will be above our other orders
+        if cur_orders[order_type]:
+            addition = 0
+        else:
+            addition = 0.000001
 
-    bid_price = highest_bid_price + 0.000001
-    ask_price = lowest_ask_price - 0.000001
+        if order_type == "bid":
+            price = highest_bid_price + addition
+            amount = int(buy_amount / price)
 
-    converted_buy_amount = int(buy_amount / bid_price)
-    if not is_above_min_size(pair, converted_buy_amount) or \
-            not is_above_min_size(pair, sell_amount):
-        return
+            create_order = market.create_limit_buy_order
+        else:
+            price = lowest_ask_price - addition
+            amount = sell_amount
 
-    bid_id = market.create_limit_buy_order(pair, converted_buy_amount, bid_price)['info']
-    ask_id = market.create_limit_sell_order(pair, sell_amount, ask_price)['info']
+            create_order = market.create_limit_sell_order
 
-    placed_orders[pair] = Orders(bid_id, ask_id, balance_pair)
+        if is_above_min_size(pair, amount):
+            logging.info("Placing {} order with amount {}".format(order_type, amount))
+
+            order_id = create_order(pair, amount, price)['info']
+            cur_orders[order_type].append(Order(order_id, order_type))
 
 
 fail_wait_time = INIT_FAIL_WAIT_TIME
@@ -119,6 +91,11 @@ while True:
 
     coins_spend_amount = {}  # type: Dict[str, float]
     for coin, coin_id in COIN_IDS.items():
+        if coin_id not in balance:
+            coins_spend_amount[coin] = 0
+            logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
+            continue
+
         occur_cnt = sum([1 for pair in PAIRS if coin in pair])
 
         remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
@@ -132,6 +109,7 @@ while True:
         coins = pair.split("/")
         coin1_spend_amount, coin2_spend_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 
+        # TODO: store wait time for each pair, so if placing order for one pair is failed, we could proceed with others
         try:
             # first amount is what you spend to sell, second - what you spend to buy
             place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)

@@ -31,41 +31,31 @@ else:
     return attr
 
 
-class Orders:
-    def __init__(self, bid_id: str, ask_id
+class Order:
+    def __init__(self, order_id: str, order_type
 
     : str, last_balance_pair: List[float] = None) -> None:
-    self.bid_id = bid_id
-    self.ask_id = ask_id
+    self.id = order_id
+    self.order_type = order_type
+
     self.last_balance_pair = last_balance_pair
 
 
-@staticmethod
-def are_relevant(bid_price: float, ask_price
+def is_relevant(self, price: float, best_price
 
-: float, highest_bid_price: float, lowest_ask_price: float) -> bool:
-logging.info('checking whether bid price:{0} and ask price:{1} are relevant'.format(bid_price, ask_price))
-return bid_price >= highest_bid_price and ask_price <= lowest_ask_price
+: float) -> bool:
+logging.info('checking whether {} price: {} is relevant'.format(self.order_type, price))
+if self.order_type == "bid":
+    return price >= best_price
+else:
+    return price <= best_price
 
 
 def cancel(self, market: Market
 
 ) -> None:
-logging.info('try to cancel bid order:{0} \n and ask order: {1}'.format(self.bid_id, self.ask_id))
-market.cancel_order(self.bid_id)
-market.cancel_order(self.ask_id)
-
-
-def partial_cancel(self, market: Market, bid_status
-
-: str, ask_status: str) -> None:
-logging.info('try to partialy cancel open bid/ask orders:')
-if bid_status == "open":
-    logging.info('try to partialy cancel open bid order:{0}\n'.format(self.bid_id))
-    market.cancel_order(self.bid_id)
-if ask_status == "open":
-    logging.info('try to partialy cancel open ask order:{0}\n'.format(self.ask_id))
-    market.cancel_order(self.ask_id)
+logging.info('try to cancel {} order: {}'.format(self.order_type, self.id))
+market.cancel_order(self.id)
 
 
 class CachedObject:
@@ -95,70 +85,44 @@ def get_downtime(self):
     return default_timer() - self._last_update
 
 
-def get_change(val1: float, val2
-
-: float) -> float:
-if not val2:
-    return 0
-return ((val1 - val2) / val2) * 100.0
-
-
-def convert_to_one(balance_pair: List[float], convert_price
-
-: float) -> float:
-return balance_pair[0] + int(balance_pair[1] / convert_price)
-
-
-def get_balance_pair(market: Market, pair
-
-: str) -> List[float]:
-balance = market.fetch_balance()
-
-coins = pair.split("/")
-balance_pair = []  # type: List[float]
-for coin in coins:
-    coin_id = COIN_IDS[coin]
-
-    remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
-    coin_balance = balance[coin_id]["free"] - remaining_balance
-
-    balance_pair.append(coin_balance)
-
-return balance_pair
+def reverse_enum(iterable):
+    for idx in range(len(iterable) - 1, -1, -1):
+        yield idx, iterable[idx]
 
 
 def init_placed_orders(market: Market
 
-) -> Dict[str, Orders]:
+) -> Dict[str, Dict[str, List[Order]]]:
 orders = market.fetch_orders()
-grouped_orders = {}  # type: Dict[str, Dict]
+placed_orders = {pair: {"bid": [], "ask": []} for pair in PAIRS}  # type: Dict[str, Dict[str, List[Order]]]
 for order in orders:
     if order["status"] == "open" or order["info"]["Status"] == "Processing":
         pair = order["symbol"]
-        if pair not in grouped_orders:
-            grouped_orders[pair] = {"bid": None, "ask": None}
+        if pair not in placed_orders:
+            logging.info("Found order with pair '{}' not listed in variable PAIRS".format(pair))
+            continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        grouped_orders[pair][order_type] = order["id"]
-
-placed_orders = {}  # type: Dict[str, Orders]
-for pair, orders_pair in grouped_orders.items():
-    placed_orders[pair] = Orders(orders_pair["bid"], orders_pair["ask"])
+        placed_orders[pair][order_type].append(Order(order["id"], order_type))
 
 return placed_orders
 
 
-def cancel_half_opened_orders(market: Market, placed_orders
+def get_ref_book(pair: str, opened_ref_markets
 
-: Dict[str, Orders]) -> None:
-for pair, orders in placed_orders.items():
-    if orders.bid_id is None or orders.ask_id is None:
-        logging.info("Found half opened orders")
-        statuses = [None if order_id is None else "open"
-                    for order_id in (orders.bid_id, orders.ask_id)]
+: Dict[str, Market], cached_ref_books: Dict[str, CachedObject]):
+if pair not in REF_MARKETS:
+    logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
+    return None
 
-        orders.partial_cancel(market, *statuses)
-        del placed_orders[pair]
+ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
+
+logging.info("Getting reference market order book for: {0}".format(pair))
+cached_ref_book = cached_ref_books[REF_MARKETS[pair]]
+if cached_ref_book.get_downtime() > REF_BOOK_RELEVANCE_TIME:
+    cached_ref_book.update_value(ref_market.fetch_order_book(pair))
+
+return cached_ref_book.get_value()
 
 
 def get_best_prices(market: Market, ref_book
@@ -173,11 +137,14 @@ def _get_best_price(order_type: str
 if book[order_type]:
     return book[order_type][0][0]
 else:
-    logging.info("There are no {0} in the orderbook ".format(order_type))
-    price = ref_book[order_type][0][0]
+    logging.info("There are no {0} in the orderbook".format(order_type))
+
     logging.info("Getting the best price for {0} from the referece orderbook".format(order_type))
-    addition = price * REF_PRICE_DEVIATION  ##Note @Said: We will use a price deviation depending on the coin. I will add mapping for that later on.
-    logging.info("Calculating our best price for {0} with a derivation of: ".format(REF_PRICE_DEVIATION))
+    price = ref_book[order_type][0][0]
+
+    # Note @Said: We will use a price deviation depending on the coin. I will add mapping for that later on.
+    addition = price * REF_PRICE_DEVIATION
+    logging.info("Calculating best price for {} with a deviation of:{}".format(order_type, REF_PRICE_DEVIATION))
     return price + addition if order_type == "asks" else price - addition
 
 return _get_best_price("bids"), _get_best_price("asks")
@@ -200,6 +167,38 @@ return ref_highest_bid_price - highest_bid_price >= ref_bid_deviation and \
        spread > MIN_SPREAD
 
 
+def get_change(val1: float, val2
+
+: float) -> float:
+if not val2:
+    return 0
+return ((val1 - val2) / val2) * 100
+
+
+def get_balance_pair(market: Market, pair
+
+: str) -> List[float]:
+balance = market.fetch_balance()
+
+coins = pair.split("/")
+balance_pair = []  # type: List[float]
+for coin in coins:
+    coin_id = COIN_IDS[coin]
+
+    remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
+    coin_balance = balance[coin_id]["free"] - remaining_balance
+
+    balance_pair.append(coin_balance)
+
+return balance_pair
+
+
+def convert_to_one(balance_pair: List[float], convert_price
+
+: float) -> float:
+return balance_pair[0] + int(balance_pair[1] / convert_price)
+
+
 def is_above_min_size(pair: str, amount
 
 : float) -> bool:
@@ -213,7 +212,7 @@ min_amount = MIN_AMOUNTS[coin_to_spend]
 all_ok = True
 if amount < min_amount:
     logging.info("Too small amount to place")
-    logging.info("{coin}: {amount} - {min}".format(coin=coin_to_spend, amount=amount, min=min_amount))
+    logging.info("{coin}: amount: {amount} < {min}".format(coin=coin_to_spend, amount=amount, min=min_amount))
 
     all_ok = False
 
