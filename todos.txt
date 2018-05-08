@@ -45,6 +45,21 @@ Current Behaviour: Rename and redefine "Round" to a "Trade".
 
 
 
+9) 08.05
+Priority: normal
+Current Behaviour: we just have one ref price deviation: REF_PRICE_DEVIATION = 0.05
+Expected: I should be able to configure the REF_PRICE_DEVIATION for every coin. -> Maybe you could add a map structure like the one for min amount to trade.
+Something like a function that get_ref_price_deviation(coinsymbole) for default if the coin is not in the configuration it returns 0.05 as default    
+
+
+10) 08.05
+Priority: high
+Current Behaviour: if current bid/ask price is above/below ref market price with a REF_PRICE_DEVIATION => Situation is not relevant and the order is not set.
+Expected : 	- If current bid is above ref market price with a REF_PRICE_DEVIATION, but ask price is fine => Only set sell order
+	 	- If current ask is below ref market price with a REF_PRICE_DEVIATION, but bid price is fine => Only set bid order
+
+
+
 
 #DONE TODOS - Finished todo goes here
 3) Check my question on the function: place_orders, it is added as comment
