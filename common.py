@@ -1,7 +1,8 @@
-from typing import List, Tuple, Callable
+from random import randint
+from sys import maxsize
 from time import sleep
 from timeit import default_timer
-from sys import maxsize
+from typing import List, Tuple, Callable
 
 from ccxt.base.exchange import Exchange
 
@@ -81,8 +82,41 @@ def get_value(self):
     return self._value
 
 
-def get_downtime(self):
-    return default_timer() - self._last_update
+def get_downtime(self) ->
+
+
+float:
+return default_timer() - self._last_update
+
+
+class WaitInfo:
+    def __init__(self, init_wait_time: float
+
+    ) -> None:
+    self.init_wait_time = init_wait_time
+    self.wait_time = None
+    self._captured_moment = None
+
+
+def start_waiting(self) ->
+
+
+None:
+self.wait_time = self.init_wait_time + randint(0, 2 * MINUTE)
+self._captured_moment = default_timer()
+
+
+def is_done_waiting(self) ->
+
+
+bool:
+if self._captured_moment is None:
+    return True
+
+is_done = default_timer() - self._captured_moment > self.wait_time
+if is_done:
+    self._captured_moment = None
+return is_done
 
 
 def reverse_enum(iterable):
@@ -150,9 +184,9 @@ else:
 return _get_best_price("bids"), _get_best_price("asks")
 
 
-def is_situation_relevant(ref_book: Dict, highest_bid_price
+def get_orders_relevancy(ref_book: Dict, highest_bid_price
 
-: float, lowest_ask_price: float) -> bool:
+: float, lowest_ask_price: float) -> Dict[str, bool]:
 spread = get_change(lowest_ask_price, highest_bid_price)
 logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
 
@@ -162,9 +196,13 @@ ref_lowest_ask_price = ref_book["asks"][0][0]
 ref_bid_deviation = ref_highest_bid_price * REF_PRICE_DEVIATION
 ref_ask_deviation = ref_lowest_ask_price * REF_PRICE_DEVIATION
 
-return ref_highest_bid_price - highest_bid_price >= ref_bid_deviation and \
-       lowest_ask_price - ref_lowest_ask_price >= ref_ask_deviation and \
-       spread > MIN_SPREAD
+conditions = [
+    spread > MIN_SPREAD,
+    ref_highest_bid_price - highest_bid_price >= ref_bid_deviation,
+    lowest_ask_price - ref_lowest_ask_price >= ref_ask_deviation
+]
+
+return {"bid": conditions[0] and conditions[1], "ask": conditions[0] and conditions[2]}
 
 
 def get_change(val1: float, val2

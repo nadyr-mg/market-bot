@@ -1,12 +1,8 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other, especially 6 and 7 -> Please take a quick look at ALL todos and then start implementing a solution.  
 
-# Added handling of RequestTimeout exceptions
-4) 01.05
-Priority: Highest
-Current Behaviour: If timeout exception occurs -> program crashes and stop working
-Expected Behaviour: If timeout exception occurs -> Catch the exception, log it and printout warning and keep the program running. This is the most important thing, the program should not be stoped because of any connectivity error.
 
+# Half completed. Need to implement waiting for random time before replacing
 5) 01.05
 Priority: low
 Current Behaviour:
@@ -14,9 +10,6 @@ Current Behaviour:
 Expected Behaviour:
 - If one order is no longer on the top, for example the buy order -> Than only cancel the buy order and replace it on top again.
 Note: Replacing the order should be done after a random time from 3min to 7min
-
-
-
 
 
 8) 01.05
@@ -52,14 +45,6 @@ Expected: I should be able to configure the REF_PRICE_DEVIATION for every coin. 
 Something like a function that get_ref_price_deviation(coinsymbole) for default if the coin is not in the configuration it returns 0.05 as default    
 
 
-10) 08.05
-Priority: high
-Current Behaviour: if current bid/ask price is above/below ref market price with a REF_PRICE_DEVIATION => Situation is not relevant and the order is not set.
-Expected : 	- If current bid is above ref market price with a REF_PRICE_DEVIATION, but ask price is fine => Only set sell order
-	 	- If current ask is below ref market price with a REF_PRICE_DEVIATION, but bid price is fine => Only set bid order
-
-
-
 
 #DONE TODOS - Finished todo goes here
 3) Check my question on the function: place_orders, it is added as comment
@@ -86,6 +71,13 @@ The new buy order can be put on our current buy order with same price, no need t
 # Yes it's much easier to cancel standalone order, and put a new pair of orders.
 
 -Same for buying. If for example you have a buy order for 100 WAX, but you only buy 10 WAX. => You put an sell order to sell the 10 WAX
+
+
+# Added handling of RequestTimeout exceptions
+4) 01.05
+Priority: Highest
+Current Behaviour: If timeout exception occurs -> program crashes and stop working
+Expected Behaviour: If timeout exception occurs -> Catch the exception, log it and printout warning and keep the program running. This is the most important thing, the program should not be stoped because of any connectivity error.
 
 
 # Added new strategy:
@@ -116,3 +108,11 @@ KeyError: '98385941-89b3-45c2-ae8e-b64c6f3bbac9'
 
 Expected Behaviour:
 If we don't have balance for a coin -> Just put buy order then.
+
+
+# Replaced variable 'situation_relevant' with orders_relevancy (calculating relevancy for bid and ask orders separately)
+10) 08.05
+Priority: high
+Current Behaviour: if current bid/ask price is above/below ref market price with a REF_PRICE_DEVIATION => Situation is not relevant and the order is not set.
+Expected : 	- If current bid is above ref market price with a REF_PRICE_DEVIATION, but ask price is fine => Only set sell order
+	 	- If current ask is below ref market price with a REF_PRICE_DEVIATION, but bid price is fine => Only set bid order

@@ -1,20 +1,7 @@
-from random import randint
-
 import ccxt
 from ccxt.base.errors import RequestTimeout
 
 from common import *
-
-# initialization
-logging.info('Starting Bot ...')
-
-lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
-
-placed_orders = init_placed_orders(lykke)
-
-opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
-                      for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
-cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARKETS}  # type: Dict[str, CachedObject]
 
 
 def place_orders(market: Market, placed_orders
@@ -31,8 +18,8 @@ highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
 logging.info("Getting/calculating best bid price: {0}".format(highest_bid_price))
 logging.info("Getting/calculating best ask price: {0}".format(lowest_ask_price))
 
-situation_relevant = is_situation_relevant(ref_book, highest_bid_price, lowest_ask_price)
-logging.info('Is situation relevant?: {}\n'.format(situation_relevant))
+orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price)
+logging.info('Is orders are relevant?\n{}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, List[Order]]
 
@@ -48,7 +35,7 @@ if cur_orders["bid"] or cur_orders["ask"]:
             logging.info("checking current {} status '{}': {}\n".format(order_type, status, order.id))
             if status == "open":
                 relevant_value = order.is_relevant(order_info["price"], best_price)
-                if not situation_relevant or not relevant_value:
+                if not orders_relevancy[order_type] or not relevant_value:
                     logging.info("Order is opened and irrelevant. Cancellation...")
                     order.cancel(market)
             else:
@@ -57,8 +44,10 @@ if cur_orders["bid"] or cur_orders["ask"]:
 
                 # TODO: define successful round
 
-if situation_relevant:
     for order_type in ("bid", "ask"):
+        if not orders_relevancy[order_type]:
+            continue
+
         # we don't want to place an order that will be above our other orders
         if cur_orders[order_type]:
             addition = 0
@@ -80,10 +69,18 @@ if situation_relevant:
             logging.info("Placing {} order with amount {}".format(order_type, amount))
 
             order_id = create_order(pair, amount, price)['info']
-            cur_orders[order_type].append(Order(order_id, order_type))
+            cur_orders[order_type].append(Order(order_id, order_type))  # initialization
+logging.info('Starting Bot ...')
 
+lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 
-fail_wait_time = INIT_FAIL_WAIT_TIME
+placed_orders = init_placed_orders(lykke)
+
+opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
+                      for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
+cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARKETS}  # type: Dict[str, CachedObject]
+
+fail_wait_infos = {pair: WaitInfo(INIT_FAIL_WAIT_TIME) for pair in PAIRS}  # type: Dict[str, WaitInfo]
 
 while True:
     logging.info('Fetching free balance ...')
@@ -106,23 +103,26 @@ while True:
         logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
 
     for pair in PAIRS:
+        fail_wait_info = fail_wait_infos[pair]
+        if not fail_wait_info.is_done_waiting():
+            continue
+
         coins = pair.split("/")
         coin1_spend_amount, coin2_spend_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 
-        # TODO: store wait time for each pair, so if placing order for one pair is failed, we could proceed with others
         try:
             # first amount is what you spend to sell, second - what you spend to buy
             place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
-        except RequestTimeout as err:
-            logging.warning('error occurred: {}'.format(err))
+        except RequestTimeout:
+            logging.warning('while processing pair {}, RequestTimeout error occurred'.format(pair))
 
-            cur_wait_time = randint(fail_wait_time, fail_wait_time + 2 * 60)
-            fail_wait_time += INC_WAIT_TIME
-            logging.warning('going to sleep for: {:.2f} minutes'.format(cur_wait_time / 60))
-            sleep(cur_wait_time)
+            fail_wait_info.start_waiting()
+
+            # if next error will occur, then wait time will increase by INC_WAIT_TIME
+            fail_wait_info.init_wait_time += INC_WAIT_TIME
         else:
             # placed orders successfully, restore initial wait time
-            fail_wait_time = INIT_FAIL_WAIT_TIME
+            fail_wait_info.init_wait_time = INIT_FAIL_WAIT_TIME
 
     logging.info('going to sleep for: {}\n'.format(PERIOD))
     sleep(PERIOD)
