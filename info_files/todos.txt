@@ -2,15 +2,6 @@
 Overview: The todos might be related to each other, especially 6 and 7 -> Please take a quick look at ALL todos and then start implementing a solution.  
 
 
-# Half completed. Need to implement waiting for random time before replacing
-5) 01.05
-Priority: low
-Current Behaviour:
-- If one order is no longer on the top, both orders are then canceled an replaced.
-Expected Behaviour:
-- If one order is no longer on the top, for example the buy order -> Than only cancel the buy order and replace it on top again.
-Note: Replacing the order should be done after a random time from 3min to 7min
-
 
 8) 01.05
 Priority: normal
@@ -116,3 +107,14 @@ Priority: high
 Current Behaviour: if current bid/ask price is above/below ref market price with a REF_PRICE_DEVIATION => Situation is not relevant and the order is not set.
 Expected : 	- If current bid is above ref market price with a REF_PRICE_DEVIATION, but ask price is fine => Only set sell order
 	 	- If current ask is below ref market price with a REF_PRICE_DEVIATION, but bid price is fine => Only set bid order
+
+
+# Half completed. Need to implement waiting for random time before replacing
+# Fully completed. wait_info object in class Orders for setting random waiting time
+5) 01.05
+Priority: low
+Current Behaviour:
+- If one order is no longer on the top, both orders are then canceled an replaced.
+Expected Behaviour:
+- If one order is no longer on the top, for example the buy order -> Than only cancel the buy order and replace it on top again.
+Note: Replacing the order should be done after a random time from 3min to 7min
