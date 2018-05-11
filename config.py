@@ -1,6 +1,10 @@
 import logging
 from json import load
 from typing import Dict
+from os.path import join
+
+from configuration_files import config_dir
+
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 PAIRS = ['WAX/ETH']
@@ -18,10 +22,6 @@ INC_WAIT_TIME = 2 * MINUTE
 
 REF_BOOK_RELEVANCE_TIME = 5 * MINUTE
 
-## how to get the new coin ids:
-## lykke_markets = lykke.fetch_markets()
-## for market, asset  in lykke_markets.items():
-##     print("{0} : {1}".format(market, asset['base']))
 
 COIN_IDS = {
     "ETH": "ETH",
@@ -32,12 +32,12 @@ COIN_IDS = {
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
 }
 
-with open("reference_markets.json") as file:
+with open(join(config_dir, "reference_markets.json")) as file:
     REF_MARKETS = load(file)  # type: Dict
 
 USED_REF_MARKETS = {market for market in REF_MARKETS.values() if market}
 
-with open("min_amounts.json") as file:
+with open(join(config_dir, "min_amounts.json")) as file:
     MIN_AMOUNTS = load(file)  # type: Dict
 
 # setup default logging level
