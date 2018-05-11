@@ -98,11 +98,10 @@ class WaitInfo:
     self._captured_moment = None
 
 
-def start_waiting(self) ->
+def start_waiting(self, addition: float
 
-
-None:
-self.wait_time = self.init_wait_time + randint(0, 2 * MINUTE)
+) -> None:
+self.wait_time = self.init_wait_time + addition
 self._captured_moment = default_timer()
 
 
@@ -119,6 +118,51 @@ if is_done:
 return is_done
 
 
+class Orders:
+    def __init__(self, order_type: str
+
+    ) -> None:
+    self.orders = []  # type: List[Order]
+    self.order_type = order_type
+
+    self.wait_time_set = False
+    self.wait_info = WaitInfo(0)
+
+
+def add_order(self, order_id: str
+
+) -> None:
+self.orders.append(Order(order_id, self.order_type))
+
+
+def pop_order(self, idx: int
+
+):
+self.orders.pop(idx)
+
+
+def set_wait_time(self) ->
+
+
+None:
+if not self.wait_time_set:
+    # waiting for random time after cancellation
+    wait_time = randint(*AFTER_CANCEL_WAIT_BOUNDS)
+    self.wait_info.start_waiting(wait_time)
+    self.wait_time_set = True
+
+
+def is_placing_available(self) ->
+
+
+bool:
+is_available = self.wait_info.is_done_waiting()
+if is_available:
+    # done with waiting, reset flag
+    self.wait_time_set = False
+return is_available
+
+
 def reverse_enum(iterable):
     for idx in range(len(iterable) - 1, -1, -1):
         yield idx, iterable[idx]
@@ -126,9 +170,10 @@ def reverse_enum(iterable):
 
 def init_placed_orders(market: Market
 
-) -> Dict[str, Dict[str, List[Order]]]:
+) -> Dict[str, Dict[str, Orders]]:
 orders = market.fetch_orders()
-placed_orders = {pair: {"bid": [], "ask": []} for pair in PAIRS}  # type: Dict[str, Dict[str, List[Order]]]
+placed_orders = {pair: {"bid": Orders("bid"), "ask": Orders("ask")}
+                 for pair in PAIRS}  # type: Dict[str, Dict[str, Orders]]
 for order in orders:
     if order["status"] == "open" or order["info"]["Status"] == "Processing":
         pair = order["symbol"]
@@ -137,7 +182,7 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        placed_orders[pair][order_type].append(Order(order["id"], order_type))
+        placed_orders[pair][order_type].add_order(order["id"])
 
 return placed_orders
 

@@ -6,7 +6,7 @@ from common import *
 
 def place_orders(market: Market, placed_orders
 
-: Dict[str, Dict[str, List[Order]]],
+: Dict[str, Dict[str, Orders]],
   buy_amount: float, sell_amount: float, pair: str) -> None:
 logging.info("Entering place_orders func, pair: {}".format(pair))
 
@@ -21,13 +21,13 @@ logging.info("Getting/calculating best ask price: {0}".format(lowest_ask_price))
 orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price)
 logging.info('Is orders are relevant?\n{}'.format(orders_relevancy))
 
-cur_orders = placed_orders[pair]  # type: Dict[str, List[Order]]
+cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
 if cur_orders["bid"] or cur_orders["ask"]:
     logging.info("Found placed orders on trading market")
 
     for order_type in cur_orders:
-        for order_idx, order in reverse_enum(cur_orders[order_type]):
+        for order_idx, order in reverse_enum(cur_orders[order_type].orders):
             order_info = market.fetch_order(order.id)
 
             status = order_info["status"]
@@ -37,15 +37,18 @@ if cur_orders["bid"] or cur_orders["ask"]:
                 relevant_value = order.is_relevant(order_info["price"], best_price)
                 if not orders_relevancy[order_type] or not relevant_value:
                     logging.info("Order is opened and irrelevant. Cancellation...")
+
+                    # All open orders have the same price, hence if one is irrelevant -> all are irrelevant
                     order.cancel(market)
+                    cur_orders[order_type].set_wait_time()
             else:
                 logging.info("Order is already closed. Deleting from dict 'placed_orders'...")
-                del cur_orders[order_type][order_idx]
+                cur_orders[order_type].pop_order(order_idx)
 
                 # TODO: define successful round
 
     for order_type in ("bid", "ask"):
-        if not orders_relevancy[order_type]:
+        if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
             continue
 
         # we don't want to place an order that will be above our other orders
@@ -69,7 +72,7 @@ if cur_orders["bid"] or cur_orders["ask"]:
             logging.info("Placing {} order with amount {}".format(order_type, amount))
 
             order_id = create_order(pair, amount, price)['info']
-            cur_orders[order_type].append(Order(order_id, order_type))  # initialization
+            cur_orders[order_type].add_order(order_id)  # initialization
 logging.info('Starting Bot ...')
 
 lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
@@ -116,7 +119,7 @@ while True:
         except RequestTimeout:
             logging.warning('while processing pair {}, RequestTimeout error occurred'.format(pair))
 
-            fail_wait_info.start_waiting()
+            fail_wait_info.start_waiting(randint(0, 2 * MINUTE))
 
             # if next error will occur, then wait time will increase by INC_WAIT_TIME
             fail_wait_info.init_wait_time += INC_WAIT_TIME
