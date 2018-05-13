@@ -13,19 +13,21 @@ Current Behaviour: Rename and redefine "Round" to a "Trade".
  -> Trade Check: 	- 1st Check: Balance > Balance before a complete Trade
 			- 2nd Check: Compare expected Profit with actual profit, should approximately be the same
 			expected profit = (sell_price - buy_price) * number of coins traded
- 			actual profit = current_balance - before_trade_started_balance
+ 			actual profit = cost_for_sell_order - cost_for_buy_order
+
+
 - A partial trade is: Buy of x coins and sell of y coins were y<x
 - A partial trade is: Sell of x coins and buy of y coins were y<x
  -> Trade Check: 	- Only the 2nd check: Compare expected Profit with actual profit, should approximately be the same
-			expected profit = (sell_price - buy_price) * (number of coins traded) => min(number of bought, number of sold)
- 			actual profit = after_bought_after_partially_sold_balance - before_bought_before_sold_balance * ( number_of_coins_partially_sold / total_number_of_coins_initialy bought)
-			example:
-				- Total bought 1000 XYZCoins for 1 ETH -> before_bought_before_sold_balance = 1 ETH and after_bought_before_sold_balance = 0 ETH
-				- Partially Sold 500 XYCoins for 0.6 ETH -> after_partially_sold_balance = 0.6 ETH
-				=> Therefore: after_bought_after_partially_sold_balance - before_bought_before_sold_balance * ( number_of_coins_partially_sold / total_number_of_coins_initialy bought)
-				-> 		0.6 ETH - 1 ETH * ( 500 / 1000)  --> Partial Profit would be in our case 0.1 ETH
+			expected profit = (sell_price - buy_price) * number of coins traded
+			actual profit = min(filled_sell, filled_buy) * (sell_price - buy_price)
 
-			Note: We cannot really calculate the actual profit since our total balance after a partial trade might still be lower then before the trade
+			actual profit 2= cost_for_sell_order - filled_sell * buy_price in case of filled_sell < filled_buy
+			actual profit 2= filled_buy * sell_price  - cost_for_buy_order in case of filled_buy < filled_sell
+
+
+			Note: To double check the value of cost we will also use a second formula for actual profit: actual profit 2
+			Comparing: expected_profit = actual_profit = actual_profit_2 they should be approximately the same
 
 
 
