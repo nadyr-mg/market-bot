@@ -2,43 +2,6 @@
 Overview: The todos might be related to each other, especially 6 and 7 -> Please take a quick look at ALL todos and then start implementing a solution.  
 
 
-
-8) 01.05
-Priority: normal
-Current Behaviour: Rename and redefine "Round" to a "Trade".
-
-
-- A complete Trade is: a buy of x coins and sell x of these coins.
-- A complete Trade also could be: a sell of x coins and buy x of these coins back.
- -> Trade Check: 	- 1st Check: Balance > Balance before a complete Trade
-			- 2nd Check: Compare expected Profit with actual profit, should approximately be the same
-			expected profit = (sell_price - buy_price) * number of coins traded
- 			actual profit = cost_for_sell_order - cost_for_buy_order
-
-
-- A partial trade is: Buy of x coins and sell of y coins were y<x
-- A partial trade is: Sell of x coins and buy of y coins were y<x
- -> Trade Check: 	- Only the 2nd check: Compare expected Profit with actual profit, should approximately be the same
-			expected profit = (sell_price - buy_price) * number of coins traded
-			actual profit = min(filled_sell, filled_buy) * (sell_price - buy_price)
-
-			actual profit 2= cost_for_sell_order - filled_sell * buy_price in case of filled_sell < filled_buy
-			actual profit 2= filled_buy * sell_price  - cost_for_buy_order in case of filled_buy < filled_sell
-
-
-			Note: To double check the value of cost we will also use a second formula for actual profit: actual profit 2
-			Comparing: expected_profit = actual_profit = actual_profit_2 they should be approximately the same
-
-
-
-9) 08.05
-Priority: normal
-Current Behaviour: we just have one ref price deviation: REF_PRICE_DEVIATION = 0.05
-Expected: I should be able to configure the REF_PRICE_DEVIATION for every coin. -> Maybe you could add a map structure like the one for min amount to trade.
-Something like a function that get_ref_price_deviation(coinsymbole) for default if the coin is not in the configuration it returns 0.05 as default    
-
-
-
 #DONE TODOS - Finished todo goes here
 3) Check my question on the function: place_orders, it is added as comment
 => Clarified
@@ -120,3 +83,42 @@ Current Behaviour:
 Expected Behaviour:
 - If one order is no longer on the top, for example the buy order -> Than only cancel the buy order and replace it on top again.
 Note: Replacing the order should be done after a random time from 3min to 7min
+
+
+9) 08.05
+Priority: normal
+Current Behaviour: we just have one ref price deviation: REF_PRICE_DEVIATION = 0.05
+Expected: I should be able to configure the REF_PRICE_DEVIATION for every coin. -> Maybe you could add a map structure like the one for min amount to trade.
+Something like a function that get_ref_price_deviation(coinsymbole) for default if the coin is not in the configuration it returns 0.05 as default
+
+
+# Added function is_round_successful: checking whether trade between two orders (bid and ask) was successful,
+# one of the orders could be partially filled
+8) 01.05
+Priority: normal
+Current Behaviour: Rename and redefine "Round" to a "Trade".
+
+
+- A complete Trade is: a buy of x coins and sell x of these coins.
+- A complete Trade also could be: a sell of x coins and buy x of these coins back.
+ -> Trade Check: 	- 1st Check: Balance > Balance before a complete Trade
+			- 2nd Check: Compare expected Profit with actual profit, should approximately be the same
+			expected profit = (sell_price - buy_price) * number of coins traded
+ 			actual profit = cost_for_sell_order - cost_for_buy_order
+
+
+- A partial trade is: Buy of x coins and sell of y coins were y<x
+- A partial trade is: Sell of x coins and buy of y coins were y<x
+ -> Trade Check: 	- Only the 2nd check: Compare expected Profit with actual profit, should approximately be the same
+			expected profit = (sell_price - buy_price) * number of coins traded
+
+			# I'm guessing that here you are implying sell/buy price from API, because otherwise formulas
+			# for expected_profit and actual_profit are equal
+			actual profit = min(filled_sell, filled_buy) * (sell_price - buy_price)
+
+			actual profit 2= cost_for_sell_order - filled_sell * buy_price in case of filled_sell < filled_buy
+			actual profit 2= filled_buy * sell_price  - cost_for_buy_order in case of filled_buy < filled_sell
+
+
+			Note: To double check the value of cost we will also use a second formula for actual profit: actual profit 2
+			Comparing: expected_profit = actual_profit = actual_profit_2 they should be approximately the same

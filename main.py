@@ -41,9 +41,25 @@ if cur_orders["bid"] or cur_orders["ask"]:
                     cur_orders[order_type].set_wait_time()
             else:
                 logging.info("Order is already closed. Deleting from dict 'placed_orders'...")
-                cur_orders[order_type].pop_order(order_idx)
+                cur_orders[order_type].pop(order_idx)
 
-                # TODO: define successful round
+                if status == "closed":
+                    opposite_type = "ask" if order_type == "bid" else "bid"
+                    if order_idx < len(cur_orders[opposite_type].orders):
+                        opposite_order = cur_orders[opposite_type].get(order_idx)
+                        opposite_order_info = market.fetch_order(opposite_order.id)
+
+                        # bringing to a proper order
+                        if order_type == "ask":
+                            order_info, opposite_order_info = opposite_order_info, order_info
+
+                        logging.info("Defining round for 'bid': {}, 'ask': {}"
+                                     .format(order_info["id"], opposite_order_info["id"]))
+                        if is_round_successful(order_info, opposite_order_info,
+                                               highest_bid_price, lowest_ask_price):
+                            logging.info("Round ended successfully")
+                        else:
+                            logging.info("Round ended unsuccessfully")
 
     for order_type in ("bid", "ask"):
         if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
@@ -70,7 +86,7 @@ if cur_orders["bid"] or cur_orders["ask"]:
             logging.info("Placing {} order with amount {}".format(order_type, amount))
 
             order_id = create_order(pair, amount, price)['info']
-            cur_orders[order_type].add_order(order_id)  # initialization
+            cur_orders[order_type].add(order_id)  # initialization
 logging.info('Starting Bot ...')
 
 is_passed = check_conf_files()

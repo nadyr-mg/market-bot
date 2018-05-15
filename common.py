@@ -35,11 +35,9 @@ else:
 class Order:
     def __init__(self, order_id: str, order_type
 
-    : str, last_balance_pair: List[float] = None) -> None:
+    : str) -> None:
     self.id = order_id
     self.order_type = order_type
-
-    self.last_balance_pair = last_balance_pair
 
 
 def is_relevant(self, price: float, best_price
@@ -129,16 +127,22 @@ class Orders:
     self.wait_info = WaitInfo(0)
 
 
-def add_order(self, order_id: str
+def add(self, order_id: str
 
 ) -> None:
 self.orders.append(Order(order_id, self.order_type))
 
 
-def pop_order(self, idx: int
+def pop(self, idx: int
 
-):
-self.orders.pop(idx)
+) -> Order:
+return self.orders.pop(idx)
+
+
+def get(self, idx: int
+
+) -> Order:
+return self.orders[idx]
 
 
 def set_wait_time(self) ->
@@ -182,7 +186,7 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        placed_orders[pair][order_type].add_order(order["id"])
+        placed_orders[pair][order_type].add(order["id"])
 
 return placed_orders
 
@@ -256,24 +260,6 @@ if not val2:
 return ((val1 - val2) / val2) * 100
 
 
-def get_balance_pair(market: Market, pair
-
-: str) -> List[float]:
-balance = market.fetch_balance()
-
-coins = pair.split("/")
-balance_pair = []  # type: List[float]
-for coin in coins:
-    coin_id = COIN_IDS[coin]
-
-    remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
-    coin_balance = balance[coin_id]["free"] - remaining_balance
-
-    balance_pair.append(coin_balance)
-
-return balance_pair
-
-
 def convert_to_one(balance_pair: List[float], convert_price
 
 : float) -> float:
@@ -320,3 +306,38 @@ for coin in COIN_IDS:
         is_check_passed = False
 
 return is_check_passed
+
+
+def is_round_successful(buy_order: Dict, sell_order
+
+: Dict, buy_price: float, sell_price: float) -> bool:
+buy_amount = buy_order["filled"]
+sell_amount = sell_order["filled"]
+
+buy_cost = buy_order["cost"]
+sell_cost = sell_order["cost"]
+
+amount_traded = min(buy_amount, sell_amount)
+expected_profit = (sell_price - buy_price) * amount_traded
+profit_deviation = expected_profit * ACCEPTABLE_PROFIT_DEVIATION
+logging.info("expected profit: {}".format(expected_profit))
+
+if buy_amount == sell_amount:  # A complete Trade
+    actual_profit = sell_cost - buy_cost
+    logging.info("actual profit: {}".format(actual_profit))
+
+    result = abs(actual_profit - expected_profit) < profit_deviation
+else:  # A partial trade
+    actual_profit = (sell_order["price"] - buy_order["price"]) * amount_traded
+    logging.info("actual profit: {}".format(actual_profit))
+
+    if amount_traded == sell_amount:  # in case of filled_sell < filled_buy
+        actual_profit2 = sell_cost - sell_amount * buy_price
+    else:
+        actual_profit2 = buy_amount * sell_price - buy_cost
+    logging.info("actual profit2: {}".format(actual_profit2))
+
+    result = abs(actual_profit - expected_profit) < profit_deviation and \
+             abs(actual_profit2 - expected_profit) < profit_deviation
+
+return result
