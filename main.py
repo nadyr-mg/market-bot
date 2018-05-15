@@ -11,14 +11,12 @@ def place_orders(market: Market, placed_orders
 logging.info("Entering place_orders func, pair: {}".format(pair))
 
 ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
-if ref_book is None:
-    return
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
-logging.info("Getting/calculating best bid price: {0}".format(highest_bid_price))
-logging.info("Getting/calculating best ask price: {0}".format(lowest_ask_price))
+logging.info("Getting/calculating best bid price: {:.8f}".format(highest_bid_price))
+logging.info("Getting/calculating best ask price: {:.8f}".format(lowest_ask_price))
 
-orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price)
+orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
 logging.info('Is orders are relevant?\n{}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
@@ -74,6 +72,11 @@ if cur_orders["bid"] or cur_orders["ask"]:
             order_id = create_order(pair, amount, price)['info']
             cur_orders[order_type].add_order(order_id)  # initialization
 logging.info('Starting Bot ...')
+
+is_passed = check_conf_files()
+if not is_passed:
+    logging.error("found inconsistencies in configuration files")
+    exit(1)
 
 lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 

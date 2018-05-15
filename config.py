@@ -13,8 +13,6 @@ MIN_SPREAD = 10
 PERIOD = 15
 BALANCE_REMAIN_PART = 0.7
 
-REF_PRICE_DEVIATION = 0.05
-
 MINUTE = 60
 
 INIT_FAIL_WAIT_TIME = 3 * MINUTE
@@ -41,6 +39,9 @@ USED_REF_MARKETS = {market for market in REF_MARKETS.values() if market}
 
 with open(join(config_dir, "min_amounts.json")) as file:
     MIN_AMOUNTS = load(file)  # type: Dict
+
+with open(join(config_dir, "ref_deviations.json")) as file:
+    REF_PRICE_DEVIATIONS = load(file)  # type: Dict
 
 # setup default logging level
 logging.basicConfig(level=logging.INFO)

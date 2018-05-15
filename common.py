@@ -190,10 +190,6 @@ return placed_orders
 def get_ref_book(pair: str, opened_ref_markets
 
 : Dict[str, Market], cached_ref_books: Dict[str, CachedObject]):
-if pair not in REF_MARKETS:
-    logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
-    return None
-
 ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
 
 logging.info("Getting reference market order book for: {0}".format(pair))
@@ -208,6 +204,7 @@ def get_best_prices(market: Market, ref_book
 
 : Dict, pair: str) -> Tuple[float, float]:
 book = market.fetch_order_book(pair)
+ref_price_deviation = REF_PRICE_DEVIATIONS[pair]
 
 
 def _get_best_price(order_type: str
@@ -218,12 +215,11 @@ if book[order_type]:
 else:
     logging.info("There are no {0} in the orderbook".format(order_type))
 
-    logging.info("Getting the best price for {0} from the referece orderbook".format(order_type))
+    logging.info("Getting the best price for {0} from the reference orderbook".format(order_type))
     price = ref_book[order_type][0][0]
 
-    # Note @Said: We will use a price deviation depending on the coin. I will add mapping for that later on.
-    addition = price * REF_PRICE_DEVIATION
-    logging.info("Calculating best price for {} with a deviation of:{}".format(order_type, REF_PRICE_DEVIATION))
+    addition = price * ref_price_deviation
+    logging.info("Calculating best price for {} with a deviation of:{}".format(order_type, ref_price_deviation))
     return price + addition if order_type == "asks" else price - addition
 
 return _get_best_price("bids"), _get_best_price("asks")
@@ -231,15 +227,17 @@ return _get_best_price("bids"), _get_best_price("asks")
 
 def get_orders_relevancy(ref_book: Dict, highest_bid_price
 
-: float, lowest_ask_price: float) -> Dict[str, bool]:
+: float,
+  lowest_ask_price: float, pair: str) -> Dict[str, bool]:
 spread = get_change(lowest_ask_price, highest_bid_price)
 logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
 
 ref_highest_bid_price = ref_book["bids"][0][0]
 ref_lowest_ask_price = ref_book["asks"][0][0]
 
-ref_bid_deviation = ref_highest_bid_price * REF_PRICE_DEVIATION
-ref_ask_deviation = ref_lowest_ask_price * REF_PRICE_DEVIATION
+ref_price_deviation = REF_PRICE_DEVIATIONS[pair]
+ref_bid_deviation = ref_highest_bid_price * ref_price_deviation
+ref_ask_deviation = ref_lowest_ask_price * ref_price_deviation
 
 conditions = [
     spread > MIN_SPREAD,
@@ -286,10 +284,6 @@ def is_above_min_size(pair: str, amount
 
 : float) -> bool:
 coin_to_spend = pair.partition("/")[0]
-if coin_to_spend not in MIN_AMOUNTS:
-    logging.warning("Coin: '{}'; coin is not found in the min amounts mapping".format(coin_to_spend))
-    return False
-
 min_amount = MIN_AMOUNTS[coin_to_spend]
 
 all_ok = True
@@ -300,3 +294,29 @@ if amount < min_amount:
     all_ok = False
 
 return all_ok
+
+
+def check_conf_files() ->
+
+
+bool:
+is_check_passed = True
+
+for pair in PAIRS:
+    # reference_markets.json
+    if pair not in REF_MARKETS:
+        logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
+        is_check_passed = False
+
+    # ref_deviations.json
+    if pair not in REF_PRICE_DEVIATIONS:
+        logging.warning("Pair '{}' is not found in the reference deviations mapping".format(pair))
+        is_check_passed = False
+
+# min_amounts.json
+for coin in COIN_IDS:
+    if coin not in MIN_AMOUNTS:
+        logging.warning("Coin: '{}'; coin is not found in the min amounts mapping".format(coin))
+        is_check_passed = False
+
+return is_check_passed
