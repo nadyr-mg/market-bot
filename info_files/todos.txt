@@ -1,5 +1,55 @@
 #CURRENT TODOS
-Overview: The todos might be related to each other, especially 6 and 7 -> Please take a quick look at ALL todos and then start implementing a solution.  
+Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.  
+
+10) Placing wrong buy and sell prices.
+Buy/Sell order is placed on top of the current best price. It should be placed below/above the current best prices.
+Except in the case we already have orders placed as best prices.  
+
+
+11) Placing multiple sell and buy orders on top of each other for WAX/ETH 
+
+12) Not placing sell order for CVC/ETH. Maybe because there no order in the order book.
+
+Here are the logs
+
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+INFO:root:Starting Bot ...
+INFO:root:Fetching free balance ...
+INFO:root:+ETH : 0.018716982
+INFO:root:Order size for ETH: 0.009358491
+INFO:root:+LOC : 0.6000000000000001
+INFO:root:Order size for LOC: 0.6000000000000001
+INFO:root:+CVC : 3.0
+INFO:root:Order size for CVC: 3.0
+INFO:root:Entering place_orders func, pair: LOC/ETH
+INFO:root:Getting reference market order book for: LOC/ETH
+INFO:root:There are no asks in the orderbook
+INFO:root:Getting the best price for asks from the reference orderbook
+INFO:root:Calculating best price for asks with a deviation of:0.5
+INFO:root:Getting/calculating best bid price: 0.00139400
+INFO:root:Getting/calculating best ask price: 0.00240000
+INFO:root:Spread between best bid and best ask: 72.17
+
+INFO:root:Is orders are relevant?
+{'bid': False, 'ask': True}
+INFO:root:Found placed orders on trading market
+INFO:root:Too small amount to place
+INFO:root:LOC: amount: 0.6000000000000001 < 1
+INFO:root:Entering place_orders func, pair: CVC/ETH
+INFO:root:Getting reference market order book for: CVC/ETH
+INFO:root:There are no asks in the orderbook
+INFO:root:Getting the best price for asks from the reference orderbook
+INFO:root:Calculating best price for asks with a deviation of:0.5
+INFO:root:Getting/calculating best bid price: 0.00056000
+INFO:root:Getting/calculating best ask price: 0.00123708
+INFO:root:Spread between best bid and best ask: 120.91
+
+INFO:root:Is orders are relevant?
+{'bid': False, 'ask': False}
+INFO:root:Found placed orders on trading market
+INFO:root:going to sleep for: 15
+
+
 
 
 #DONE TODOS - Finished todo goes here
@@ -14,10 +64,10 @@ Overview: The todos might be related to each other, especially 6 and 7 -> Please
 -> They will not appear in that list.
 Instead you will have to use fetch_orders() and filter them out. You can find them with the status 'Processing'. Here is an example:
 
->>> orders = exchange.fetch_orders()
->>> for i in range(0,len(orders)):
-...     if orders[i]['info']['Status'] == 'Processing' :
-...             print(orders[i])
+orders = exchange.fetch_orders()
+for i in range(0,len(orders)):
+     if orders[i]['info']['Status'] == 'Processing' :
+             print(orders[i])
 
 Example:
 -A partially executed sell order: Sell order of 100 WAX, but only 10 WAX are sold.
