@@ -44,6 +44,8 @@
   "HGT/ETH": 0.5,
   "HGT/BTC": 0.5,
   "LOC/BTC": 0.5,
+  "LOC/ETH": 0.5,
+  "CVC/BTC": 0.5,
   "CVC/ETH": 0.5,
   "LC/ETH": null
 }
