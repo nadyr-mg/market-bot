@@ -44,7 +44,7 @@ class Order:
 def is_relevant(self, price: float, best_price
 
 : float) -> bool:
-info('checking whether {} price: {} is relevant'.format(self.order_type, price))
+info('checking whether {} price: {:.8f} is relevant'.format(self.order_type, price))
 if self.order_type == "bid":
     return price >= best_price
 else:
@@ -144,6 +144,13 @@ def get(self, idx: int
 
 ) -> Order:
 return self.orders[idx]
+
+
+def is_empty(self) ->
+
+
+bool:
+return len(self.orders) == 0
 
 
 def set_wait_time(self) ->

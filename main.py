@@ -21,7 +21,9 @@ logging.info('Is orders are relevant?\n{}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
-if cur_orders["bid"] or cur_orders["ask"]:
+is_some_order_cancelled = False
+
+if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
     logging.info("Found placed orders on trading market")
 
     for order_type in cur_orders:
@@ -39,6 +41,8 @@ if cur_orders["bid"] or cur_orders["ask"]:
                     # All open orders have the same price, hence if one is irrelevant -> all are irrelevant
                     order.cancel(market)
                     cur_orders[order_type].set_wait_time()
+
+                    is_some_order_cancelled = True
             else:
                 logging.info("Order is already closed. Deleting from dict 'placed_orders'...")
                 cur_orders[order_type].pop(order_idx)
@@ -61,15 +65,18 @@ if cur_orders["bid"] or cur_orders["ask"]:
                         else:
                             logging.info("Round ended unsuccessfully")
 
+if is_some_order_cancelled:
+    # better get back to a main loop and recalculate balance
+    return
+
     for order_type in ("bid", "ask"):
         if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
             continue
 
-        # we don't want to place an order that will be above our other orders
-        if cur_orders[order_type]:
-            addition = 0
-        else:
+        if cur_orders[order_type].is_empty():
             addition = 0.000001
+        else:  # we don't want to place an order that will be above our other orders
+            addition = 0
 
         if order_type == "bid":
             price = highest_bid_price + addition
