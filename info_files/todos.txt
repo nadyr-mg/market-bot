@@ -1,10 +1,5 @@
 #CURRENT TODOS
-Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.  
-
-10) Placing wrong buy and sell prices.
-Buy/Sell order is placed on top of the current best price. It should be placed below/above the current best prices.
-Except in the case we already have orders placed as best prices.  
-
+Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
 11) Placing multiple sell and buy orders on top of each other for WAX/ETH 
 
@@ -172,3 +167,8 @@ Current Behaviour: Rename and redefine "Round" to a "Trade".
 
 			Note: To double check the value of cost we will also use a second formula for actual profit: actual profit 2
 			Comparing: expected_profit = actual_profit = actual_profit_2 they should be approximately the same
+
+
+10) Placing wrong buy and sell prices.
+Buy/Sell order is placed on top of the current best price. It should be placed below/above the current best prices.
+Except in the case we already have orders placed as best prices.
