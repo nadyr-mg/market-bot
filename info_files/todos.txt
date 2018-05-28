@@ -46,8 +46,18 @@ INFO:root:going to sleep for: 15
 
 
 
+13) We should have 2 additional log types:
+	- One for placing the orders
+	- One every time an order is filled/executed
+Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
+I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
 
-#DONE TODOS - Finished todo goes here
+
+
+###########
+#DONE TODOS - Finished todo goes here - Latest Todo on top
+###########
+
 3) Check my question on the function: place_orders, it is added as comment
 => Clarified
 #VERIFIED
