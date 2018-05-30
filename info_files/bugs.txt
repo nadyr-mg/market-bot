@@ -1,3 +1,104 @@
+Bug #4:
+
+Reason: unknown
+Fix: The program should continue running. If it is a new type of exception the program should send me an email with short extract of the log and the exception.
+Here are the logs:
+
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 2, in raise_from
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 383, in _make_request
+    httplib_response = conn.getresponse()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 258, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 1009, in recv_into
+    return self.read(nbytes, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 871, in read
+    return self._sslobj.read(len, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 631, in read
+    v = self._sslobj.read(len, buffer)
+ConnectionResetError: [Errno 54] Connection reset by peer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 440, in send
+    timeout=timeout
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 639, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/util/retry.py", line 357, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/packages/six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 2, in raise_from
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 383, in _make_request
+    httplib_response = conn.getresponse()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 258, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 1009, in recv_into
+    return self.read(nbytes, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 871, in read
+    return self._sslobj.read(len, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 631, in read
+    v = self._sslobj.read(len, buffer)
+urllib3.exceptions.ProtocolError: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 357, in fetch
+    proxies=self.proxies
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 490, in send
+    raise ConnectionError(err, request=request)
+requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 158, in <module>
+    place_orders(lykke, placed_orders, coin2_spend_amount, coin1_spend_amount, pair)
+  File "main.py", line 13, in place_orders
+    ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 35, in get_ref_book
+    cached_ref_book.update_value(ref_market.fetch_order_book(pair))
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
+    return attr(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/bittrex.py", line 241, in fetch_order_book
+    }, params))
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/bittrex.py", line 680, in request
+    response = self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 303, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 381, in fetch
+    self.raise_error(ExchangeError, url, method, e, self.last_http_response)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.ExchangeError: bittrex https://bittrex.com/api/v1.1/public/getorderbook?market=ETH-WAX&type=both GET ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer')) {"success":true,"message":"","result":{"buy":[{"Quantity":2535.20780982,"Rate":0.00032861},{"Quantity":831.54600000,"Rate":0.00032860},{"Quantity":3567.31438489,"Rate":0.00032857},{"Quantity":6159.43100000,"Rate":0.00032286},{"Quantity":5203.65494810,"Rate":0.00032285},{"Quantity":17067.27790856,"Rate":0.00032284},{"Quantity":1633.74765345,"Rate":0.00032241},{"Quantity":229.68089667,"Rate":0.00032000},{"Quantity":25.24152594,"Rate":0.00031944},{"Quantity":10.00000000,"Rate":0.00031800},{"Quantity":22.82851200,"Rate":0.00031795},{"Quantity":13.67741208,"Rate":0.00031582},{"Quantity":7618.56390070,"Rate":0.00031502},{"Quantity":6808.11720263,"Rate":0.00031501},{"Quantity":3321.83333333,"Rate":0.00031500},{"Quantity":100.00000000,"Rate":0.00031441},{"Quantity":506.02132892,"Rate":0.00031011},{"Quantity":30.00000000,"Rate":0.00031000},{"Quantity":25.00000000,"Rate":0.00030995},{"Quantity":100.00000000,"Rate":0.00030866},{"Quantity":1292.84351283,"Rate":0.00030864},{"Quantity":1000.00000000,"Rate":0.00030697},{"Quantity":2134.04545350,"Rate":0.00030000},{"Quantity":548.81392353,"Rate":0.00029520},{"Quantity":1781.25000000,"Rate":0.00028000},{"Quantity":31.00000000,"Rate":0.00027507},{"Quantity":36272.72727273,"Rate":0.00027500},{"Quantity":18.75018750,"Rate":0.00026600},{"Quantity":60.00000000,"Rate":0.00025007},{"Quantity":500.00000000,"Rate":0.00025000},{"Quantity":90.00000000,"Rate":0.00022507},{"Quantity":120.00000000,"Rate":0.00020007},{"Quantity":240.00000000,"Rate":0.00017507},{"Quantity":700.00000000,"Rate":0.00017500},{"Quantity":13800.69102517,"Rate":0.00010608},{"Quantity":20000.00000000,"Rate":0.00000300},{"Quantity":100000.00000000,"Rate":0.00000011},{"Quantity":200000.00000000,"Rate":0.00000006},{"Quantity":200000.00000000,"Rate":0.00000001}],"sell":[{"Quantity":106.45228718,"Rate":0.00033425},{"Quantity":140.64104223,"Rate":0.00033426},{"Quantity":29.07141005,"Rate":0.00033428},{"Quantity":10.07354604,"Rate":0.00033462},{"Quantity":98.54758357,"Rate":0.00033881},{"Quantity":7722.56100000,"Rate":0.00033882},{"Quantity":3453.73226881,"Rate":0.00033883},{"Quantity":1139.18020848,"Rate":0.00033981},{"Quantity":89.91008992,"Rate":0.00034396},{"Quantity":35.68497400,"Rate":0.00035000},{"Quantity":25.00000000,"Rate":0.00035035},{"Quantity":611.63088387,"Rate":0.00035588},{"Quantity":853.53249803,"Rate":0.00035589},{"Quantity":10.00000000,"Rate":0.00035607},{"Quantity":56.94285002,"Rate":0.00035626},{"Quantity":1000.00000000,"Rate":0.00035800},{"Quantity":26.00385954,"Rate":0.00035900},{"Quantity":15.69810726,"Rate":0.00036000},{"Quantity":207.58902613,"Rate":0.00036100},{"Quantity":329.93525017,"Rate":0.00036489},{"Quantity":364.29668681,"Rate":0.00036971},{"Quantity":143.09815026,"Rate":0.00037177},{"Quantity":1189.44333073,"Rate":0.00037903},{"Quantity":187.66571017,"Rate":0.00038077},{"Quantity":121.82070784,"Rate":0.00038269},{"Quantity":2800.00000000,"Rate":0.00038380},{"Quantity":51.00000000,"Rate":0.00038850},{"Quantity":2146.00000000,"Rate":0.00038879},{"Quantity":2874.00000000,"Rate":0.00038880},{"Quantity":2877.00000000,"Rate":0.00038881},{"Quantity":2144.00000000,"Rate":0.00038882},{"Quantity":2367.00000000,"Rate":0.00038883},{"Quantity":2425.00000000,"Rate":0.00038884},{"Quantity":3320.37613031,"Rate":0.00038885},{"Quantity":291.63794475,"Rate":0.00038891},{"Quantity":52.42051739,"Rate":0.00039492},{"Quantity":2230.64061993,"Rate":0.00039900},{"Quantity":1894.29355102,"Rate":0.00040000},{"Quantity":808.11905601,"Rate":0.00040370},{"Quantity":1454.14842172,"Rate":0.00041000},{"Quantity":869.87007546,"Rate":0.00042000},{"Quantity":20.00000000,"Rate":0.00042200},{"Quantity":17.84248700,"Rate":0.00042500},{"Quantity":1229.26576788,"Rate":0.00042998},{"Quantity":117.84248700,"Rate":0.00045000},{"Quantity":163.42278581,"Rate":0.00045280},{"Quantity":578.16077896,"Rate":0.00045500},{"Quantity":3000.00000000,"Rate":0.00047000},{"Quantity":317.84248700,"Rate":0.00047500},{"Quantity":2999.00000000,"Rate":0.00049000},{"Quantity":20.00000000,"Rate":0.00049700},{"Quantity":315.21567388,"Rate":0.00049720},{"Quantity":290.35790174,"Rate":0.00049875},{"Quantity":21.82713348,"Rate":0.00050300},{"Quantity":239.37717994,"Rate":0.00050919},{"Quantity":166.75403996,"Rate":0.00051000},{"Quantity":199.87531135,"Rate":0.00051379},{"Quantity":750.00000000,"Rate":0.00052000},{"Quantity":8.92124350,"Rate":0.00052500},{"Quantity":25000.00000000,"Rate":0.00053353},{"Quantity":45.00000000,"Rate":0.00053976},{"Quantity":383.48590215,"Rate":0.00054521},{"Quantity":390.17760017,"Rate":0.00055000},{"Quantity":979.36363636,"Rate":0.00055758},{"Quantity":900.00000000,"Rate":0.00056000},{"Quantity":19.44444444,"Rate":0.00056500},{"Quantity":7852.07933953,"Rate":0.00056900},{"Quantity":73.86563489,"Rate":0.00056932},{"Quantity":554.17692920,"Rate":0.00056999},{"Quantity":151.31895288,"Rate":0.00057000},{"Quantity":135.83642259,"Rate":0.00057080},{"Quantity":30.00000000,"Rate":0.00057717},{"Quantity":1129.05890248,"Rate":0.00057750},{"Quantity":1000.00000000,"Rate":0.00057900},{"Quantity":22.03137721,"Rate":0.00057915},{"Quantity":50.00000000,"Rate":0.00057976},{"Quantity":50.00000000,"Rate":0.00058000},{"Quantity":1000.00000000,"Rate":0.00058100},{"Quantity":1000.00000000,"Rate":0.00058300},{"Quantity":20.00000000,"Rate":0.00058500},{"Quantity":1181.81818182,"Rate":0.00058600},{"Quantity":12950.00000000,"Rate":0.00058888},{"Quantity":386.41327345,"Rate":0.00059000},{"Quantity":180.76552046,"Rate":0.00059525},{"Quantity":340.44949573,"Rate":0.00059788},{"Quantity":50.00000000,"Rate":0.00059976},{"Quantity":9.00000000,"Rate":0.00059988},{"Quantity":10217.27374541,"Rate":0.00060000},{"Quantity":68.51309457,"Rate":0.00060375},{"Quantity":885.29912397,"Rate":0.00061200},{"Quantity":213.66776961,"Rate":0.00063000},{"Quantity":2588.09967019,"Rate":0.00063330},{"Quantity":17.28769497,"Rate":0.00063400},{"Quantity":208.96701883,"Rate":0.00065625},{"Quantity":163.84212996,"Rate":0.00065722},{"Quantity":941.20373400,"Rate":0.00065960},{"Quantity":7308.58501786,"Rate":0.00066203},{"Quantity":16.40625000,"Rate":0.00067000},{"Quantity":15.05394675,"Rate":0.00067729},{"Quantity":4108.72299506,"Rate":0.00068799}]}}
+
+
+
 Bug #3:
 Reason: unknown
 Fix: The program should continue running. If it is a new type of exception the program should send me an email with short extract of the log and the exception.
