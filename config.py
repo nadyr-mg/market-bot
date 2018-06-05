@@ -46,4 +46,4 @@ with open(join(config_dir, "ref_deviations.json")) as file:
     REF_PRICE_DEVIATIONS = load(file)  # type: Dict
 
 # setup default logging level
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
