@@ -8,16 +8,17 @@ def place_orders(market: Market, placed_orders
 
 : Dict[str, Dict[str, Orders]],
   buy_amount: float, sell_amount: float, pair: str) -> None:
-logging.info("Entering place_orders func, pair: {}".format(pair))
+logging.info("Entering place_orders function...")
 
 ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
 
 highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
-logging.info("Getting/calculating best bid price: {:.8f}".format(highest_bid_price))
-logging.info("Getting/calculating best ask price: {:.8f}".format(lowest_ask_price))
+logging.info("Current best bid at: {:.8f}".format(highest_bid_price))
+logging.info("Current best ask at: {:.8f}".format(lowest_ask_price))
 
 orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
-logging.info('Is orders are relevant?\n{}'.format(orders_relevancy))
+logging.info(
+    'Checking orders relevancy: Spread and whether bid and ask are better then ref market\n{}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
@@ -90,7 +91,8 @@ if is_some_order_cancelled:
             create_order = market.create_limit_sell_order
 
         if is_above_min_size(pair, amount):
-            logging.info("Placing {} order with amount {}".format(order_type, amount))
+            logging.info(
+                "Placing {} with amount {}".format(order_type, amount))  # <- Todo:inlude the price in the logging
 
             order_id = create_order(pair, amount, price)['info']
             cur_orders[order_type].add(order_id)  # initialization
@@ -126,7 +128,7 @@ while True:
 
         remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
         coin_balance = balance[coin_id]["free"] - remaining_balance
-        logging.info('+{0} : {1}'.format(coin, coin_balance))
+        logging.info('{0} Balance: {1}'.format(coin, coin_balance))
 
         coins_spend_amount[coin] = coin_balance / occur_cnt
         logging.info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))

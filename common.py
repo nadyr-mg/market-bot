@@ -71,7 +71,7 @@ def get_orders_relevancy(ref_book: Dict, highest_bid_price
 : float,
   lowest_ask_price: float, pair: str) -> Dict[str, bool]:
 spread = get_change(lowest_ask_price, highest_bid_price)
-logging.info('Spread between best bid and best ask: {0:.2f}\n'.format(spread))
+logging.info('Spread is about: {0:.2f}%'.format(spread))
 
 ref_highest_bid_price = ref_book["bids"][0][0]
 ref_lowest_ask_price = ref_book["asks"][0][0]
