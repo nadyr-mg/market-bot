@@ -146,8 +146,8 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                         if order_type == "ask":
                             order_info, opposite_order_info = opposite_order_info, order_info
 
-                        info("Defining round for 'bid': {}, 'ask': {}"
-                             .format(order_info["id"], opposite_order_info["id"]))
+                        info("Defining round for 'bid': {}, 'ask': {}".format(order_info["id"],
+                                                                              opposite_order_info["id"]))
                         if is_round_successful(order_info, opposite_order_info,
                                                highest_bid_price, lowest_ask_price):
                             info("Round ended successfully")
