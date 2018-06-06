@@ -1,6 +1,9 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
+### Main Priority Todo ###
+### Make sure that the Bot is always running even after it crashes due to an exception of any kind, bear in mind that every time the balance is fetched, an order is placed or the price from the order book is fetched there is a high possibility that we encounter an exception! Basically every time we use the ccxt library ###
+
 11) Placing multiple sell and buy orders on top of each other for WAX/ETH 
 
 12) Not placing sell order for CVC/ETH. Maybe because there no order in the order book.
@@ -52,6 +55,7 @@ INFO:root:going to sleep for: 15
 Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
 I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
 
+ 
 
 
 ###########
