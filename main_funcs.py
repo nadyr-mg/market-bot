@@ -1,5 +1,3 @@
-from logging import info
-
 from ccxt.base.errors import RequestTimeout
 
 from common import *
