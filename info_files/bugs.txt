@@ -211,9 +211,7 @@ Saids-MBP:lykke_market_maker said.salem$
 
 
 
-
-
-
+///// Fixed
 
 
 # Fixed: added sleep for rateLimit milliseconds after every call to market
@@ -227,7 +225,6 @@ This should not affect the spread checking. Spread checking should be done in sh
 
 -2) Handle the thrown exception -> log msg " Too many requests sent to #exchangeName" => Retry after randometime between 3min and 5min. If after second try we get same error increase wait time +2 min. Always do that until the request is successful
 ==> Use this error handling for all api request, also for Lykke. The program should keep working even after such errors!
-		
 
 
 Bug error msg:
@@ -311,9 +308,6 @@ Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
     raise exception_type(output)
 ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public/getorderbook?market=ETH-WAX&type=both HTTPSConnectionPool(host='bittrex.com', port=443): Read timed out. (read timeout=10)
-
-
-
 
 Bug #1#:
 Still getting this error:
@@ -408,20 +402,6 @@ Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
     raise exception_type(output)
 ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public/getorderbook?market=ETH-WAX&type=both HTTPSConnectionPool(host='bittrex.com', port=443): Read timed out. (read timeout=10)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

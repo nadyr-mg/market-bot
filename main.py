@@ -38,7 +38,7 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                 if not orders_relevancy[order_type] or not relevant_value:
                     logging.info("Order is opened and irrelevant. Cancellation...")
 
-                    # All open orders have the same price, hence if one is irrelevant -> all are irrelevant
+                    # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
                     order.cancel(market)
                     cur_orders[order_type].set_wait_time()
 
