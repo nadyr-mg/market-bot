@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from structures import *
 from config import *
 
@@ -19,7 +17,7 @@ for order in orders:
     if order["status"] == "open" or order["info"]["Status"] == "Processing":
         pair = order["symbol"]
         if pair not in placed_orders:
-            logging.info("Found order with pair '{}' not listed in variable PAIRS".format(pair))
+            info("Found order with pair '{}' not listed in variable PAIRS".format(pair))
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
@@ -33,7 +31,7 @@ def get_ref_book(pair: str, opened_ref_markets
 : Dict[str, Market], cached_ref_books: Dict[str, CachedObject]):
 ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
 
-logging.info("Getting reference market order book for: {0}".format(pair))
+info("Getting reference market order book for: {0}".format(pair))
 cached_ref_book = cached_ref_books[REF_MARKETS[pair]]
 if cached_ref_book.get_downtime() > REF_BOOK_RELEVANCE_TIME:
     cached_ref_book.update_value(ref_market.fetch_order_book(pair))
@@ -54,13 +52,13 @@ def _get_best_price(order_type: str
 if book[order_type]:
     return book[order_type][0][0]
 else:
-    logging.info("There are no {0} in the orderbook".format(order_type))
+    info("There are no {0} in the orderbook".format(order_type))
 
-    logging.info("Getting the best price for {0} from the reference orderbook".format(order_type))
+    info("Getting the best price for {0} from the reference orderbook".format(order_type))
     price = ref_book[order_type][0][0]
 
     addition = price * ref_price_deviation
-    logging.info("Calculating best price for {} with a deviation of:{}".format(order_type, ref_price_deviation))
+    info("Calculating best price for {} with a deviation of:{}".format(order_type, ref_price_deviation))
     return price + addition if order_type == "asks" else price - addition
 
 return _get_best_price("bids"), _get_best_price("asks")
@@ -71,7 +69,7 @@ def get_orders_relevancy(ref_book: Dict, highest_bid_price
 : float,
   lowest_ask_price: float, pair: str) -> Dict[str, bool]:
 spread = get_change(lowest_ask_price, highest_bid_price)
-logging.info('Spread is about: {0:.2f}%'.format(spread))
+info('Spread is about: {0:.2f}%'.format(spread))
 
 ref_highest_bid_price = ref_book["bids"][0][0]
 ref_lowest_ask_price = ref_book["asks"][0][0]
@@ -111,8 +109,8 @@ min_amount = MIN_AMOUNTS[coin_to_spend]
 
 all_ok = True
 if amount < min_amount:
-    logging.info("Too small amount to place")
-    logging.info("{coin}: amount: {amount} < {min}".format(coin=coin_to_spend, amount=amount, min=min_amount))
+    info("Too small amount to place")
+    info("{coin}: amount: {amount} < {min}".format(coin=coin_to_spend, amount=amount, min=min_amount))
 
     all_ok = False
 
@@ -157,22 +155,22 @@ sell_cost = sell_order["cost"]
 amount_traded = min(buy_amount, sell_amount)
 expected_profit = (sell_price - buy_price) * amount_traded
 profit_deviation = expected_profit * ACCEPTABLE_PROFIT_DEVIATION
-logging.info("expected profit: {}".format(expected_profit))
+info("expected profit: {}".format(expected_profit))
 
 if buy_amount == sell_amount:  # A complete Trade
     actual_profit = sell_cost - buy_cost
-    logging.info("actual profit: {}".format(actual_profit))
+    info("actual profit: {}".format(actual_profit))
 
     result = abs(actual_profit - expected_profit) < profit_deviation
 else:  # A partial trade
     actual_profit = (sell_order["price"] - buy_order["price"]) * amount_traded
-    logging.info("actual profit: {}".format(actual_profit))
+    info("actual profit: {}".format(actual_profit))
 
     if amount_traded == sell_amount:  # in case of filled_sell < filled_buy
         actual_profit2 = sell_cost - sell_amount * buy_price
     else:
         actual_profit2 = buy_amount * sell_price - buy_cost
-    logging.info("actual profit2: {}".format(actual_profit2))
+    info("actual profit2: {}".format(actual_profit2))
 
     result = abs(actual_profit - expected_profit) < profit_deviation and \
              abs(actual_profit2 - expected_profit) < profit_deviation

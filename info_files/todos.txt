@@ -2,7 +2,9 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
 ### Main Priority Todo ###
-### Make sure that the Bot is always running even after it crashes due to an exception of any kind, bear in mind that every time the balance is fetched, an order is placed or the price from the order book is fetched there is a high possibility that we encounter an exception! Basically every time we use the ccxt library ###
+### Make sure that the Bot is always running even after it crashes due to an exception of any kind, bear in mind that
+### every time the balance is fetched, an order is placed or the price from the order book is fetched there is a high
+### possibility that we encounter an exception! Basically every time we use the ccxt library ###
 
 13) We should have 2 additional log types:
 	- One for placing the orders

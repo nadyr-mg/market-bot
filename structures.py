@@ -1,9 +1,9 @@
+from logging import info
 from random import randint
 from sys import maxsize
 from time import sleep
 from timeit import default_timer
-from typing import Callable, List
-from logging import info
+from typing import Callable, List, Dict, Tuple
 
 from ccxt.base.exchange import Exchange
 
@@ -173,3 +173,25 @@ if is_available:
     # done with waiting, reset flag
     self.wait_time_set = False
 return is_available
+
+
+class ObjectsForPlacing:
+    """
+    Needed only for aggregation of necessary objects
+    """
+
+    def __init__(self, market: Market, placed_orders
+
+    : Dict[str, Dict[str, Orders]],
+      opened_ref_markets: Dict[str, Market], cached_ref_books: Dict[str, CachedObject]) -> None:
+    self.market = market
+    self.placed_orders = placed_orders
+    self.opened_ref_markets = opened_ref_markets
+    self.cached_ref_books = cached_ref_books
+
+
+def unpack_objects(self) ->
+
+
+Tuple:
+return self.market, self.placed_orders, self.opened_ref_markets, self.cached_ref_books
