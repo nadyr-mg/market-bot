@@ -17,8 +17,7 @@ logging.info("Current best bid at: {:.8f}".format(highest_bid_price))
 logging.info("Current best ask at: {:.8f}".format(lowest_ask_price))
 
 orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
-logging.info(
-    'Checking orders relevancy: Spread and whether bid and ask are better then ref market\n{}'.format(orders_relevancy))
+logging.info('Checking whether bid and ask are better then ref market: {}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
@@ -33,7 +32,7 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
 
             status = order_info["status"]
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
-            logging.info("checking current {} status '{}': {}\n".format(order_type, status, order.id))
+            logging.info("checking current {} status '{}': {}".format(order_type, status, order.id))
             if status == "open":
                 relevant_value = order.is_relevant(order_info["price"], best_price)
                 if not orders_relevancy[order_type] or not relevant_value:
@@ -155,5 +154,5 @@ while True:
             # placed orders successfully, restore initial wait time
             fail_wait_info.init_wait_time = INIT_FAIL_WAIT_TIME
 
-    logging.info('going to sleep for: {}\n'.format(PERIOD))
+    logging.info('going to sleep for: {} seconds\n'.format(PERIOD))
     sleep(PERIOD)
