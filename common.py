@@ -1,3 +1,7 @@
+import smtplib
+from email.message import EmailMessage
+from traceback import format_exc
+
 from structures import *
 from config import *
 
@@ -176,3 +180,38 @@ else:  # A partial trade
              abs(actual_profit2 - expected_profit) < profit_deviation
 
 return result
+
+
+def send_message(header: str, text
+
+: str) -> None:
+msg = EmailMessage()
+
+msg['Subject'] = header
+msg['From'] = FROM_EMAIL
+msg['To'] = TO_EMAIL
+msg.set_content(text)
+
+with smtplib.SMTP_SSL('smtp.google.com', 587) as server:
+    server.ehlo()
+    server.starttls()
+    server.login(LOGIN, PASSW)
+
+    server.send_message(msg)
+
+
+def get_log_extract() ->
+
+
+str:
+with open(LOG_FILENAME) as file:
+    logs = reversed(file.read().split('\n'))
+
+return '\n'.join([line for idx, line in enumerate(logs) if idx < LINES_TO_SEND])
+
+
+def get_last_traceback() ->
+
+
+str:
+return format_exc(chain=False)

@@ -33,6 +33,10 @@ while True:
         if isinstance(err, KeyboardInterrupt):
             raise
         else:
+            text = '{}\n{}'.format(get_log_extract(), get_last_traceback())
+            header = 'unexpected error occured'
+            send_message(header, text)
+
             error('unexpected error occurred: {}'.format(str(err)))
 
     logging.info('going to sleep for: {} seconds\n'.format(PERIOD))
