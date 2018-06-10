@@ -46,6 +46,10 @@
   "LOC/BTC": 0.5,
   "LOC/ETH": 0.5,
   "CVC/BTC": 0.5,
-  "CVC/ETH": 0.5,
-  "LC/ETH": null
+  "CVC/ETH": 0.05,
+  "LC/ETH": 0.05,
+  "LYKKE/CHF": 0.00,
+  "LYKKE/USD": 0.00,
+  "LYKKE/EUR": 0.00
+
 }

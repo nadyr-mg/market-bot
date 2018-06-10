@@ -41,10 +41,17 @@
   "ZRX/BTC": "binance",
   "LOC/ETH": "hitbtc",
   "LOC/BTC": "hitbtc",
-  "CVC/ETH": "okex",
-  "CVC/BTC": "okex",
-  "HCP": null,
-  "HGT/ETH": null,
-  "HGT/BTC": null,
-  "LC": null
+  "CVC/ETH": "binance",
+  "CVC/BTC": "binance",
+  "LYKKE/ETH": "lykke",
+  "LYKKE/BTC": "lykke",
+  "LYKKE/USD": "lykke",
+  "LYKKE/CHF": "lykke",
+  "LYKKE/EUR": "lykke",
+  "LYKKE/JPY": "lykke",
+  "LYKKE/GBP": "lykke",
+  "HCP/ETH": "lykke",
+  "HGT/ETH": "lykke",
+  "HGT/BTC": "lykke",
+  "LC/ETH": "lykke"
 }
