@@ -16,7 +16,7 @@ for coin, coin_id in COIN_IDS.items():
         info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
         continue
 
-    occur_cnt = sum([1 for pair in PAIRS if coin in pair])
+    occur_cnt = max(1, sum([1 for pair in PAIRS if coin in pair]))  ## is this right ? Otherwise we get devision by zero
 
     remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
     coin_balance = balance[coin_id]["free"] - remaining_balance
