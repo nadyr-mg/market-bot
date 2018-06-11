@@ -85,7 +85,15 @@ for order_type in ("bid", "ask"):
         continue
 
     if cur_orders[order_type].is_empty():
-        addition = 0.000001
+        coins = pair.split("/")
+        base = coins[0]
+        quote = coins[1]
+        currencies = ['USD', 'EUR', 'CHF', 'JPY', 'GBP']
+        if (quote == 'ETH' or quote == 'BTC'):
+            addition = 0.000001
+        if any(quote in currency for currency in currencies):
+            addition = 0.00001
+            info('------------------  0.00001 addition')
     else:  # we don't want to place an order that will be above our other orders
         addition = 0
 
