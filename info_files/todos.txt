@@ -1,6 +1,27 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
+14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
+	-> Balance should return the whole Balance including the balance that is used in current open orders
+	-> Ordersize should be what the Bot will be use to trade
+	Maybe only the logs are wrong. Anyway the calculation of the order size should be updated as described in 15#
+
+15) The order size should be calculated differently.
+	-> For every Pair I should be able to specify how much I want to use percentage wise. For example, for AGI/ETH:
+	-AGI amount: 0.5 (50% of the total AGI balance )
+	-ETH amount: 0.05 (5% of the total ETH balance )
+	Second Example: AGI/BTC:
+	-AGI amount: 0.5 (50% of the total AGI balance )
+	-BTC amount: 0.025 (2.5% of the total BTC balance )
+	After a trade is executed and the balance of the coin is change nothing should happen until a specific threshold is reached.
+	Lets call it the amount_threshold and give it a value of 0.1 or 10%
+	If for example we had 1000 AGI and we bought 100 additional AGI for X ETH. Our overall balance of AGI is now 1100. From 1000 AGI to 1100 is an increase of 10% which is >= threshold, therefore we should recalculate the order size for all AGI pairs.
+	After this trade, also the overall ETH balance was reduced by X ETH. If X is 10% of the overall	ETH balance we should also recalculate the order size for every ETH pair. This could also affect other pairs like EOS/ETH or ETH/USD ...
+	=> The change of the order size should can take place in the new iteration phase of the Bot.
+
+ 
+ 
+
 13) We should have 2 additional log types:
 	- One for placing the orders
 	- One every time an order is filled/executed
