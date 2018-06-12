@@ -43,7 +43,7 @@ with open(join(config_dir, "min_amounts.json")) as file:
 with open(join(config_dir, "ref_deviations.json")) as file:
     REF_PRICE_DEVIATIONS = load(file)  # type: Dict
 
-LOG_FILENAME = 'info.log'
+LOG_FILENAME = 'log_files/info.log'
 
 # setup default logging level
 logger = logging.getLogger()
@@ -68,4 +68,4 @@ FROM_EMAIL = 'Your gmail address'
 LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
 TO_EMAIL = 'Address where messages should come'
 
-FILLED_ORDERS_FILE = 'filled_orders.json'
+FILLED_ORDERS_FILE = 'log_files/filled_orders.json'

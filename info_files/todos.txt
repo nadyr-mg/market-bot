@@ -2,18 +2,6 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
 
-13) Every trade that is filled, whether it is partially or completely filled it should be logged into a file. You can use a csv format:
-Datetime	CreatedAt	Pair	Volume	Filled	Price	Cost
-2018-06-10T08:09:41.973Z	2018-06-10T07:30:59.594Z	LKKUSD	155.0	155.0	0.03856	5.9768
-2018-06-10T08:12:31.373Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	135.0	0.03856	5.2312
-2018-06-11T18:16:51.323Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	20.0	0.03856	0.3312
-
-The orders that are complete has the Status 'Matched' and that are partially filled have the Status 'Processing'
-
-Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
-I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
-
-
 # Bot spreads balance by coins that are present in var PAIRS. So if coin occurs there 1 time, then order size for this coin
 # will be the same as balance for it, if 2 times, then order size = balance for this coin / 2
 14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
@@ -229,3 +217,17 @@ INFO:root:going to sleep for: 15
 ### Make sure that the Bot is always running even after it crashes due to an exception of any kind, bear in mind that
 ### every time the balance is fetched, an order is placed or the price from the order book is fetched there is a high
 ### possibility that we encounter an exception! Basically every time we use the ccxt library ###
+
+
+# Added logging to a json file. This file structured by creation date of an order
+13) Every trade that is filled, whether it is partially or completely filled it should be logged into a file. You can use a csv format:
+Datetime	CreatedAt	Pair	Volume	Filled	Price	Cost
+2018-06-10T08:09:41.973Z	2018-06-10T07:30:59.594Z	LKKUSD	155.0	155.0	0.03856	5.9768
+2018-06-10T08:12:31.373Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	135.0	0.03856	5.2312
+2018-06-11T18:16:51.323Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	20.0	0.03856	0.3312
+
+The orders that are complete has the Status 'Matched' and that are partially filled have the Status 'Processing'
+
+Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
+I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this
+information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...

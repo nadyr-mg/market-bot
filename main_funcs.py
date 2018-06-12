@@ -127,6 +127,10 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
         for order_idx, order in reverse_enum(cur_orders[order_type].orders):
             order_info = market.fetch_order(order.id)
 
+            if order_info['info']['Status'] == 'Matched' or order_info['info']['Status'] == 'Processing':
+                info('logging order to a file')
+                log_filled_order(order_info)
+
             status = order_info["status"]
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
             info("checking current {} status '{}': {}".format(order_type, status, order.id))

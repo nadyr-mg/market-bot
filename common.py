@@ -1,6 +1,7 @@
 import smtplib
 from email.message import EmailMessage
 from traceback import format_exc
+from json import dump
 
 from structures import *
 from config import *
@@ -215,3 +216,31 @@ def get_last_traceback() ->
 
 str:
 return format_exc(chain=False)
+
+
+def construct_order_dict(order_info):
+    return {
+        'Datetime': order_info['datetime'],
+        'CreatedAt': order_info['info']['CreatedAt'],
+        'Pair': order_info['symbol'],
+        'Volume': order_info['amount'],
+        'Filled': order_info['filled'],
+        'Price': order_info['price'],
+        'Cost': order_info['cost'],
+    }
+
+
+def log_filled_order(order_info):
+    with open(FILLED_ORDERS_FILE) as file:
+        filled_orders = load(file)  # type: Dict[str, List]
+
+    created_at = order_info['info']['CreatedAt']
+    if created_at not in filled_orders:
+        filled_orders[created_at] = []
+
+    order_dict = construct_order_dict(order_info)
+    if order_dict not in filled_orders[created_at]:
+        filled_orders[created_at].append(order_dict)
+
+    with open(FILLED_ORDERS_FILE, 'w') as out:
+        dump(filled_orders, out)
