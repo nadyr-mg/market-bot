@@ -1,12 +1,27 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
+
+
+13) Every trade that is filled, whether it is partially or completely filled it should be logged into a file. You can use a csv format:
+Datetime	CreatedAt	Pair	Volume	Filled	Price	Cost
+2018-06-10T08:09:41.973Z	2018-06-10T07:30:59.594Z	LKKUSD	155.0	155.0	0.03856	5.9768
+2018-06-10T08:12:31.373Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	135.0	0.03856	5.2312
+2018-06-11T18:16:51.323Z	2018-06-11T08:20:49.594Z	LKKUSD	155.0	20.0	0.03856	0.3312
+
+The orders that are complete has the Status 'Matched' and that are partially filled have the Status 'Processing'
+
+Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
+I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
+
+
 14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
 	-> Balance should return the whole Balance including the balance that is used in current open orders
 	-> Ordersize should be what the Bot will be use to trade
 	Maybe only the logs are wrong. Anyway the calculation of the order size should be updated as described in 15#
 
-15) The order size should be calculated differently.
+15) Priority: Highest
+The order size should be calculated differently.
 	-> For every Pair I should be able to specify how much I want to use percentage wise. For example, for AGI/ETH:
 	-AGI amount: 0.5 (50% of the total AGI balance )
 	-ETH amount: 0.05 (5% of the total ETH balance )
@@ -20,13 +35,12 @@ Overview: The todos might be related to each other -> Please take a quick look a
 	=> The change of the order size should can take place in the new iteration phase of the Bot.
 
  
- 
+16) Priority: Lowest
+The reference markets we introduced do not always have the same terminology. For example BCH/BTC is named BCC/BTC in other exchanges. Or IOT/BTC is named sometimes IOTA/BTC ...
+We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.Note: If it is the same name we just put a default value, maybe just null or something. 
 
-13) We should have 2 additional log types:
-	- One for placing the orders
-	- One every time an order is filled/executed
-Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
-I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
+17) ignore for now: Every order that is placed should be logged into a file...
+
 
 
 ###########
