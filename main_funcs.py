@@ -16,7 +16,7 @@ for coin, coin_id in COIN_IDS.items():
         info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
         continue
 
-    occur_cnt = max(1, sum([1 for pair in PAIRS if coin in pair]))  ## is this right ? Otherwise we get devision by zero
+    occur_cnt = max(1, sum([1 for pair in PAIRS if coin in pair]))
 
     remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
     coin_balance = balance[coin_id]["free"] - remaining_balance
@@ -89,7 +89,7 @@ for order_type in ("bid", "ask"):
         base = coins[0]
         quote = coins[1]
         currencies = ['USD', 'EUR', 'CHF', 'JPY', 'GBP']
-        if (quote == 'ETH' or quote == 'BTC'):
+        if quote == 'ETH' or quote == 'BTC':
             addition = 0.000001
         if any(quote in currency for currency in currencies):
             addition = 0.00001

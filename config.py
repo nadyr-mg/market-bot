@@ -43,13 +43,6 @@ with open(join(config_dir, "min_amounts.json")) as file:
 with open(join(config_dir, "ref_deviations.json")) as file:
     REF_PRICE_DEVIATIONS = load(file)  # type: Dict
 
-# how many lines of logs to send by an email if unexpected error occurs
-LINES_TO_SEND = 15
-
-FROM_EMAIL = 'Your gmail address'
-LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
-TO_EMAIL = 'Address where messages should come'
-
 LOG_FILENAME = 'info.log'
 
 # setup default logging level
@@ -67,3 +60,12 @@ logger.addHandler(handler)
 handler = logging.FileHandler(LOG_FILENAME, 'w')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
+# how many lines of logs to send by an email if unexpected error occurs
+LINES_TO_SEND = 15
+
+FROM_EMAIL = 'Your gmail address'
+LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
+TO_EMAIL = 'Address where messages should come'
+
+FILLED_ORDERS_FILE = 'filled_orders.json'

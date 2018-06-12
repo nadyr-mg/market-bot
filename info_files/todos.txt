@@ -2,7 +2,6 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
 
-
 13) Every trade that is filled, whether it is partially or completely filled it should be logged into a file. You can use a csv format:
 Datetime	CreatedAt	Pair	Volume	Filled	Price	Cost
 2018-06-10T08:09:41.973Z	2018-06-10T07:30:59.594Z	LKKUSD	155.0	155.0	0.03856	5.9768
@@ -15,6 +14,8 @@ Note:Later on I want to use this information to be displayed in html. You can se
 I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
 
 
+# Bot spreads balance by coins that are present in var PAIRS. So if coin occurs there 1 time, then order size for this coin
+# will be the same as balance for it, if 2 times, then order size = balance for this coin / 2
 14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
 	-> Balance should return the whole Balance including the balance that is used in current open orders
 	-> Ordersize should be what the Bot will be use to trade
@@ -37,7 +38,11 @@ The order size should be calculated differently.
  
 16) Priority: Lowest
 The reference markets we introduced do not always have the same terminology. For example BCH/BTC is named BCC/BTC in other exchanges. Or IOT/BTC is named sometimes IOTA/BTC ...
-We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.Note: If it is the same name we just put a default value, maybe just null or something. 
+We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.
+# you can just add new line in reference_markets.json. e.g. if hitbtc uses IOTA/BTC name:
+# "IOT/BTC": "bittrex",  // it was there before
+# "IOTA/BTC": "hitbtc",  // line you want to add.
+Note: If it is the same name we just put a default value, maybe just null or something.
 
 17) ignore for now: Every order that is placed should be logged into a file...
 
