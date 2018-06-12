@@ -139,6 +139,15 @@ for pair in PAIRS:
         logging.warning("Pair '{}' is not found in the reference deviations mapping".format(pair))
         is_check_passed = False
 
+    if pair not in USED_BALANCE_PAIRS:
+        logging.warning("Pair '{}' is not found in the 'USED_BALANCE_PAIRS' variable".format(pair))
+        is_check_passed = False
+
+    coins = pair.split('/')
+    if coins[0] not in COIN_IDS or coins[1] not in COIN_IDS:
+        logging.warning("Coin from pair '{}' is not found in the 'COIN_IDS' variable".format(pair))
+        is_check_passed = False
+
 # min_amounts.json
 for coin in COIN_IDS:
     if MIN_AMOUNTS.get(coin) is None:

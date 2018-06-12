@@ -24,10 +24,18 @@ fail_wait_infos = {pair: WaitInfo(INIT_FAIL_WAIT_TIME) for pair in PAIRS}  # typ
 
 placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, cached_ref_books)
 
+last_coins_balances = {coin: {'total': 0, 'free': 0} for coin in COIN_IDS}
+last_coins_spend_amount = {}
+
 while True:
     try:
-        coins_spend_amount = get_spend_amounts(placing_objects.market)
+        coins_balances = get_coins_balances(placing_objects.market)
+        coins_spend_amount = get_spend_amounts(last_coins_spend_amount, coins_balances, last_coins_balances)
+
+        last_coins_balances, last_coins_spend_amount = coins_balances, coins_spend_amount
+
         info('')  # print line break for better readability
+
         iterate_pairs(placing_objects, fail_wait_infos, coins_spend_amount)
     except Exception as err:
         if isinstance(err, KeyboardInterrupt):

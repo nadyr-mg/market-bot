@@ -1,29 +1,6 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
-
-# Bot spreads balance by coins that are present in var PAIRS. So if coin occurs there 1 time, then order size for this coin
-# will be the same as balance for it, if 2 times, then order size = balance for this coin / 2
-14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
-	-> Balance should return the whole Balance including the balance that is used in current open orders
-	-> Ordersize should be what the Bot will be use to trade
-	Maybe only the logs are wrong. Anyway the calculation of the order size should be updated as described in 15#
-
-15) Priority: Highest
-The order size should be calculated differently.
-	-> For every Pair I should be able to specify how much I want to use percentage wise. For example, for AGI/ETH:
-	-AGI amount: 0.5 (50% of the total AGI balance )
-	-ETH amount: 0.05 (5% of the total ETH balance )
-	Second Example: AGI/BTC:
-	-AGI amount: 0.5 (50% of the total AGI balance )
-	-BTC amount: 0.025 (2.5% of the total BTC balance )
-	After a trade is executed and the balance of the coin is change nothing should happen until a specific threshold is reached.
-	Lets call it the amount_threshold and give it a value of 0.1 or 10%
-	If for example we had 1000 AGI and we bought 100 additional AGI for X ETH. Our overall balance of AGI is now 1100. From 1000 AGI to 1100 is an increase of 10% which is >= threshold, therefore we should recalculate the order size for all AGI pairs.
-	After this trade, also the overall ETH balance was reduced by X ETH. If X is 10% of the overall	ETH balance we should also recalculate the order size for every ETH pair. This could also affect other pairs like EOS/ETH or ETH/USD ...
-	=> The change of the order size should can take place in the new iteration phase of the Bot.
-
- 
 16) Priority: Lowest
 The reference markets we introduced do not always have the same terminology. For example BCH/BTC is named BCC/BTC in other exchanges. Or IOT/BTC is named sometimes IOTA/BTC ...
 We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.
@@ -231,3 +208,29 @@ The orders that are complete has the Status 'Matched' and that are partially fil
 Note:Later on I want to use this information to be displayed in html. You can see an example of the expected html output on the 2 PNG files I added.
 I will provide exact information on how we can proceed with the html implementation. But for now just keep in mind that we will have to use this
 information later on in some type of html-templates. So I think it might be useful to save these information not only as log but maybe also in a list or dict...
+
+
+# Bot spreads balance by coins that are present in var PAIRS. So if coin occurs there 1 time, then order size for this coin
+# will be the same as balance for it, if 2 times, then order size = balance for this coin / 2
+14) Is there a difference between Balance and order size ? When I run the Bot it seems to be always the same.
+	-> Balance should return the whole Balance including the balance that is used in current open orders
+	-> Ordersize should be what the Bot will be use to trade
+	Maybe only the logs are wrong. Anyway the calculation of the order size should be updated as described in 15#
+
+# Added variable USED_BALANCE_PAIRS for distributing balance over coins
+# Storing balances for coins from last iteration to check if threshold was passed
+15) Priority: Highest
+The order size should be calculated differently.
+	-> For every Pair I should be able to specify how much I want to use percentage wise. For example, for AGI/ETH:
+	-AGI amount: 0.5 (50% of the total AGI balance )
+	-ETH amount: 0.05 (5% of the total ETH balance )
+	Second Example: AGI/BTC:
+	-AGI amount: 0.5 (50% of the total AGI balance )
+	-BTC amount: 0.025 (2.5% of the total BTC balance )
+	After a trade is executed and the balance of the coin is change nothing should happen until a specific threshold is reached.
+	Lets call it the amount_threshold and give it a value of 0.1 or 10%
+	If for example we had 1000 AGI and we bought 100 additional AGI for X ETH. Our overall balance of AGI is now 1100.
+	From 1000 AGI to 1100 is an increase of 10% which is >= threshold, therefore we should recalculate the order size for all AGI pairs.
+	After this trade, also the overall ETH balance was reduced by X ETH. If X is 10% of the overall	ETH balance we should
+	also recalculate the order size for every ETH pair. This could also affect other pairs like EOS/ETH or ETH/USD ...
+	=> The change of the order size should can take place in the new iteration phase of the Bot.

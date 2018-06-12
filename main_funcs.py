@@ -3,27 +3,48 @@ from ccxt.base.errors import RequestTimeout
 from common import *
 
 
-def get_spend_amounts(market: Market
+def get_coins_balances(market: Market
 
-) -> Dict[str, float]:
+) -> Dict[str, Dict]:
 info('Fetching free balance ...')
 balance = market.fetch_balance()
 
-coins_spend_amount = {}  # type: Dict[str, float]
+coins_balances = {}  # type: Dict[str, Dict]
 for coin, coin_id in COIN_IDS.items():
     if coin_id not in balance:
-        coins_spend_amount[coin] = 0
-        info('Order size for {0}: {1}'.format(coin, coins_spend_amount[coin]))
+        coins_balances[coin] = 0
+        logging.warning('Can\'t find coin_id "{}" in balance'.format(coin_id))
         continue
 
-    occur_cnt = max(1, sum([1 for pair in PAIRS if coin in pair]))
+    info('{}: Total balance: {:.8f}'.format(coin, balance[coin_id]["total"]))
+    info('{}: Free balance: {:.8f}'.format(coin, balance[coin_id]["free"]))
+    coins_balances[coin] = {
+        'total': balance[coin_id]["total"],
+        'free': balance[coin_id]["free"],
+    }
 
-    remaining_balance = balance[coin_id]["total"] * BALANCE_REMAIN_PART
-    coin_balance = balance[coin_id]["free"] - remaining_balance
-    info('{} Balance: {:.8f}'.format(coin, coin_balance))
+return coins_balances
 
-    coins_spend_amount[coin] = coin_balance / occur_cnt
-    info('Order size for {}: {:.8f}'.format(coin, coins_spend_amount[coin]))
+
+def get_spend_amounts(last_coins_spend_amount: Dict[str, Dict],
+                                               coins_balances
+
+: Dict[str, Dict[str, float]],
+  last_coins_balances: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
+coins_spend_amount = {}  # type: Dict[str, Dict[str, float]]
+for pair in PAIRS:
+    if pair not in coins_spend_amount:
+        coins_spend_amount[pair] = {}
+
+    coins = pair.split('/')
+    for coin in coins:
+        threshold = last_coins_balances[coin]['total'] * AMOUNT_THRESHOLD
+        if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold:
+            coins_spend_amount[pair][coin] = coins_balances[coin]['free'] * USED_BALANCE_PAIRS[pair][coin]
+        else:
+            coins_spend_amount[pair][coin] = last_coins_spend_amount[pair][coin]
+
+        info('pair: {}, coin: {}, order size: {:.8f}'.format(pair, coin, coins_spend_amount[pair][coin]))
 
 return coins_spend_amount
 
@@ -31,18 +52,18 @@ return coins_spend_amount
 def iterate_pairs(placing_objects: ObjectsForPlacing, fail_wait_infos
 
 : Dict[str, WaitInfo],
-  coins_spend_amount: Dict[str, float]):
+  coins_spend_amount: Dict[str, Dict[str, float]]):
 for pair in PAIRS:
     fail_wait_info = fail_wait_infos[pair]
     if not fail_wait_info.is_done_waiting():
         continue
 
     coins = pair.split("/")
-    coin1_spend_amount, coin2_spend_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
+    coin1_amount, coin2_amount = coins_spend_amount[pair][coins[0]], coins_spend_amount[pair][coins[1]]
 
     try:
         # first amount is what you spend to sell, second - what you spend to buy
-        place_orders(placing_objects, coin2_spend_amount, coin1_spend_amount, pair)
+        place_orders(placing_objects, coin2_amount, coin1_amount, pair)
     except RequestTimeout:
         logging.warning('while processing pair {}, RequestTimeout error occurred'.format(pair))
 
