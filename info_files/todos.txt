@@ -12,6 +12,20 @@ Note: If it is the same name we just put a default value, maybe just null or som
 17) ignore for now: Every order that is placed should be logged into a file...
 
 
+18) Priority: Highest
+In every iteration the bot should check if the order is still the first order in the order book (this works fine) and also at the best price (this is not implemented). For example:
+BTC/USD Bids
+6590 <-- This one is our order, it is 1 USD above the best price, this is fine for now
+6589
+6450
+
+Now the order for 6589 USD is removed, in that case our order should be updated to the following price:
+6451 <-- This should be the price of our order but is currently not the case
+6450
+
+In the current implementation the Bot does not update the price.
+
+
 
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
