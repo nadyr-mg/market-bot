@@ -44,10 +44,9 @@ if cached_ref_book.get_downtime() > REF_BOOK_RELEVANCE_TIME:
 return cached_ref_book.get_value()
 
 
-def get_best_prices(market: Market, ref_book
+def get_best_prices(book: Dict, ref_book
 
 : Dict, pair: str) -> Tuple[float, float]:
-book = market.fetch_order_book(pair)
 ref_price_deviation = REF_PRICE_DEVIATIONS[pair]
 
 
@@ -253,3 +252,48 @@ def log_filled_order(order_info):
 
     with open(FILLED_ORDERS_FILE, 'w') as out:
         dump(filled_orders, out)
+
+
+def get_lowest_price_diff(pair: str
+
+) -> float:
+coins = pair.split("/")
+base = coins[0]
+quote = coins[1]
+currencies = ['USD', 'EUR', 'CHF', 'JPY', 'GBP']
+
+if any(quote in currency for currency in currencies):
+    diff = 0.00001
+else:
+    diff = 0.000001
+
+return diff
+
+
+def is_last_order_at_best(book: Dict, ref_book
+
+: Dict, pair: str) -> Dict[str, bool]:
+def _is_last_order_at_best(order_type: str
+
+) -> bool:
+if book[order_type]:
+    if len(book[order_type]) > 1:
+        last_orders_diff = abs(book[order_type][0][0] - book[order_type][1][0])
+    else:
+        info('Only one order in book, hence it\'s at best')
+        return True
+else:
+    if len(ref_book[order_type]) > 1:
+        last_orders_diff = abs(ref_book[order_type][0][0] - ref_book[order_type][1][0])
+    else:
+        info('Only one order in ref_book, hence it\'s at best')
+        return True
+
+lowest_diff = get_lowest_price_diff(pair)
+info("Calculating difference between two last orders, lowest diff: {}".format(order_type, lowest_diff))
+return last_orders_diff <= lowest_diff
+
+return {
+    'bid': _is_last_order_at_best("bids"),
+    'ask': _is_last_order_at_best("asks"),
+}

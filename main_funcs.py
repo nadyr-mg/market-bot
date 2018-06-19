@@ -85,18 +85,22 @@ info("Entering place_orders function...")
 market, placed_orders, opened_ref_markets, cached_ref_books = placing_objects.unpack_objects()
 
 ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
+main_book = market.fetch_order_book(pair)
 
-highest_bid_price, lowest_ask_price = get_best_prices(market, ref_book, pair)
+highest_bid_price, lowest_ask_price = get_best_prices(main_book, ref_book, pair)
 info("Current best bid at: {:.8f}".format(highest_bid_price))
 info("Current best ask at: {:.8f}".format(lowest_ask_price))
+
+is_orders_at_best = is_last_order_at_best(main_book, ref_book, pair)
+info("Is current orders at best: {}".format(is_orders_at_best))
 
 orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
 info('Checking whether bid and ask are better then ref market: {}'.format(orders_relevancy))
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
-is_some_order_cancelled = handle_placed_orders(market, cur_orders, orders_relevancy, highest_bid_price,
-                                               lowest_ask_price)
+is_some_order_cancelled = handle_placed_orders(market, cur_orders, orders_relevancy, is_orders_at_best,
+                                               highest_bid_price, lowest_ask_price)
 if is_some_order_cancelled:
     # better get back to a main loop and recalculate balance
     return
@@ -106,15 +110,9 @@ for order_type in ("bid", "ask"):
         continue
 
     if cur_orders[order_type].is_empty():
-        coins = pair.split("/")
-        base = coins[0]
-        quote = coins[1]
-        currencies = ['USD', 'EUR', 'CHF', 'JPY', 'GBP']
-        if quote == 'ETH' or quote == 'BTC':
-            addition = 0.000001
-        if any(quote in currency for currency in currencies):
-            addition = 0.00001
-            info('------------------  0.00001 addition')
+        addition = get_lowest_price_diff(pair)
+
+        info('------------------  {} addition'.format(addition))
     else:  # we don't want to place an order that will be above our other orders
         addition = 0
 
@@ -139,7 +137,8 @@ for order_type in ("bid", "ask"):
 def handle_placed_orders(market: Market, cur_orders
 
 : Dict[str, Orders], orders_relevancy: Dict[str, bool],
-                                       highest_bid_price: float, lowest_ask_price: float) -> bool:
+                                       is_orders_at_best: Dict[
+                                                              str, bool], highest_bid_price: float, lowest_ask_price: float) -> bool:
 is_some_order_cancelled = False  # is some order was cancelled during handling
 if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
     info("Found placed orders on trading market")
@@ -157,7 +156,7 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
             info("checking current {} status '{}': {}".format(order_type, status, order.id))
             if status == "open":
                 relevant_value = order.is_relevant(order_info["price"], best_price)
-                if not orders_relevancy[order_type] or not relevant_value:
+                if not orders_relevancy[order_type] or not is_orders_at_best[order_type] or not relevant_value:
                     info("Order is opened and irrelevant. Cancellation...")
 
                     # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant

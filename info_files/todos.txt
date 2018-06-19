@@ -1,34 +1,12 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
-16) Priority: Lowest
-The reference markets we introduced do not always have the same terminology. For example BCH/BTC is named BCC/BTC in other exchanges. Or IOT/BTC is named sometimes IOTA/BTC ...
-We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.
-# you can just add new line in reference_markets.json. e.g. if hitbtc uses IOTA/BTC name:
-# "IOT/BTC": "bittrex",  // it was there before
-# "IOTA/BTC": "hitbtc",  // line you want to add.
-Note: If it is the same name we just put a default value, maybe just null or something.
-
 17) ignore for now: Every order that is placed should be logged into a file...
 
 
-18) Priority: Highest
-In every iteration the bot should check if the order is still the first order in the order book (this works fine) and also at the best price (this is not implemented). For example:
-BTC/USD Bids
-6590 <-- This one is our order, it is 1 USD above the best price, this is fine for now
-6589
-6450
-
-Now the order for 6589 USD is removed, in that case our order should be updated to the following price:
-6451 <-- This should be the price of our order but is currently not the case
-6450
-
-In the current implementation the Bot does not update the price.
-
-
-
 ######## Implementation in a New Branch ##########
-20) Add the functionality to store/save the execution prices for the orders. Also add an initial buy price for the coins. The Bot then should never sell below the buying price.
+20) Add the functionality to store/save the execution prices for the orders.
+Also add an initial buy price for the coins. The Bot then should never sell below the buying price.
 For example AGI/ETH:
 - Initial bought price: x => never sell below x (If we don't specify the initial bought price then we can sell it for any price)
 - After selling a the coin for y = x + 20%-> We place the buy order again, but this time the buying price should never exceed y.
@@ -263,3 +241,27 @@ The order size should be calculated differently.
 	After this trade, also the overall ETH balance was reduced by X ETH. If X is 10% of the overall	ETH balance we should
 	also recalculate the order size for every ETH pair. This could also affect other pairs like EOS/ETH or ETH/USD ...
 	=> The change of the order size should can take place in the new iteration phase of the Bot.
+
+
+# you can just add new line in reference_markets.json. e.g. if hitbtc uses IOTA/BTC name:
+# "IOT/BTC": "bittrex",  // it was there before
+# "IOTA/BTC": "hitbtc",  // line you want to add.
+16) Priority: Lowest
+The reference markets we introduced do not always have the same terminology. For example BCH/BTC is named BCC/BTC in other exchanges. Or IOT/BTC is named sometimes IOTA/BTC ...
+We should add a mapping for that. I think it would be best if we just add it to the mapping in the file for reference markets.
+Note: If it is the same name we just put a default value, maybe just null or something.
+
+
+# Implemented
+18) Priority: Highest
+In every iteration the bot should check if the order is still the first order in the order book (this works fine) and also at the best price (this is not implemented). For example:
+BTC/USD Bids
+6590 <-- This one is our order, it is 1 USD above the best price, this is fine for now
+6589
+6450
+
+Now the order for 6589 USD is removed, in that case our order should be updated to the following price:
+6451 <-- This should be the price of our order but is currently not the case
+6450
+
+In the current implementation the Bot does not update the price.
