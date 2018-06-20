@@ -201,8 +201,7 @@ msg['From'] = FROM_EMAIL
 msg['To'] = TO_EMAIL
 msg.set_content(text)
 
-with smtplib.SMTP_SSL('smtp.google.com', 587) as server:
-    server.ehlo()
+with smtplib.SMTP('smtp.gmail.com', 587) as server:
     server.starttls()
     server.login(LOGIN, PASSW)
 
