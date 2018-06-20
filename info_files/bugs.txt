@@ -1,3 +1,140 @@
+# Wrong behaviour:
+
+First a sell order is placed, then immediately after it is placed it is canceled because it is no longer relevant.
+
+
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+2018-06-20 12:47:33,152 - INFO - Starting Bot ...
+2018-06-20 12:47:33,661 - INFO - Fetching free balance ...
+2018-06-20 12:47:33,919 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:47:33,919 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:47:33,920 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:47:33,920 - INFO - WAX: Free balance: 103.72000000
+2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:47:33,920 - INFO - 
+2018-06-20 12:47:33,920 - INFO - Entering place_orders function...
+2018-06-20 12:47:33,920 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:47:36,117 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:47:36,118 - INFO - Current best ask at: 0.03897700
+2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:47:36,119 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:47:36,119 - INFO - Spread is about: 94965.85%
+2018-06-20 12:47:36,119 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:47:36,119 - INFO - Found placed orders on trading market
+2018-06-20 12:47:36,374 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:47:36,374 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:47:36,375 - INFO - Too small amount to place
+2018-06-20 12:47:36,375 - INFO - WAX: amount: 0 < 2.5
+2018-06-20 12:47:36,375 - INFO - ------------------  1e-06 addition
+2018-06-20 12:47:36,376 - INFO - Placing ask order, price: 0.038976, amount: 103.72
+2018-06-20 12:47:36,634 - INFO - 
+2018-06-20 12:47:36,634 - INFO - going to sleep for: 15 seconds
+
+2018-06-20 12:47:51,639 - INFO - Fetching free balance ...
+2018-06-20 12:47:51,893 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:47:51,893 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:47:51,894 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:47:51,894 - INFO - WAX: Free balance: 0.00000000
+2018-06-20 12:47:51,894 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:47:51,895 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:47:51,895 - INFO - 
+2018-06-20 12:47:51,895 - INFO - Entering place_orders function...
+2018-06-20 12:47:51,896 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:47:52,140 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:47:52,140 - INFO - Current best ask at: 0.03897600
+2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:47:52,141 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:47:52,141 - INFO - Spread is about: 94963.41%
+2018-06-20 12:47:52,142 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:47:52,142 - INFO - Found placed orders on trading market
+2018-06-20 12:47:52,396 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:47:52,397 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:47:52,645 - INFO - checking current ask status 'open': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:47:52,646 - INFO - checking whether ask price: 0.03897600 is relevant
+2018-06-20 12:47:52,646 - INFO - Order is opened and irrelevant. Cancellation...
+2018-06-20 12:47:52,646 - INFO - try to cancel ask order: 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:47:52,903 - INFO - 
+2018-06-20 12:47:52,903 - INFO - going to sleep for: 15 seconds
+
+2018-06-20 12:48:07,905 - INFO - Fetching free balance ...
+2018-06-20 12:48:08,153 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:48:08,153 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:48:08,153 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:48:08,154 - INFO - WAX: Free balance: 103.72000000
+2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:48:08,155 - INFO - 
+2018-06-20 12:48:08,155 - INFO - Entering place_orders function...
+2018-06-20 12:48:08,155 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:48:08,399 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:48:08,400 - INFO - Current best ask at: 0.03897700
+2018-06-20 12:48:08,400 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:48:08,401 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:48:08,401 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:48:08,401 - INFO - Spread is about: 94965.85%
+2018-06-20 12:48:08,401 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:48:08,402 - INFO - Found placed orders on trading market
+2018-06-20 12:48:08,653 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:48:08,654 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:48:08,897 - INFO - checking current ask status 'canceled': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:48:08,897 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
+2018-06-20 12:48:08,897 - INFO - Too small amount to place
+2018-06-20 12:48:08,898 - INFO - WAX: amount: 0 < 2.5
+2018-06-20 12:48:08,898 - INFO - 
+2018-06-20 12:48:08,898 - INFO - going to sleep for: 15 seconds
+
+
+
+
+
+
+
+#New Bug:
+I still sometimes get the following error:
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+2018-06-20 12:46:56,993 - INFO - Starting Bot ...
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 366, in fetch
+    response.raise_for_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/models.py", line 935, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 17, in <module>
+    placed_orders = init_placed_orders(lykke)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 16, in init_placed_orders
+    orders = market.fetch_orders()
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
+    return attr(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 282, in fetch_orders
+    self.load_markets()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 914, in load_markets
+    markets = self.fetch_markets()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 139, in fetch_markets
+    markets = self.publicGetAssetPairs()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 308, in request
+    return self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 305, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 379, in fetch
+    self.handle_rest_errors(e, response.status_code, self.last_http_response, url, method)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 408, in handle_rest_errors
+    self.raise_error(error, url, method, exception if exception else http_status_code, response)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 290, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.DDoSProtection: lykke https://hft-api.lykke.com/api/AssetPairs GET 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs API calls quota exceeded! maximum admitted 300 per 1m.
+Saids-MBP:lykke_market_maker said.salem$ 
+
+
+
+
+
 #New Bug:
 
 2018-06-19 17:15:31,468 - INFO - Entering place_orders function...
