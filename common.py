@@ -2,9 +2,11 @@ import smtplib
 from email.message import EmailMessage
 from traceback import format_exc
 from json import dump
+from numpy import isclose
 
 from structures import *
 from config import *
+
 
 
 def reverse_enum(iterable):
@@ -292,7 +294,7 @@ lowest_diff = get_lowest_price_diff(pair)
 info(
     "Calculating difference between two last orders, lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
         order_type, lowest_diff, last_orders_diff))
-return last_orders_diff <= lowest_diff
+return last_orders_diff < lowest_diff or isclose(last_orders_diff, lowest_diff)
 
 return {
     'bid': _is_last_order_at_best("bids"),
