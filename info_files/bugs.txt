@@ -1,93 +1,3 @@
-# Wrong behaviour:
-
-First a sell order is placed, then immediately after it is placed it is canceled because it is no longer relevant.
-
-
-Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
-2018-06-20 12:47:33,152 - INFO - Starting Bot ...
-2018-06-20 12:47:33,661 - INFO - Fetching free balance ...
-2018-06-20 12:47:33,919 - INFO - ETH: Total balance: 0.06191844
-2018-06-20 12:47:33,919 - INFO - ETH: Free balance: 0.00000844
-2018-06-20 12:47:33,920 - INFO - WAX: Total balance: 103.72000000
-2018-06-20 12:47:33,920 - INFO - WAX: Free balance: 103.72000000
-2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
-2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:47:33,920 - INFO - 
-2018-06-20 12:47:33,920 - INFO - Entering place_orders function...
-2018-06-20 12:47:33,920 - INFO - Getting reference market order book for: WAX/ETH
-2018-06-20 12:47:36,117 - INFO - Current best bid at: 0.00004100
-2018-06-20 12:47:36,118 - INFO - Current best ask at: 0.03897700
-2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: bids
-2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: asks
-2018-06-20 12:47:36,119 - INFO - Is current orders at best: {'bid': True, 'ask': False}
-2018-06-20 12:47:36,119 - INFO - Spread is about: 94965.85%
-2018-06-20 12:47:36,119 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
-2018-06-20 12:47:36,119 - INFO - Found placed orders on trading market
-2018-06-20 12:47:36,374 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
-2018-06-20 12:47:36,374 - INFO - checking whether bid price: 0.00004100 is relevant
-2018-06-20 12:47:36,375 - INFO - Too small amount to place
-2018-06-20 12:47:36,375 - INFO - WAX: amount: 0 < 2.5
-2018-06-20 12:47:36,375 - INFO - ------------------  1e-06 addition
-2018-06-20 12:47:36,376 - INFO - Placing ask order, price: 0.038976, amount: 103.72
-2018-06-20 12:47:36,634 - INFO - 
-2018-06-20 12:47:36,634 - INFO - going to sleep for: 15 seconds
-
-2018-06-20 12:47:51,639 - INFO - Fetching free balance ...
-2018-06-20 12:47:51,893 - INFO - ETH: Total balance: 0.06191844
-2018-06-20 12:47:51,893 - INFO - ETH: Free balance: 0.00000844
-2018-06-20 12:47:51,894 - INFO - WAX: Total balance: 103.72000000
-2018-06-20 12:47:51,894 - INFO - WAX: Free balance: 0.00000000
-2018-06-20 12:47:51,894 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
-2018-06-20 12:47:51,895 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:47:51,895 - INFO - 
-2018-06-20 12:47:51,895 - INFO - Entering place_orders function...
-2018-06-20 12:47:51,896 - INFO - Getting reference market order book for: WAX/ETH
-2018-06-20 12:47:52,140 - INFO - Current best bid at: 0.00004100
-2018-06-20 12:47:52,140 - INFO - Current best ask at: 0.03897600
-2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: bids
-2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: asks
-2018-06-20 12:47:52,141 - INFO - Is current orders at best: {'bid': True, 'ask': False}
-2018-06-20 12:47:52,141 - INFO - Spread is about: 94963.41%
-2018-06-20 12:47:52,142 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
-2018-06-20 12:47:52,142 - INFO - Found placed orders on trading market
-2018-06-20 12:47:52,396 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
-2018-06-20 12:47:52,397 - INFO - checking whether bid price: 0.00004100 is relevant
-2018-06-20 12:47:52,645 - INFO - checking current ask status 'open': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
-2018-06-20 12:47:52,646 - INFO - checking whether ask price: 0.03897600 is relevant
-2018-06-20 12:47:52,646 - INFO - Order is opened and irrelevant. Cancellation...
-2018-06-20 12:47:52,646 - INFO - try to cancel ask order: 9ed61583-15ce-4f6a-a175-0e13ffd4476d
-2018-06-20 12:47:52,903 - INFO - 
-2018-06-20 12:47:52,903 - INFO - going to sleep for: 15 seconds
-
-2018-06-20 12:48:07,905 - INFO - Fetching free balance ...
-2018-06-20 12:48:08,153 - INFO - ETH: Total balance: 0.06191844
-2018-06-20 12:48:08,153 - INFO - ETH: Free balance: 0.00000844
-2018-06-20 12:48:08,153 - INFO - WAX: Total balance: 103.72000000
-2018-06-20 12:48:08,154 - INFO - WAX: Free balance: 103.72000000
-2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
-2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:48:08,155 - INFO - 
-2018-06-20 12:48:08,155 - INFO - Entering place_orders function...
-2018-06-20 12:48:08,155 - INFO - Getting reference market order book for: WAX/ETH
-2018-06-20 12:48:08,399 - INFO - Current best bid at: 0.00004100
-2018-06-20 12:48:08,400 - INFO - Current best ask at: 0.03897700
-2018-06-20 12:48:08,400 - INFO - Calculating difference between two last orders, lowest diff: bids
-2018-06-20 12:48:08,401 - INFO - Calculating difference between two last orders, lowest diff: asks
-2018-06-20 12:48:08,401 - INFO - Is current orders at best: {'bid': True, 'ask': False}
-2018-06-20 12:48:08,401 - INFO - Spread is about: 94965.85%
-2018-06-20 12:48:08,401 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
-2018-06-20 12:48:08,402 - INFO - Found placed orders on trading market
-2018-06-20 12:48:08,653 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
-2018-06-20 12:48:08,654 - INFO - checking whether bid price: 0.00004100 is relevant
-2018-06-20 12:48:08,897 - INFO - checking current ask status 'canceled': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
-2018-06-20 12:48:08,897 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
-2018-06-20 12:48:08,897 - INFO - Too small amount to place
-2018-06-20 12:48:08,898 - INFO - WAX: amount: 0 < 2.5
-2018-06-20 12:48:08,898 - INFO - 
-2018-06-20 12:48:08,898 - INFO - going to sleep for: 15 seconds
-
-
-
 
 
 
@@ -254,6 +164,101 @@ socket.gaierror: [Errno 8] nodename nor servname provided, or not known
 
 ///// Fixed
 
+Bug: Wrong Cancellation of good orders
+# Wrong behaviour:
+
+First a sell order is placed, then immediately after it is placed it is canceled because it is no longer relevant.
+
+
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+2018-06-20 12:47:33,152 - INFO - Starting Bot ...
+2018-06-20 12:47:33,661 - INFO - Fetching free balance ...
+2018-06-20 12:47:33,919 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:47:33,919 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:47:33,920 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:47:33,920 - INFO - WAX: Free balance: 103.72000000
+2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:47:33,920 - INFO - 
+2018-06-20 12:47:33,920 - INFO - Entering place_orders function...
+2018-06-20 12:47:33,920 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:47:36,117 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:47:36,118 - INFO - Current best ask at: 0.03897700
+2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:47:36,118 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:47:36,119 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:47:36,119 - INFO - Spread is about: 94965.85%
+2018-06-20 12:47:36,119 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:47:36,119 - INFO - Found placed orders on trading market
+2018-06-20 12:47:36,374 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:47:36,374 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:47:36,375 - INFO - Too small amount to place
+2018-06-20 12:47:36,375 - INFO - WAX: amount: 0 < 2.5
+2018-06-20 12:47:36,375 - INFO - ------------------  1e-06 addition
+2018-06-20 12:47:36,376 - INFO - Placing ask order, price: 0.038976, amount: 103.72
+2018-06-20 12:47:36,634 - INFO - 
+2018-06-20 12:47:36,634 - INFO - going to sleep for: 15 seconds
+
+2018-06-20 12:47:51,639 - INFO - Fetching free balance ...
+2018-06-20 12:47:51,893 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:47:51,893 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:47:51,894 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:47:51,894 - INFO - WAX: Free balance: 0.00000000
+2018-06-20 12:47:51,894 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:47:51,895 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:47:51,895 - INFO - 
+2018-06-20 12:47:51,895 - INFO - Entering place_orders function...
+2018-06-20 12:47:51,896 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:47:52,140 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:47:52,140 - INFO - Current best ask at: 0.03897600
+2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:47:52,141 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:47:52,141 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:47:52,141 - INFO - Spread is about: 94963.41%
+2018-06-20 12:47:52,142 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:47:52,142 - INFO - Found placed orders on trading market
+2018-06-20 12:47:52,396 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:47:52,397 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:47:52,645 - INFO - checking current ask status 'open': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:47:52,646 - INFO - checking whether ask price: 0.03897600 is relevant
+2018-06-20 12:47:52,646 - INFO - Order is opened and irrelevant. Cancellation...
+2018-06-20 12:47:52,646 - INFO - try to cancel ask order: 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:47:52,903 - INFO - 
+2018-06-20 12:47:52,903 - INFO - going to sleep for: 15 seconds
+
+2018-06-20 12:48:07,905 - INFO - Fetching free balance ...
+2018-06-20 12:48:08,153 - INFO - ETH: Total balance: 0.06191844
+2018-06-20 12:48:08,153 - INFO - ETH: Free balance: 0.00000844
+2018-06-20 12:48:08,153 - INFO - WAX: Total balance: 103.72000000
+2018-06-20 12:48:08,154 - INFO - WAX: Free balance: 103.72000000
+2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
+2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
+2018-06-20 12:48:08,155 - INFO - 
+2018-06-20 12:48:08,155 - INFO - Entering place_orders function...
+2018-06-20 12:48:08,155 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-20 12:48:08,399 - INFO - Current best bid at: 0.00004100
+2018-06-20 12:48:08,400 - INFO - Current best ask at: 0.03897700
+2018-06-20 12:48:08,400 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-20 12:48:08,401 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-20 12:48:08,401 - INFO - Is current orders at best: {'bid': True, 'ask': False}
+2018-06-20 12:48:08,401 - INFO - Spread is about: 94965.85%
+2018-06-20 12:48:08,401 - INFO - Checking whether bid and ask are better then ref market: {'bid': True, 'ask': True}
+2018-06-20 12:48:08,402 - INFO - Found placed orders on trading market
+2018-06-20 12:48:08,653 - INFO - checking current bid status 'open': 19eb87f4-198f-4709-8cae-dbe3b171eb62
+2018-06-20 12:48:08,654 - INFO - checking whether bid price: 0.00004100 is relevant
+2018-06-20 12:48:08,897 - INFO - checking current ask status 'canceled': 9ed61583-15ce-4f6a-a175-0e13ffd4476d
+2018-06-20 12:48:08,897 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
+2018-06-20 12:48:08,897 - INFO - Too small amount to place
+2018-06-20 12:48:08,898 - INFO - WAX: amount: 0 < 2.5
+2018-06-20 12:48:08,898 - INFO - 
+2018-06-20 12:48:08,898 - INFO - going to sleep for: 15 seconds
+
+
+
+
+
+
+---------------
 
 # Fixed: added sleep for rateLimit milliseconds after every call to market
 # Added caching of order books for ref exchanges. Order book's relevancy is defined by constant variable REF_BOOK_RELEVANCE_TIME
