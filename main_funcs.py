@@ -157,6 +157,9 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
             if status == "open":
                 relevant_value = order.is_relevant(order_info["price"], best_price)
                 if not orders_relevancy[order_type] or not is_orders_at_best[order_type] or not relevant_value:
+                    info("orders_relevancy[order_type] : {}".format(orders_relevancy[order_type]))
+                    info("relevant_value: {}".format(relevant_value))
+                    info("is_orders_at_best[order_type] : {}".format(is_orders_at_best[order_type]))
                     info("Order is opened and irrelevant. Cancellation...")
 
                     # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant

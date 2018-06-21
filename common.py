@@ -289,7 +289,9 @@ else:
         return True
 
 lowest_diff = get_lowest_price_diff(pair)
-info("Calculating difference between two last orders, lowest diff: {}".format(order_type, lowest_diff))
+info(
+    "Calculating difference between two last orders, lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
+        order_type, lowest_diff, last_orders_diff))
 return last_orders_diff <= lowest_diff
 
 return {
