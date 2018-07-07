@@ -2,8 +2,6 @@
 
 
 
-
-
 Already implemented:
 - Buy order is set above current best buy order.
 - Sell order is set below current best sell order.

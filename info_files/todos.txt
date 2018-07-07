@@ -14,7 +14,8 @@ For example AGI/ETH:
 
 
 Behaviour example:
-I buy AGI for 0.00005 ETH, then I send it to the Bot to use it => therefore I don't want it to be sold below 0.00005 ETH. That is why we define the initial buy price, so that the bot can know for how much I bought the coins.
+I buy AGI for 0.00005 ETH, then I send it to the Bot to use it => therefore I don't want it to be sold below 0.00005 ETH.
+That is why we define the initial buy price, so that the bot can know for how much I bought the coins.
 I start the Bot.
 The Buying price is 0.00002 ETH and sell price is 0.000035 => The Spread is good.
 The ref market price: is  Buy 0.000025 ETH and sell price is 0.000030  => Comparing the price to the ref markets is also good.
@@ -32,7 +33,8 @@ Now the Bot can place a sell order on 0.0000349 ETH for the X AGI. The initial a
 
 
 
-Note: The behaviour of the Bot might already be right sometime, but when the prices changes suddenly, there is nothing that keeps it from selling below buying price or vice versa.
+Note: The behaviour of the Bot might already be right sometime, but when the prices changes suddenly, there is nothing
+that keeps it from selling below buying price or vice versa.
 
 
 

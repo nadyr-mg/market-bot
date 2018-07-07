@@ -1,6 +1,7 @@
-from logging import error
+from logging import error, warning
 
 import ccxt
+from ccxt.base.errors import BaseError
 
 from main_funcs import *
 
@@ -14,7 +15,18 @@ if not is_passed:
 
 lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 
-placed_orders = init_placed_orders(lykke)
+initialized_orders = False
+while not initialized_orders:
+    try:
+        placed_orders = init_placed_orders(lykke)
+    except BaseError as e:
+        warning('got error while initializing orders: {}'.format(str(e)))
+        warning('next attempt will be in {} seconds'.format(INIT_ORDERS_WAIT))
+        sleep(INIT_ORDERS_WAIT)
+        continue
+
+    initialized_orders = True
+    info('initialized orders')
 
 opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
                       for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]

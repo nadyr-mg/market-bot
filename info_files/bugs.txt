@@ -1,168 +1,9 @@
 
 
 
-
-#New Bug:
-I still sometimes get the following error:
-Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
-2018-06-20 12:46:56,993 - INFO - Starting Bot ...
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 366, in fetch
-    response.raise_for_status()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/models.py", line 935, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "main.py", line 17, in <module>
-    placed_orders = init_placed_orders(lykke)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 16, in init_placed_orders
-    orders = market.fetch_orders()
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
-    return attr(*args, **kwargs)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 282, in fetch_orders
-    self.load_markets()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 914, in load_markets
-    markets = self.fetch_markets()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 139, in fetch_markets
-    markets = self.publicGetAssetPairs()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 308, in request
-    return self.fetch2(path, api, method, params, headers, body)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 305, in fetch2
-    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 379, in fetch
-    self.handle_rest_errors(e, response.status_code, self.last_http_response, url, method)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 408, in handle_rest_errors
-    self.raise_error(error, url, method, exception if exception else http_status_code, response)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 290, in raise_error
-    raise exception_type(output)
-ccxt.base.errors.DDoSProtection: lykke https://hft-api.lykke.com/api/AssetPairs GET 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs API calls quota exceeded! maximum admitted 300 per 1m.
-Saids-MBP:lykke_market_maker said.salem$ 
-
-
-
-
-
-#New Bug:
-
-2018-06-19 17:15:31,468 - INFO - Entering place_orders function...
-2018-06-19 17:15:31,469 - INFO - Getting reference market order book for: WAX/ETH
-2018-06-19 17:15:31,709 - INFO - Current best bid at: 0.00013000
-2018-06-19 17:15:31,709 - INFO - Current best ask at: 0.03897700
-2018-06-19 17:15:31,709 - INFO - Calculating difference between two last orders, lowest diff: bids
-2018-06-19 17:15:31,710 - INFO - Calculating difference between two last orders, lowest diff: asks
-2018-06-19 17:15:31,710 - INFO - Is current orders at best: {'bid': False, 'ask': False}
-2018-06-19 17:15:31,710 - INFO - Spread is about: 29882.31%
-2018-06-19 17:15:31,711 - INFO - Checking whether bid and ask are better then ref market: {'bid': False, 'ask': True}
-2018-06-19 17:15:31,711 - INFO - 
-2018-06-19 17:15:31,711 - INFO - going to sleep for: 15 seconds
-
-2018-06-19 18:19:00,176 - INFO - Fetching free balance ...
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 387, in _make_request
-    six.raise_from(e, None)
-  File "<string>", line 2, in raise_from
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 383, in _make_request
-    httplib_response = conn.getresponse()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
-    response.begin()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
-    version, status, reason = self._read_status()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 258, in _read_status
-    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 586, in readinto
-    return self._sock.recv_into(b)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 1009, in recv_into
-    return self.read(nbytes, buffer)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 871, in read
-    return self._sslobj.read(len, buffer)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 631, in read
-    v = self._sslobj.read(len, buffer)
-socket.timeout: The read operation timed out
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 440, in send
-    timeout=timeout
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 639, in urlopen
-    _stacktrace=sys.exc_info()[2])
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/util/retry.py", line 357, in increment
-    raise six.reraise(type(error), error, _stacktrace)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/packages/six.py", line 686, in reraise
-    raise value
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 601, in urlopen
-    chunked=chunked)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 389, in _make_request
-    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 309, in _raise_timeout
-    raise ReadTimeoutError(self, url, "Read timed out. (read timeout=%s)" % timeout_value)
-urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 359, in fetch
-    proxies=self.proxies
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 508, in request
-    resp = self.send(prep, **send_kwargs)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 618, in send
-    r = adapter.send(request, **kwargs)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 521, in send
-    raise ReadTimeout(e, request=request)
-requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "main.py", line 32, in <module>
-    coins_balances = get_coins_balances(placing_objects.market)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/main_funcs.py", line 8, in get_coins_balances
-    balance = market.fetch_balance()
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
-    return attr(*args, **kwargs)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 101, in fetch_balance
-    balances = self.privateGetWallets()
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 308, in request
-    return self.fetch2(path, api, method, params, headers, body)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 305, in fetch2
-    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 369, in fetch
-    self.raise_error(RequestTimeout, method, url, e)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 290, in raise_error
-    raise exception_type(output)
-ccxt.base.errors.RequestTimeout: lykke GET https://hft-api.lykke.com/api/Wallets HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "main.py", line 46, in <module>
-    send_message(header, text)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 180, in send_message
-    with smtplib.SMTP_SSL('smtp.google.com', 587) as server:
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 1030, in __init__
-    source_address)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 251, in __init__
-    (code, msg) = self.connect(host, port)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 336, in connect
-    self.sock = self._get_socket(host, port, self.timeout)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 1036, in _get_socket
-    self.source_address)
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 704, in create_connection
-    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 745, in getaddrinfo
-    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
-socket.gaierror: [Errno 8] nodename nor servname provided, or not known
-
-
-
-
-
-
-
+________________________________________________________________________________________________
 ///// Fixed
+______________________________________________________________________________________________________________________
 
 Bug: Wrong Cancellation of good orders
 # Wrong behaviour:
@@ -731,4 +572,158 @@ Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 288, in raise_error
     raise exception_type(output)
 ccxt.base.errors.ExchangeError: lykke https://hft-api.lykke.com/api/Wallets GET ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer')) {"Id":"e3f88963-2bcf-46ad-93b4-18564a0cc4e1","Status":"InOrderBook","AssetPairId":"WAXETH","Volume":567.0,"Price":3.3E-05,"RemainingVolume":567.0,"LastMatchTime":null,"CreatedAt":"2018-05-28T08:50:17.854Z"}
+Saids-MBP:lykke_market_maker said.salem$
+
+
+
+// Fixed in commit 'Update common.py' (21c4295e6d763befe167f61dc276c1383344a884)
+#New Bug:
+
+2018-06-19 17:15:31,468 - INFO - Entering place_orders function...
+2018-06-19 17:15:31,469 - INFO - Getting reference market order book for: WAX/ETH
+2018-06-19 17:15:31,709 - INFO - Current best bid at: 0.00013000
+2018-06-19 17:15:31,709 - INFO - Current best ask at: 0.03897700
+2018-06-19 17:15:31,709 - INFO - Calculating difference between two last orders, lowest diff: bids
+2018-06-19 17:15:31,710 - INFO - Calculating difference between two last orders, lowest diff: asks
+2018-06-19 17:15:31,710 - INFO - Is current orders at best: {'bid': False, 'ask': False}
+2018-06-19 17:15:31,710 - INFO - Spread is about: 29882.31%
+2018-06-19 17:15:31,711 - INFO - Checking whether bid and ask are better then ref market: {'bid': False, 'ask': True}
+2018-06-19 17:15:31,711 - INFO -
+2018-06-19 17:15:31,711 - INFO - going to sleep for: 15 seconds
+
+2018-06-19 18:19:00,176 - INFO - Fetching free balance ...
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 2, in raise_from
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 383, in _make_request
+    httplib_response = conn.getresponse()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 258, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 1009, in recv_into
+    return self.read(nbytes, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 871, in read
+    return self._sslobj.read(len, buffer)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/ssl.py", line 631, in read
+    v = self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 440, in send
+    timeout=timeout
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 639, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/util/retry.py", line 357, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/packages/six.py", line 686, in reraise
+    raise value
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 389, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/urllib3/connectionpool.py", line 309, in _raise_timeout
+    raise ReadTimeoutError(self, url, "Read timed out. (read timeout=%s)" % timeout_value)
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 359, in fetch
+    proxies=self.proxies
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py", line 521, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 32, in <module>
+    coins_balances = get_coins_balances(placing_objects.market)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/main_funcs.py", line 8, in get_coins_balances
+    balance = market.fetch_balance()
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
+    return attr(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 101, in fetch_balance
+    balances = self.privateGetWallets()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 308, in request
+    return self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 305, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 369, in fetch
+    self.raise_error(RequestTimeout, method, url, e)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 290, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.RequestTimeout: lykke GET https://hft-api.lykke.com/api/Wallets HTTPSConnectionPool(host='hft-api.lykke.com', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 46, in <module>
+    send_message(header, text)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 180, in send_message
+    with smtplib.SMTP_SSL('smtp.google.com', 587) as server:
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 1030, in __init__
+    source_address)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 251, in __init__
+    (code, msg) = self.connect(host, port)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 336, in connect
+    self.sock = self._get_socket(host, port, self.timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/smtplib.py", line 1036, in _get_socket
+    self.source_address)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 704, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 745, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+
+#New Bug:
+I still sometimes get the following error:
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
+2018-06-20 12:46:56,993 - INFO - Starting Bot ...
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 366, in fetch
+    response.raise_for_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/models.py", line 935, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 17, in <module>
+    placed_orders = init_placed_orders(lykke)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/common.py", line 16, in init_placed_orders
+    orders = market.fetch_orders()
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/lykke_market_maker/structures.py", line 23, in method
+    return attr(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 282, in fetch_orders
+    self.load_markets()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 914, in load_markets
+    markets = self.fetch_markets()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/lykke.py", line 139, in fetch_markets
+    markets = self.publicGetAssetPairs()
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 308, in request
+    return self.fetch2(path, api, method, params, headers, body)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 305, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 379, in fetch
+    self.handle_rest_errors(e, response.status_code, self.last_http_response, url, method)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 408, in handle_rest_errors
+    self.raise_error(error, url, method, exception if exception else http_status_code, response)
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/ccxt/base/exchange.py", line 290, in raise_error
+    raise exception_type(output)
+ccxt.base.errors.DDoSProtection: lykke https://hft-api.lykke.com/api/AssetPairs GET 429 Client Error: Too Many Requests for url: https://hft-api.lykke.com/api/AssetPairs API calls quota exceeded! maximum admitted 300 per 1m.
 Saids-MBP:lykke_market_maker said.salem$

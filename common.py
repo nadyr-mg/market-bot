@@ -8,7 +8,6 @@ from structures import *
 from config import *
 
 
-
 def reverse_enum(iterable):
     for idx in range(len(iterable) - 1, -1, -1):
         yield idx, iterable[idx]

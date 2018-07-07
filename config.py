@@ -32,7 +32,10 @@ AMOUNT_THRESHOLD = 0.1  # Balance should go below/above this threshold to change
 
 ACCEPTABLE_PROFIT_DEVIATION = 0.05
 
+# Wait time
 MINUTE = 60
+
+INIT_ORDERS_WAIT = 10
 
 INIT_FAIL_WAIT_TIME = 3 * MINUTE
 INC_WAIT_TIME = 2 * MINUTE
@@ -41,6 +44,7 @@ REF_BOOK_RELEVANCE_TIME = 5 * MINUTE
 
 AFTER_CANCEL_WAIT_BOUNDS = (3 * MINUTE, 7 * MINUTE)
 
+# Json files
 with open(join(config_dir, "reference_markets.json")) as file:
     REF_MARKETS = load(file)  # type: Dict
 
@@ -52,6 +56,7 @@ with open(join(config_dir, "min_amounts.json")) as file:
 with open(join(config_dir, "ref_deviations.json")) as file:
     REF_PRICE_DEVIATIONS = load(file)  # type: Dict
 
+# Logging
 LOG_FILENAME = 'log_files/info.log'
 
 # setup default logging level
@@ -70,6 +75,9 @@ handler = logging.FileHandler(LOG_FILENAME, 'w')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
+
+# Email
 # how many lines of logs to send by an email if unexpected error occurs
 LINES_TO_SEND = 15
 
@@ -77,4 +85,7 @@ FROM_EMAIL = 'Your gmail address'
 LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
 TO_EMAIL = 'Address where messages should come'
 
-FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
+# setting initial buy prices for coins
+# initial_buy_prices = {
+#
+# }
