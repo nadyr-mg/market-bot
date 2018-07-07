@@ -39,6 +39,8 @@ placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, ca
 last_coins_balances = {coin: {'total': 0, 'free': 0} for coin in COIN_IDS}
 last_coins_spend_amount = {}
 
+tracked_prices = {pair: {'buy': [], 'sell': []} for pair in PAIRS}
+
 while True:
     try:
         coins_balances = get_coins_balances(placing_objects.market)

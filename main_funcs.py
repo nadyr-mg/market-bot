@@ -151,6 +151,10 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                 info('logging order to a file')
                 log_filled_order(order_info)
 
+                #
+
+                order.filled = order_info['filled']
+
             status = order_info["status"]
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
             info("checking current {} status '{}': {}".format(order_type, status, order.id))

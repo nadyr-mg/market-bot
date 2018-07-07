@@ -84,8 +84,3 @@ LINES_TO_SEND = 15
 FROM_EMAIL = 'Your gmail address'
 LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
 TO_EMAIL = 'Address where messages should come'
-
-# setting initial buy prices for coins
-# initial_buy_prices = {
-#
-# }

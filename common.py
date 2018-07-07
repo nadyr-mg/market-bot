@@ -27,7 +27,7 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        placed_orders[pair][order_type].add(order["id"])
+        placed_orders[pair][order_type].add(order["id"], order["filled"])
 
 return placed_orders
 

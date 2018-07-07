@@ -36,9 +36,10 @@ else:
 class Order:
     def __init__(self, order_id: str, order_type
 
-    : str) -> None:
+    : str, filled) -> None:
     self.id = order_id
     self.order_type = order_type
+    self.filled = filled
 
 
 def is_relevant(self, price: float, best_price
@@ -128,10 +129,10 @@ class Orders:
     self.wait_info = WaitInfo(0)
 
 
-def add(self, order_id: str
+def add(self, order_id: str, filled = 0
 
 ) -> None:
-self.orders.append(Order(order_id, self.order_type))
+self.orders.append(Order(order_id, self.order_type, filled))
 
 
 def pop(self, idx: int
