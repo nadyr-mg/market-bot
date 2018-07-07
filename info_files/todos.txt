@@ -20,30 +20,25 @@ We could add a new derivation for the ask price:
 
 ######## Implementation in a New Branch ##########
 20) Add the functionality to store/save the execution prices for the orders.
-Also add an initial buy price for the coins. The Bot then should never sell below the buying price.
-For example AGI/ETH:
-- Initial bought price: x => never sell below x (If we don't specify the initial bought price then we can sell it for any price)
-- After selling a the coin for y = x + 20%-> We place the buy order again, but this time the buying price should never exceed y.
-- Same is true for the partially executed orders: We sell 1/3 for y and  2/3 for z. In this case 1/3 should never be below y and the 2/3 should never be below y.
 
-
-Behaviour example:
-I buy AGI for 0.00005 ETH, then I send it to the Bot to use it => therefore I don't want it to be sold below 0.00005 ETH.
-That is why we define the initial buy price, so that the bot can know for how much I bought the coins.
-I start the Bot.
-The Buying price is 0.00002 ETH and sell price is 0.000035 => The Spread is good.
-The ref market price: is  Buy 0.000025 ETH and sell price is 0.000030  => Comparing the price to the ref markets is also good.
---
-The current behaviour of the bot would be:
-Place buy price on 0.000021 ETH -> This is fine
-Place sell price on 0.0000349 ETH -> This is not good since I bought it for 0.00005 ETH --> This sell order should not be placed.
---
-
-After a while I bought X AGI for the price of 0.000021 ETH
-So my total AGI are the X that I bought at the price of 0.000021 ETH and the initial amount that I bought at the price of 0.00005 ETH
-Now the Bot can place a sell order on 0.0000349 ETH for the X AGI. The initial amount of AGI that I bought for 0.00005 ETH can still not be sold.
---
-
+Forget about the initial buy price. There is no initial buy or sell price.
+Lets first only consider full orders (not partial orders):
+	- There is no initial buy/sell price -> we can move up and down in the price like we want.
+	- In case we sell TestCoin for a price of 3 --> we will not buy it back for a price 	> 3 (we keep track of the sell price)
+	- In case we buy TestCoin for a price of 3  --> We will not sell it for a price 	< 3 (we keep track of the buy price)
+	- Selling and buying the coin back will reset the the saved buy and sell price
+	- Same for buying and selling the coin
+Example:
+	- Bought TestCoin for 3
+	- Sold TestCoin for 4
+	-> Reset saved buy and sell price
+	=> This means now we can buy and sell again for any price
+Same applies for partially filled orders:
+	- Bought 10 TestCoin for 3
+	- Sold 5 TestCoin for 4
+	-> Reset saved sell price
+	-> Reduce saved buy price amount from 10 to 5 (because we already sold 5)
+	=> This means the 5 TestCoin that we have bought and sold are now free again and we can buy and sell those 5 for any price
 
 
 
