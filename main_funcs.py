@@ -26,11 +26,10 @@ for coin, coin_id in COIN_IDS.items():
 return coins_balances
 
 
-def get_spend_amounts(last_coins_spend_amount: Dict[str, Dict],
-                                               coins_balances
+def get_spend_amounts(coins_balances: Dict[str, Dict[str, float]],
+                                      last_coins_balances
 
-: Dict[str, Dict[str, float]],
-  last_coins_balances: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
+: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
 coins_spend_amount = {}  # type: Dict[str, Dict[str, float]]
 for pair in PAIRS:
     if pair not in coins_spend_amount:
@@ -39,10 +38,12 @@ for pair in PAIRS:
     coins = pair.split('/')
     for coin in coins:
         threshold = last_coins_balances[coin]['total'] * AMOUNT_THRESHOLD
-        if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold:
+        freed_amount = last_coins_balances[coin]['total'] * FREED_AMOUNT_PERCENTAGE
+        if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold or \
+                        coins_balances[coin]['free'] >= freed_amount:
             coins_spend_amount[pair][coin] = coins_balances[coin]['free'] * USED_BALANCE_PAIRS[pair][coin]
-        else:
-            coins_spend_amount[pair][coin] = last_coins_spend_amount[pair][coin]
+
+            last_coins_balances[coin]['total'] = coins_balances[coin]['total']
 
         info('pair: {}, coin: {}, order size: {:.8f}'.format(pair, coin, coins_spend_amount[pair][coin]))
 
@@ -58,12 +59,8 @@ for pair in PAIRS:
     if not fail_wait_info.is_done_waiting():
         continue
 
-    coins = pair.split("/")
-    coin1_amount, coin2_amount = coins_spend_amount[pair][coins[0]], coins_spend_amount[pair][coins[1]]
-
     try:
-        # first amount is what you spend to sell, second - what you spend to buy
-        place_orders(placing_objects, coin2_amount, coin1_amount, pair)
+        place_orders(placing_objects, coins_spend_amount[pair], pair)
     except RequestTimeout:
         logging.warning('while processing pair {}, RequestTimeout error occurred'.format(pair))
 
@@ -78,9 +75,9 @@ for pair in PAIRS:
     info('')  # print line break for better readability
 
 
-def place_orders(placing_objects: ObjectsForPlacing, buy_amount
+def place_orders(placing_objects: ObjectsForPlacing, coins_spend_amount, pair
 
-: float, sell_amount: float, pair: str) -> None:
+: str) -> None:
 info("Entering place_orders function...")
 market, placed_orders, opened_ref_markets, cached_ref_books = placing_objects.unpack_objects()
 
@@ -105,6 +102,9 @@ if is_some_order_cancelled:
     # better get back to a main loop and recalculate balance
     return
 
+coins = pair.split("/")
+# first amount is what you spend to sell, second - what you spend to buy
+sell_amount, buy_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 for order_type in ("bid", "ask"):
     if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
         continue
@@ -133,6 +133,11 @@ for order_type in ("bid", "ask"):
         order_id = create_order(pair, amount, price)['info']
         cur_orders[order_type].add(order_id)
 
+        if order_type == "bid":
+            coins_spend_amount[coins[1]] = 0
+        else:
+            coins_spend_amount[coins[0]] = 0
+
 
 def handle_placed_orders(market: Market, cur_orders
 
@@ -150,10 +155,6 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
             if order_info['info']['Status'] == 'Matched' or order_info['info']['Status'] == 'Processing':
                 info('logging order to a file')
                 log_filled_order(order_info)
-
-                #
-
-                order.filled = order_info['filled']
 
             status = order_info["status"]
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price

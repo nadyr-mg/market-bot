@@ -37,16 +37,13 @@ fail_wait_infos = {pair: WaitInfo(INIT_FAIL_WAIT_TIME) for pair in PAIRS}  # typ
 placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, cached_ref_books)
 
 last_coins_balances = {coin: {'total': 0, 'free': 0} for coin in COIN_IDS}
-last_coins_spend_amount = {}
 
 tracked_prices = {pair: {'buy': [], 'sell': []} for pair in PAIRS}
 
 while True:
     try:
         coins_balances = get_coins_balances(placing_objects.market)
-        coins_spend_amount = get_spend_amounts(last_coins_spend_amount, coins_balances, last_coins_balances)
-
-        last_coins_balances, last_coins_spend_amount = coins_balances, coins_spend_amount
+        coins_spend_amount = get_spend_amounts(coins_balances, last_coins_balances)
 
         info('')  # print line break for better readability
 

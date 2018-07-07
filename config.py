@@ -28,7 +28,9 @@ USED_BALANCE_PAIRS = {
         'ETH': 1,
     }
 }
-AMOUNT_THRESHOLD = 0.1  # Balance should go below/above this threshold to change order sizes for coins
+AMOUNT_THRESHOLD = 0.03  # Balance should go below/above this threshold to change order sizes for coins
+# how much money should be freed to recalculate order sizes
+FREED_AMOUNT_PERCENTAGE = 0.2
 
 ACCEPTABLE_PROFIT_DEVIATION = 0.05
 
