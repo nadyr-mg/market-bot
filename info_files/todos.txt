@@ -3,6 +3,20 @@ Overview: The todos might be related to each other -> Please take a quick look a
 
 17) ignore for now: Every order that is placed should be logged into a file...
 
+21) In ref_deviations.json we have the deviation for the reference markets.
+Right now, we use this data for placing the ask and bid price.
+We should have one derivation for the ask price and one for the bid price.
+Now it is like this:
+{
+  "WAX/ETH": 0.5,
+  "AE/ETH": 0.5,
+...}
+We could add a new derivation for the ask price:
+{
+  "WAX/ETH": 0.5, 0.2
+  "AE/ETH": 0.5, 0.1
+...}
+
 
 ######## Implementation in a New Branch ##########
 20) Add the functionality to store/save the execution prices for the orders.
