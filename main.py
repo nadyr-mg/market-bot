@@ -45,7 +45,7 @@ coins_spend_amount = {pair: {} for pair in PAIRS}
 while True:
     try:
         coins_balances = get_coins_balances(placing_objects.market)
-        coins_spend_amount = get_spend_amounts(coins_balances, last_coins_balances)
+        update_spend_amounts(coins_spend_amount, coins_balances, last_coins_balances)
 
         info('')  # print line break for better readability
 

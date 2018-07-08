@@ -26,8 +26,8 @@ for coin, coin_id in COIN_IDS.items():
 return coins_balances
 
 
-def get_spend_amounts(coins_spend_amount, coins_balances: Dict[str, Dict[str, float]],
-                                                          last_coins_balances
+def update_spend_amounts(coins_spend_amount, coins_balances: Dict[str, Dict[str, float]],
+                                                             last_coins_balances
 
 : Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
 for pair in PAIRS:
