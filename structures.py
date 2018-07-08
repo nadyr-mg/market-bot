@@ -184,15 +184,26 @@ class ObjectsForPlacing:
     def __init__(self, market: Market, placed_orders
 
     : Dict[str, Dict[str, Orders]],
-      opened_ref_markets: Dict[str, Market], cached_ref_books: Dict[str, CachedObject]) -> None:
+      opened_ref_markets: Dict[str, Market], cached_ref_books: Dict[str, CachedObject],
+                                                               tracked_prices) -> None:
     self.market = market
     self.placed_orders = placed_orders
     self.opened_ref_markets = opened_ref_markets
     self.cached_ref_books = cached_ref_books
+    self.tracked_prices = tracked_prices
 
 
 def unpack_objects(self) ->
 
 
 Tuple:
-return self.market, self.placed_orders, self.opened_ref_markets, self.cached_ref_books
+return self.market, self.placed_orders, self.opened_ref_markets, self.cached_ref_books, self.tracked_prices
+
+
+class TrackedPrice:
+    def __init__(self, price) ->
+
+    None:
+    self.price = price
+    self.filled = 0
+    self.is_last_update = False

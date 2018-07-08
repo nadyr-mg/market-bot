@@ -32,13 +32,13 @@ opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
                       for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
 cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARKETS}  # type: Dict[str, CachedObject]
 
+tracked_prices = {pair: {'bid': {}, 'ask': {}} for pair in PAIRS}
+
+placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, cached_ref_books, tracked_prices)
+
 fail_wait_infos = {pair: WaitInfo(INIT_FAIL_WAIT_TIME) for pair in PAIRS}  # type: Dict[str, WaitInfo]
 
-placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, cached_ref_books)
-
 last_coins_balances = {coin: {'total': 0, 'free': 0} for coin in COIN_IDS}
-
-tracked_prices = {pair: {'buy': [], 'sell': []} for pair in PAIRS}
 
 while True:
     try:
