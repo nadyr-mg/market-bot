@@ -40,6 +40,8 @@ fail_wait_infos = {pair: WaitInfo(INIT_FAIL_WAIT_TIME) for pair in PAIRS}  # typ
 
 last_coins_balances = {coin: {'total': 0, 'free': 0} for coin in COIN_IDS}
 
+coins_spend_amount = {pair: {} for pair in PAIRS}
+
 while True:
     try:
         coins_balances = get_coins_balances(placing_objects.market)
