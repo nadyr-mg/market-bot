@@ -27,7 +27,7 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        placed_orders[pair][order_type].add(order["id"], order["filled"])
+        placed_orders[pair][order_type].add(order["id"])
 
 return placed_orders
 
@@ -62,9 +62,10 @@ else:
     info("Getting the best price for {0} from the reference orderbook".format(order_type))
     price = ref_book[order_type][0][0]
 
-    addition = price * ref_price_deviation
+    order_type = order_type[:-1]  # bids -> bid, asks -> ask
+    addition = price * ref_price_deviation[order_type]
     info("Calculating best price for {} with a deviation of:{}".format(order_type, ref_price_deviation))
-    return price + addition if order_type == "asks" else price - addition
+    return price + addition if order_type == "ask" else price - addition
 
 return _get_best_price("bids"), _get_best_price("asks")
 
@@ -80,8 +81,8 @@ ref_highest_bid_price = ref_book["bids"][0][0]
 ref_lowest_ask_price = ref_book["asks"][0][0]
 
 ref_price_deviation = REF_PRICE_DEVIATIONS[pair]
-ref_bid_deviation = ref_highest_bid_price * ref_price_deviation
-ref_ask_deviation = ref_lowest_ask_price * ref_price_deviation
+ref_bid_deviation = ref_highest_bid_price * ref_price_deviation['bid']
+ref_ask_deviation = ref_lowest_ask_price * ref_price_deviation['ask']
 
 conditions = [
     spread > MIN_SPREAD,

@@ -1,55 +1,210 @@
 {
-  "WAX/ETH": 0.5,
-  "AE/ETH": 0.5,
-  "AE/BTC": 0.5,
-  "AGI/ETH": 0.5,
-  "AGI/BTC": 0.5,
-  "APPC/ETH": 0.5,
-  "APPC/BTC": 0.5,
-  "BNT/ETH": 0.5,
-  "BNT/BTC": 0.5,
-  "CAN/ETH": 0.5,
-  "CAN/BTC": 0.5,
-  "EVX/ETH": 0.5,
-  "EVX/BTC": 0.5,
-  "GNT/ETH": 0.5,
-  "GNT/BTC": 0.5,
-  "HMQ/ETH": 0.5,
-  "HMQ/BTC": 0.5,
-  "KEY/ETH": 0.5,
-  "KEY/BTC": 0.5,
-  "LRC/ETH": 0.5,
-  "LRC/BTC": 0.5,
-  "LTC/ETH": 0.5,
-  "LTC/BTC": 0.5,
-  "MCO/ETH": 0.5,
-  "MCO/BTC": 0.5,
-  "OMG/ETH": 0.5,
-  "OMG/BTC": 0.5,
-  "PKT/ETH": 0.5,
-  "PKT/BTC": 0.5,
-  "POW/ETH": 0.5,
-  "POW/BTC": 0.5,
-  "PPT/ETH": 0.5,
-  "REP/ETH": 0.5,
-  "REP/BTC": 0.5,
-  "SLR/BTC": 0.5,
-  "SNM/ETH": 0.5,
-  "SNM/BTC": 0.5,
-  "WAX/ETH": 0.5,
-  "WAX/BTC": 0.5,
-  "ZRX/ETH": 0.5,
-  "ZRX/BTC": 0.5,
-  "HCP/ETH": 0.5,
-  "HGT/ETH": 0.5,
-  "HGT/BTC": 0.5,
-  "LOC/BTC": 0.5,
-  "LOC/ETH": 0.5,
-  "CVC/BTC": 0.5,
-  "CVC/ETH": 0.05,
-  "LC/ETH": 0.05,
-  "LYKKE/CHF": 0.00,
-  "LYKKE/USD": 0.00,
-  "LYKKE/EUR": 0.00
-
+  "WAX/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "AE/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "AE/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "AGI/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "AGI/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "APPC/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "APPC/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "BNT/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "BNT/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "CAN/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "CAN/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "EVX/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "EVX/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "GNT/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "GNT/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "HMQ/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "HMQ/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "KEY/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "KEY/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LRC/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LRC/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LTC/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LTC/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "MCO/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "MCO/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "OMG/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "OMG/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "PKT/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "PKT/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "POW/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "POW/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "PPT/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "REP/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "REP/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "SLR/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "SNM/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "SNM/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "WAX/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "WAX/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "ZRX/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "ZRX/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "HCP/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "HGT/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "HGT/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LOC/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "LOC/ETH": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "CVC/BTC": {
+    "bid": 0.5,
+    "ask": 0.5
+  },
+  "CVC/ETH": {
+    "bid": 0.05,
+    "ask": 0.05
+  },
+  "LC/ETH": {
+    "bid": 0.05,
+    "ask": 0.05
+  },
+  "LYKKE/CHF": {
+    "bid": 0.00,
+    "ask": 0.00
+  },
+  "LYKKE/USD": {
+    "bid": 0.00,
+    "ask": 0.00
+  },
+  "LYKKE/EUR": {
+    "bid": 0.00,
+    "ask": 0.00
+  }
 }
