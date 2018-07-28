@@ -35,6 +35,9 @@ return placed_orders
 def get_ref_book(pair: str, opened_ref_markets
 
 : Dict[str, Market], cached_ref_books: Dict[str, CachedObject]):
+if REF_MARKETS.get(pair) is None:
+    return None
+
 ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
 
 info("Getting reference market order book for: {0}".format(pair))
@@ -56,7 +59,7 @@ def _get_best_price(order_type: str
 ) -> float:
 if book[order_type]:
     return book[order_type][0][0]
-else:
+elif ref_book is not None:
     info("There are no {0} in the orderbook".format(order_type))
 
     info("Getting the best price for {0} from the reference orderbook".format(order_type))
@@ -133,7 +136,6 @@ for pair in PAIRS:
     # reference_markets.json
     if REF_MARKETS.get(pair) is None:
         logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
-        is_check_passed = False
 
     # ref_deviations.json
     if REF_PRICE_DEVIATIONS.get(pair) is None:
@@ -283,7 +285,7 @@ if book[order_type]:
     else:
         info('Only one order in book, hence it\'s at best')
         return True
-else:
+elif ref_book is not None:
     if len(ref_book[order_type]) > 1:
         last_orders_diff = abs(ref_book[order_type][0][0] - ref_book[order_type][1][0])
     else:

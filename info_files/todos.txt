@@ -17,6 +17,7 @@ Saids-MBP:market_bot said.salem$ python3.6 main.py
 17) ignore for now: Every order that is placed should be logged into a file...
 
 
+
 ######## Implementation in a New Branch ##########
 20) Add the functionality to store/save the execution prices for the orders.
 
@@ -311,3 +312,16 @@ We could add a new derivation for the ask price:
   "WAX/ETH": 0.5, 0.2
   "AE/ETH": 0.5, 0.1
 ...}
+
+
+
+22) I need to configure the bot so that I can use it for coins without a reference market.
+Currently it is not possible to use with a pair that has no ref market.
+The pairs are set as following:
+  "LYKKE/USD": null,
+But I m still getting the following error:
+
+Saids-MBP:market_bot said.salem$ python3.6 main.py
+2018-07-27 09:34:40,566 - INFO - Starting Bot ...
+2018-07-27 09:34:40,566 - WARNING - Pair 'LYKKE/USD' is not found in the reference markets mapping
+2018-07-27 09:34:40,566 - ERROR - found inconsistencies in configuration files
