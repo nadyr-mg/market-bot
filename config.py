@@ -7,15 +7,18 @@ from configuration_files import config_dir
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 
-PAIRS = ['WAX/ETH']
+PAIRS = ['LYKKE/USD']
 # PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 COIN_IDS = {
     "ETH": "ETH",
+    "USD": "USD",
     "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
     # "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
     # "WTC": "168f13bf-bfea-4931-91ff-e449850d694e",
     # "PPT": "98385941-89b3-45c2-ae8e-b64c6f3bbac9",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
+    "LYKKE": "LKK",
+    
 }
 MIN_SPREAD = 10
 PERIOD = 15
@@ -26,7 +29,12 @@ USED_BALANCE_PAIRS = {
     'WAX/ETH': {
         'WAX': 1,
         'ETH': 1,
+    },
+    'LYKKE/USD': {
+        'LYKKE': 1,
+        'USD': 1,
     }
+
 }
 AMOUNT_THRESHOLD = 0.03  # Balance should go below/above this threshold to change order sizes for coins
 # how much money should be freed to recalculate order sizes
@@ -83,6 +91,11 @@ FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
 # how many lines of logs to send by an email if unexpected error occurs
 LINES_TO_SEND = 15
 
-FROM_EMAIL = 'Your gmail address'
-LOGIN, PASSW = FROM_EMAIL, "passw"  # credentials for authentication in your gmail account
-TO_EMAIL = 'Address where messages should come'
+FROM_EMAIL = 'crypto.notification.bot@gmail.com'
+LOGIN, PASSW = FROM_EMAIL, "gn123*"  # credentials for authentication in your gmail account
+TO_EMAIL = 'sandro.crypto.work@gmail.com'
+
+# setting initial buy prices for coins
+# initial_buy_prices = {
+#
+# }
