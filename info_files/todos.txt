@@ -3,19 +3,6 @@ Overview: The todos might be related to each other -> Please take a quick look a
 
 
 
-25)Priority: highest
-After starting the bot with LKK/USD pair I m getting the following error:
-Traceback (most recent call last):
-  File "main.py", line 50, in <module>
-    iterate_pairs(placing_objects, fail_wait_infos, coins_spend_amount)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 54, in iterate_pairs
-    place_orders(placing_objects, coins_spend_amount[pair], pair)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 87, in place_orders
-    orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
-  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/common.py", line 72, in get_orders_relevancy
-    ref_highest_bid_price = ref_book["bids"][0][0]
-TypeError: 'NoneType' object is not subscriptable
-
 
 24)Add a log file for debuging. Add a debug option in config to switch this on and off.
 
@@ -342,3 +329,18 @@ Saids-MBP:market_bot said.salem$ python3.6 main.py
 2018-07-27 09:34:40,566 - INFO - Starting Bot ...
 2018-07-27 09:34:40,566 - WARNING - Pair 'LYKKE/USD' is not found in the reference markets mapping
 2018-07-27 09:34:40,566 - ERROR - found inconsistencies in configuration files
+
+
+
+25)Priority: highest
+After starting the bot with LKK/USD pair I m getting the following error:
+Traceback (most recent call last):
+  File "main.py", line 50, in <module>
+    iterate_pairs(placing_objects, fail_wait_infos, coins_spend_amount)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 54, in iterate_pairs
+    place_orders(placing_objects, coins_spend_amount[pair], pair)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 87, in place_orders
+    orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/common.py", line 72, in get_orders_relevancy
+    ref_highest_bid_price = ref_book["bids"][0][0]
+TypeError: 'NoneType' object is not subscriptable

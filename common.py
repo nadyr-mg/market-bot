@@ -75,8 +75,10 @@ return _get_best_price("bids"), _get_best_price("asks")
 
 def get_orders_relevancy(ref_book: Dict, highest_bid_price
 
-: float,
-  lowest_ask_price: float, pair: str) -> Dict[str, bool]:
+: float, lowest_ask_price: float, pair: str):
+if ref_book is None:
+    return None
+
 spread = get_change(lowest_ask_price, highest_bid_price)
 info('Spread is about: {0:.2f}%'.format(spread))
 
