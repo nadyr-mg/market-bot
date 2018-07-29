@@ -18,7 +18,7 @@ COIN_IDS = {
     # "PPT": "98385941-89b3-45c2-ae8e-b64c6f3bbac9",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
     "LYKKE": "LKK",
-    
+
 }
 MIN_SPREAD = 10
 PERIOD = 15
@@ -69,6 +69,12 @@ with open(join(config_dir, "ref_deviations.json")) as file:
 # Logging
 LOG_FILENAME = 'log_files/info.log'
 
+ORDERS_LOG_FILENAME = 'log_files/placed_orders.log'
+
+# save logs to the file if True
+# if False, unexpected error will be send by email only with traceback (no logs)
+DEBUG = True
+
 # setup default logging level
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -80,10 +86,21 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# create error file handler and set level to error
-handler = logging.FileHandler(LOG_FILENAME, 'w')
+if DEBUG:
+    # create error file handler and set level to error
+    handler = logging.FileHandler(LOG_FILENAME, 'w')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+orders_logger = logging.getLogger('placed_orders')
+orders_logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+handler = logging.FileHandler(ORDERS_LOG_FILENAME, 'w')
 handler.setFormatter(formatter)
-logger.addHandler(handler)
+orders_logger.addHandler(handler)
+
 
 FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
 

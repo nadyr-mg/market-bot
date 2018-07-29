@@ -218,6 +218,9 @@ def get_log_extract() ->
 
 
 str:
+if not DEBUG:
+    return "logs are not available"
+
 with open(LOG_FILENAME) as file:
     logs = reversed(file.read().split('\n'))
 
@@ -255,6 +258,12 @@ def log_filled_order(order_info):
     if order_dict not in filled_orders[created_at]:
         filled_orders[created_at].append(order_dict)
 
+    coin1, coin2 = order_info['symbol'].split('/')
+    template = 'Filled {order_type} of {filled} on {amount} {coin1}, price at {price} {coin2}, cost {cost} {coin2}'
+    orders_logger.info(template.format(order_type=order_info['side'], filled=order_info['filled'],
+                                       amount=order_info['amount'], coin1=coin1, coin2=coin2,
+                                       price=order_info['price'], cost=order_info['cost']))
+
     with open(FILLED_ORDERS_FILE, 'w') as out:
         dump(filled_orders, out)
 
@@ -287,7 +296,7 @@ if book[order_type]:
     else:
         info('Only one order in book, hence it\'s at best')
         return True
-elif ref_book is not None:
+else:
     if len(ref_book[order_type]) > 1:
         last_orders_diff = abs(ref_book[order_type][0][0] - ref_book[order_type][1][0])
     else:
@@ -295,9 +304,9 @@ elif ref_book is not None:
         return True
 
 lowest_diff = get_lowest_price_diff(pair)
-info(
-    "Calculating difference between two last orders, lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
-        order_type, lowest_diff, last_orders_diff))
+info("Calculating difference between two last orders, "
+     "lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
+    order_type, lowest_diff, last_orders_diff))
 return last_orders_diff < lowest_diff or isclose(last_orders_diff, lowest_diff)
 
 return {

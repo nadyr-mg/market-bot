@@ -131,6 +131,7 @@ for order_type in ("bid", "ask"):
 
     if is_above_min_size(pair, amount):
         info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
+        orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
         order_id = create_order(pair, amount, price)['info']
         cur_orders[order_type].add(order_id)
@@ -171,6 +172,15 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                     info("relevant_value: {}".format(relevant_value))
                     info("is_orders_at_best[order_type] : {}".format(is_orders_at_best[order_type]))
                     info("Order is opened and irrelevant. Cancellation...")
+
+                    cancel_reasons = 'Prices deviate from ref market much?: {}\n' \
+                        .format(orders_relevancy is not None and not orders_relevancy[order_type])
+                    cancel_reasons += 'Difference between two last orders prices is too big?: {}\n' \
+                        .format(not is_orders_at_best[order_type])
+                    cancel_reasons += 'Order price is not better or equal to best_price?: {}\n' \
+                        .format(not relevant_value)
+
+                    orders_logger.info('canceled {} order; Reasons:\n{}'.format(order_type, cancel_reasons))
 
                     # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
                     order.cancel(market)

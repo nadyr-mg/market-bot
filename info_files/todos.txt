@@ -1,25 +1,7 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 
-
-
-
-24)Add a log file for debuging. Add a debug option in config to switch this on and off.
-
-
-23)Add a new log file only with information about the placed orders.
-For the filled orders we already have a json file. But this file is to illustrate the process logic of placing and canceling orders.
-
-For example:
--2018-06-10T08:09:41: - placed sell order for 50 WAX, price at 0.005 ETH
--2018-06-10T08:09:41: - placed buy order for 50 WAX at 0.0001 ETH
--2018-06-10T08:11:41: - canceled sell order: lower than ref market  "mention one reason or more"
--2018-06-10T08:12:31: - Filled buy of 40 on 50 WAX, price at 0.005 ETH, cost 0.2 ETH
-
-
-
 17) ignore for now: Every order that is placed should be logged into a file...
-
 
 
 ######## Implementation in a New Branch ##########
@@ -344,3 +326,18 @@ Traceback (most recent call last):
   File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/common.py", line 72, in get_orders_relevancy
     ref_highest_bid_price = ref_book["bids"][0][0]
 TypeError: 'NoneType' object is not subscriptable
+
+
+
+24)Add a log file for debuging. Add a debug option in config to switch this on and off.
+
+
+
+23)Add a new log file only with information about the placed orders.
+For the filled orders we already have a json file. But this file is to illustrate the process logic of placing and canceling orders.
+
+For example:
+-2018-06-10T08:09:41: - placed sell order for 50 WAX, price at 0.005 ETH
+-2018-06-10T08:09:41: - placed buy order for 50 WAX at 0.0001 ETH
+-2018-06-10T08:11:41: - canceled sell order: lower than ref market  "mention one reason or more"
+-2018-06-10T08:12:31: - Filled buy of 40 on 50 WAX, price at 0.005 ETH, cost 0.2 ETH
