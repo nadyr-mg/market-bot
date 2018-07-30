@@ -3,6 +3,9 @@ Overview: The todos might be related to each other -> Please take a quick look a
 Always paste the Done todo above the last Done todo.
 
 
+26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
+
+
 
 ######## Implementation in a New Branch ##########
 20) Add the functionality to store/save the execution prices for the orders.
