@@ -1,7 +1,7 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
+Always paste the Done todo above the last Done todo.
 
-17) ignore for now: Every order that is placed should be logged into a file...
 
 
 ######## Implementation in a New Branch ##########
@@ -40,6 +40,11 @@ that keeps it from selling below buying price or vice versa.
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
+
+## Next done todo paste here (replace this text)
+
+17) ignore for now: Every order that is placed should be logged into a file...
+==> Is already implemented with todo 23#
 
 3) Check my question on the function: place_orders, it is added as comment
 => Clarified
