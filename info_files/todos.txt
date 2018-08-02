@@ -2,6 +2,14 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 Always paste the Done todo above the last Done todo.
 
+28) Still putting sell orders below previous buy price, here is the log excerpt (I committed the log file in case you need to take a closer look at it):
+2018-08-01 22:48:34,161 - INFO - Placing bid order, price: 0.044410000000000005, amount: 1561
+2018-08-01 22:49:23,317 - INFO - Filled None of 25.0 on 1561.0 LYKKE, price at 0.04441 USD, cost 1.11025 USD
+...
+2018-08-01 22:56:43,150 - INFO - Placing ask order, price: 0.04398, amount: 25.0
+
+
+27) Restarting the Bot, will it know the selling/buy price of the previous filled orders (the orders executed prior the reboot) ? 
 
 26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
 

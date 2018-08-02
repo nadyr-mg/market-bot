@@ -1,0 +1,33 @@
+2018-08-01 22:42:08,465 - INFO - canceled bid order; Reasons:
+Prices deviate from ref market much?: False
+Difference between two last orders prices is too big?: True
+Order price is not better or equal to best_price?: True
+
+2018-08-01 22:42:09,094 - INFO - canceled bid order; Reasons:
+Prices deviate from ref market much?: False
+Difference between two last orders prices is too big?: True
+Order price is not better or equal to best_price?: True
+
+2018-08-01 22:48:34,161 - INFO - Placing bid order, price: 0.044410000000000005, amount: 1561
+2018-08-01 22:49:23,317 - INFO - Filled None of 25.0 on 1561.0 LYKKE, price at 0.04441 USD, cost 1.11025 USD
+2018-08-01 22:49:23,321 - INFO - Placing ask order, price: 0.045489999999999996, amount: 25.0
+2018-08-01 22:49:40,119 - INFO - Filled None of 25.0 on 1561.0 LYKKE, price at 0.04441 USD, cost 1.11025 USD
+2018-08-01 22:49:56,698 - INFO - Filled None of 25.0 on 1561.0 LYKKE, price at 0.04441 USD, cost 1.11025 USD
+2018-08-01 22:49:56,701 - INFO - canceled bid order; Reasons:
+Prices deviate from ref market much?: False
+Difference between two last orders prices is too big?: True
+Order price is not better or equal to best_price?: False
+
+2018-08-01 22:51:53,390 - INFO - canceled ask order; Reasons:
+Prices deviate from ref market much?: False
+Difference between two last orders prices is too big?: True
+Order price is not better or equal to best_price?: True
+
+2018-08-01 22:55:22,102 - INFO - Placing bid order, price: 0.04301, amount: 1586
+2018-08-01 22:56:43,150 - INFO - Placing ask order, price: 0.04398, amount: 25.0
+2018-08-01 23:13:14,534 - INFO - canceled ask order; Reasons:
+Prices deviate from ref market much?: False
+Difference between two last orders prices is too big?: True
+Order price is not better or equal to best_price?: False
+
+2018-08-01 23:19:44,995 - INFO - Placing ask order, price: 0.045489999999999996, amount: 25.0
