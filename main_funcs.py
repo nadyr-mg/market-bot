@@ -76,7 +76,8 @@ def place_orders(placing_objects: ObjectsForPlacing, coins_spend_amount, pair
 
 : str) -> None:
 info("Entering place_orders function...")
-market, placed_orders, opened_ref_markets, cached_ref_books = placing_objects.unpack_objects()
+market, placed_orders, opened_ref_markets, cached_ref_books, all_tracked_prices = placing_objects.unpack_objects()
+tracked_prices = all_tracked_prices[pair]
 
 ref_book = get_ref_book(pair, opened_ref_markets, cached_ref_books)
 main_book = market.fetch_order_book(pair)
@@ -84,10 +85,6 @@ main_book = market.fetch_order_book(pair)
 highest_bid_price, lowest_ask_price = get_best_prices(main_book, ref_book, pair)
 info("Current best bid at: {:.8f}".format(highest_bid_price))
 info("Current best ask at: {:.8f}".format(lowest_ask_price))
-
-if highest_bid_price is None or lowest_ask_price is None:
-    info("No orders in main order book and order book for reference market is missing, will try next iteration")
-    return
 
 is_orders_at_best = is_last_order_at_best(main_book, ref_book, pair)
 info("Is current orders at best: {}".format(is_orders_at_best))
@@ -98,17 +95,18 @@ info('Checking whether bid and ask are better then ref market: {}'.format(orders
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
 is_some_order_cancelled = handle_placed_orders(market, cur_orders, orders_relevancy, is_orders_at_best,
-                                               highest_bid_price, lowest_ask_price)
+                                               tracked_prices, highest_bid_price, lowest_ask_price)
 if is_some_order_cancelled:
     # better get back to a main loop and recalculate balance
     return
+
+remove_empty_prices(tracked_prices)
 
 coins = pair.split("/")
 # first amount is what you spend to sell, second - what you spend to buy
 sell_amount, buy_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 for order_type in ("bid", "ask"):
-    if (orders_relevancy is not None and not orders_relevancy[order_type]) or \
-            not cur_orders[order_type].is_placing_available():
+    if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
         continue
 
     if cur_orders[order_type].is_empty():
@@ -129,24 +127,27 @@ for order_type in ("bid", "ask"):
 
         create_order = market.create_limit_sell_order
 
+    amount = get_adjusted_amount(tracked_prices, order_type, amount, price)
     if is_above_min_size(pair, amount):
         info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
-        orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
         order_id = create_order(pair, amount, price)['info']
         cur_orders[order_type].add(order_id)
 
+        # keeping track of to-be-bought/to-be-sold amount
+        tracked_prices[order_type][order_id] = TrackedPrice(price)
+
         if order_type == "bid":
-            coins_spend_amount[coins[1]] = 0
+            coins_spend_amount[coins[1]] -= amount * price
         else:
-            coins_spend_amount[coins[0]] = 0
+            coins_spend_amount[coins[0]] -= amount
 
 
 def handle_placed_orders(market: Market, cur_orders
 
 : Dict[str, Orders], orders_relevancy: Dict[str, bool],
-                                       is_orders_at_best: Dict[
-                                                              str, bool], highest_bid_price: float, lowest_ask_price: float) -> bool:
+                                       is_orders_at_best: Dict[str, bool], tracked_prices,
+                                                          highest_bid_price: float, lowest_ask_price: float) -> bool:
 is_some_order_cancelled = False  # is some order was cancelled during handling
 if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
     info("Found placed orders on trading market")
@@ -159,37 +160,46 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                 info('logging order to a file')
                 log_filled_order(order_info)
 
+                amount, filled = abs(order_info['amount']), abs(order_info['filled'])
+                if order.id in tracked_prices[order_type]:
+                    # filled parameter has updated for an order -> updating it in tracked_prices
+
+                    is_last_update = amount == filled
+                    new_filled_amount = filled - order.filled
+                    info('Updating traked_price: {}; new filled: {}, last_update: {}'.format(order.id,
+                                                                                             new_filled_amount,
+                                                                                             is_last_update))
+
+                    tracked_price = tracked_prices[order_type][order.id]
+                    tracked_price.filled += new_filled_amount
+                    tracked_price.is_last_update = is_last_update or tracked_price.is_last_update
+
+                order.filled = filled
+
             status = order_info["status"]
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
             info("checking current {} status '{}': {}".format(order_type, status, order.id))
             if status == "open":
                 relevant_value = order.is_relevant(order_info["price"], best_price)
-                if (orders_relevancy is not None and not orders_relevancy[order_type]) or \
-                        not is_orders_at_best[order_type] or not relevant_value:
-                    if orders_relevancy is not None:
+                if not orders_relevancy[order_type] or not is_orders_at_best[order_type] or not relevant_value:
                         info("orders_relevancy[order_type] : {}".format(orders_relevancy[order_type]))
+                        info("relevant_value: {}".format(relevant_value))
+                        info("is_orders_at_best[order_type] : {}".format(is_orders_at_best[order_type]))
+                        info("Order is opened and irrelevant. Cancellation...")
 
-                    info("relevant_value: {}".format(relevant_value))
-                    info("is_orders_at_best[order_type] : {}".format(is_orders_at_best[order_type]))
-                    info("Order is opened and irrelevant. Cancellation...")
+                        # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
+                        order.cancel(market)
+                        cur_orders[order_type].set_wait_time()
 
-                    cancel_reasons = 'Prices deviate from ref market much?: {}\n' \
-                        .format(orders_relevancy is not None and not orders_relevancy[order_type])
-                    cancel_reasons += 'Difference between two last orders prices is too big?: {}\n' \
-                        .format(not is_orders_at_best[order_type])
-                    cancel_reasons += 'Order price is not better or equal to best_price?: {}\n' \
-                        .format(not relevant_value)
-
-                    orders_logger.info('canceled {} order; Reasons:\n{}'.format(order_type, cancel_reasons))
-
-                    # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
-                    order.cancel(market)
-                    cur_orders[order_type].set_wait_time()
-
-                    is_some_order_cancelled = True
+                        is_some_order_cancelled = True
             else:
                 info("Order is already closed. Deleting from dict 'placed_orders'...")
                 cur_orders[order_type].pop(order_idx)
+
+                # canceled order -> the last update for tracked_price
+                if order.id in tracked_prices[order_type]:
+                    tracked_price = tracked_prices[order_type][order.id]
+                    tracked_price.is_last_update = True
 
                 if status == "closed":
                     opposite_type = "ask" if order_type == "bid" else "bid"
@@ -209,4 +219,49 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                         else:
                             info("Round ended unsuccessfully")
 
-return is_some_order_cancelled
+return is_some_order_cancelled  # return adjusted amount - amount that is consistent with tracked prices
+def get_adjusted_amount(tracked_prices, order_type, amount, price):
+    opposite_order_type = "ask" if order_type == "bid" else "bid"
+    for tracked_price in tracked_prices[opposite_order_type].values():
+        track_amount, track_price = tracked_price.filled, tracked_price.price
+
+        if not (order_type == 'bid' and price <= track_price or
+                            order_type == 'ask' and price >= track_price):
+            info('Found inconsistent price: {}; subtracting {} - {} = {}'.format(track_price, amount, track_amount,
+                                                                                 amount - track_amount))
+            amount -= track_amount
+
+    return amount
+
+
+def remove_empty_prices(tracked_prices):
+    order_type = 'bid'
+    opposite_order_type = 'ask'
+
+    for key, tracked_price in tracked_prices[order_type].items():
+        amount, price = tracked_price.filled, tracked_price.price
+        for opp_key, opp_tracked_price in tracked_prices[opposite_order_type].items():
+            opp_amount, opp_price = opp_tracked_price.filled, opp_tracked_price.price
+
+            if order_type == 'bid' and price <= opp_price or \
+                                    order_type == 'ask' and price >= opp_price:
+
+                min_amount = min(amount, opp_amount)
+                opp_tracked_price.filled -= min_amount
+                amount -= min_amount
+
+                info(
+                    'Found opposite orders: \n{} - {}:\n amount: {}, price: {} \n {} - {}:\n amount: {}, price: {}'.format(
+                        order_type, key,
+                        amount, price,
+                        opposite_order_type, opp_key,
+                        opp_amount, opp_price
+                    ))
+
+                if opp_tracked_price.is_last_update and opp_tracked_price.filled == 0:
+                    del tracked_prices[opposite_order_type][opp_key]
+
+        if tracked_price.is_last_update and amount == 0:
+            del tracked_prices[order_type][key]
+        else:
+            tracked_price.filled = amount

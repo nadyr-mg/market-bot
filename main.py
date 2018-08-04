@@ -18,7 +18,7 @@ lykke = Market(ccxt.lykke({'apiKey': API_KEY}))
 initialized_orders = False
 while not initialized_orders:
     try:
-        placed_orders = init_placed_orders(lykke)
+        placed_orders, tracked_prices = parse_placed_orders(lykke)
     except BaseError as e:
         warning('got error while initializing orders: {}'.format(str(e)))
         warning('next attempt will be in {} seconds'.format(INIT_ORDERS_WAIT))
@@ -31,8 +31,6 @@ while not initialized_orders:
 opened_ref_markets = {market_name: Market(getattr(ccxt, market_name)())
                       for market_name in USED_REF_MARKETS}  # type: Dict[str, Market]
 cached_ref_books = {market_name: CachedObject() for market_name in USED_REF_MARKETS}  # type: Dict[str, CachedObject]
-
-tracked_prices = {pair: {'bid': {}, 'ask': {}} for pair in PAIRS}
 
 placing_objects = ObjectsForPlacing(lykke, placed_orders, opened_ref_markets, cached_ref_books, tracked_prices)
 
