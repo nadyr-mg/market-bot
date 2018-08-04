@@ -1,43 +1,17 @@
 #CURRENT TODOS
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
-
+Always paste the Done todo above the last Done todo.
 
 
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
 
-27) Restarting the Bot, will it know the selling/buy price of the previous filled orders (the orders executed prior the reboot) ?
+26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
 
-######## Implementation in a New Branch ##########
-20) Add the functionality to store/save the execution prices for the orders.
-
-Forget about the initial buy price. There is no initial buy or sell price.
-Lets first only consider full orders (not partial orders):
-	- There is no initial buy/sell price -> we can move up and down in the price like we want.
-	- In case we sell TestCoin for a price of 3 --> we will not buy it back for a price 	> 3 (we keep track of the sell price)
-	- In case we buy TestCoin for a price of 3  --> We will not sell it for a price 	< 3 (we keep track of the buy price)
-	- Selling and buying the coin back will reset the the saved buy and sell price
-	- Same for buying and selling the coin
-Example:
-	- Bought TestCoin for 3
-	- Sold TestCoin for 4
-	-> Reset saved buy and sell price
-	=> This means now we can buy and sell again for any price
-Same applies for partially filled orders:
-	- Bought 10 TestCoin for 3
-	- Sold 5 TestCoin for 4
-	-> Reset saved sell price
-	-> Reduce saved buy price amount from 10 to 5 (because we already sold 5)
-	=> This means the 5 TestCoin that we have bought and sold are now free again and we can buy and sell those 5 for any price
-
-
-
-Note: The behaviour of the Bot might already be right sometime, but when the prices changes suddenly, there is nothing
-that keeps it from selling below buying price or vice versa.
 
 17) ignore for now: Every order that is placed should be logged into a file...
-
+==> Is already implemented with todo 23#
 
 3) Check my question on the function: place_orders, it is added as comment
 => Clarified
@@ -296,3 +270,46 @@ We could add a new derivation for the ask price:
   "WAX/ETH": 0.5, 0.2
   "AE/ETH": 0.5, 0.1
 ...}
+
+
+
+22) I need to configure the bot so that I can use it for coins without a reference market.
+Currently it is not possible to use with a pair that has no ref market.
+The pairs are set as following:
+  "LYKKE/USD": null,
+But I m still getting the following error:
+
+Saids-MBP:market_bot said.salem$ python3.6 main.py
+2018-07-27 09:34:40,566 - INFO - Starting Bot ...
+2018-07-27 09:34:40,566 - WARNING - Pair 'LYKKE/USD' is not found in the reference markets mapping
+2018-07-27 09:34:40,566 - ERROR - found inconsistencies in configuration files
+
+
+
+25)Priority: highest
+After starting the bot with LKK/USD pair I m getting the following error:
+Traceback (most recent call last):
+  File "main.py", line 50, in <module>
+    iterate_pairs(placing_objects, fail_wait_infos, coins_spend_amount)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 54, in iterate_pairs
+    place_orders(placing_objects, coins_spend_amount[pair], pair)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/main_funcs.py", line 87, in place_orders
+    orders_relevancy = get_orders_relevancy(ref_book, highest_bid_price, lowest_ask_price, pair)
+  File "/Users/said.salem/ownCloud/Trading/LykkeAPI/market_bot/common.py", line 72, in get_orders_relevancy
+    ref_highest_bid_price = ref_book["bids"][0][0]
+TypeError: 'NoneType' object is not subscriptable
+
+
+
+24)Add a log file for debuging. Add a debug option in config to switch this on and off.
+
+
+
+23)Add a new log file only with information about the placed orders.
+For the filled orders we already have a json file. But this file is to illustrate the process logic of placing and canceling orders.
+
+For example:
+-2018-06-10T08:09:41: - placed sell order for 50 WAX, price at 0.005 ETH
+-2018-06-10T08:09:41: - placed buy order for 50 WAX at 0.0001 ETH
+-2018-06-10T08:11:41: - canceled sell order: lower than ref market  "mention one reason or more"
+-2018-06-10T08:12:31: - Filled buy of 40 on 50 WAX, price at 0.005 ETH, cost 0.2 ETH

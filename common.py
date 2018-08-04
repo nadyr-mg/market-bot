@@ -13,16 +13,12 @@ def reverse_enum(iterable):
         yield idx, iterable[idx]
 
 
-def parse_placed_orders(market: Market
+def init_placed_orders(market: Market
 
-):
+) -> Dict[str, Dict[str, Orders]]:
 orders = market.fetch_orders()
-
 placed_orders = {pair: {"bid": Orders("bid"), "ask": Orders("ask")}
                  for pair in PAIRS}  # type: Dict[str, Dict[str, Orders]]
-
-tracked_prices = {pair: {'bid': {}, 'ask': {}} for pair in PAIRS}
-
 for order in orders:
     if order["status"] == "open" or order["info"]["Status"] == "Processing":
         pair = order["symbol"]
@@ -31,23 +27,17 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        amount, filled = abs(order['amount']), abs(order['filled'])
+        placed_orders[pair][order_type].add(order["id"])
 
-        placed_orders[pair][order_type].add(order["id"], filled)
-
-        tracked_price = TrackedPrice(order["price"])
-
-        tracked_price.filled = filled
-        tracked_price.is_last_update = amount == filled
-
-        tracked_prices[pair][order_type][order["id"]] = tracked_price
-
-return placed_orders, tracked_prices
+return placed_orders
 
 
 def get_ref_book(pair: str, opened_ref_markets
 
 : Dict[str, Market], cached_ref_books: Dict[str, CachedObject]):
+if REF_MARKETS.get(pair) is None:
+    return None
+
 ref_market = opened_ref_markets[REF_MARKETS[pair]]  # using opened markets
 
 info("Getting reference market order book for: {0}".format(pair))
@@ -69,7 +59,7 @@ def _get_best_price(order_type: str
 ) -> float:
 if book[order_type]:
     return book[order_type][0][0]
-else:
+elif ref_book is not None:
     info("There are no {0} in the orderbook".format(order_type))
 
     info("Getting the best price for {0} from the reference orderbook".format(order_type))
@@ -85,8 +75,10 @@ return _get_best_price("bids"), _get_best_price("asks")
 
 def get_orders_relevancy(ref_book: Dict, highest_bid_price
 
-: float,
-  lowest_ask_price: float, pair: str) -> Dict[str, bool]:
+: float, lowest_ask_price: float, pair: str):
+if ref_book is None:
+    return None
+
 spread = get_change(lowest_ask_price, highest_bid_price)
 info('Spread is about: {0:.2f}%'.format(spread))
 
@@ -146,7 +138,6 @@ for pair in PAIRS:
     # reference_markets.json
     if REF_MARKETS.get(pair) is None:
         logging.warning("Pair '{}' is not found in the reference markets mapping".format(pair))
-        is_check_passed = False
 
     # ref_deviations.json
     if REF_PRICE_DEVIATIONS.get(pair) is None:
@@ -227,6 +218,9 @@ def get_log_extract() ->
 
 
 str:
+if not DEBUG:
+    return "logs are not available"
+
 with open(LOG_FILENAME) as file:
     logs = reversed(file.read().split('\n'))
 
@@ -263,6 +257,13 @@ def log_filled_order(order_info):
     order_dict = construct_order_dict(order_info)
     if order_dict not in filled_orders[created_at]:
         filled_orders[created_at].append(order_dict)
+
+    coin1, coin2 = order_info['symbol'].split('/')
+    order_type = "bid" if order_info["amount"] > 0 else "ask"
+    template = 'Filled {order_type} of {filled} on {amount} {coin1}, price at {price} {coin2}, cost {cost} {coin2}'
+    orders_logger.info(template.format(order_type=order_type, filled=order_info['filled'],
+                                       amount=order_info['amount'], coin1=coin1, coin2=coin2,
+                                       price=order_info['price'], cost=order_info['cost']))
 
     with open(FILLED_ORDERS_FILE, 'w') as out:
         dump(filled_orders, out)
@@ -304,9 +305,9 @@ else:
         return True
 
 lowest_diff = get_lowest_price_diff(pair)
-info(
-    "Calculating difference between two last orders, lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
-        order_type, lowest_diff, last_orders_diff))
+info("Calculating difference between two last orders, "
+     "lowest diff for {0}: lowest_diff {1} | last_orders_diff: {2}".format(
+    order_type, lowest_diff, last_orders_diff))
 return last_orders_diff < lowest_diff or isclose(last_orders_diff, lowest_diff)
 
 return {
