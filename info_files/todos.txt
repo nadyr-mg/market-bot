@@ -15,39 +15,6 @@ Always paste the Done todo above the last Done todo.
 
 
 
-######## Implementation in a New Branch ##########
-20) Add the functionality to store/save the execution prices for the orders.
-
-Forget about the initial buy price. There is no initial buy or sell price.
-Lets first only consider full orders (not partial orders):
-	- There is no initial buy/sell price -> we can move up and down in the price like we want.
-	- In case we sell TestCoin for a price of 3 --> we will not buy it back for a price 	> 3 (we keep track of the sell price)
-	- In case we buy TestCoin for a price of 3  --> We will not sell it for a price 	< 3 (we keep track of the buy price)
-	- Selling and buying the coin back will reset the the saved buy and sell price
-	- Same for buying and selling the coin
-Example:
-	- Bought TestCoin for 3
-	- Sold TestCoin for 4
-	-> Reset saved buy and sell price
-	=> This means now we can buy and sell again for any price
-Same applies for partially filled orders:
-	- Bought 10 TestCoin for 3
-	- Sold 5 TestCoin for 4
-	-> Reset saved sell price
-	-> Reduce saved buy price amount from 10 to 5 (because we already sold 5)
-	=> This means the 5 TestCoin that we have bought and sold are now free again and we can buy and sell those 5 for any price
-
-
-
-Note: The behaviour of the Bot might already be right sometime, but when the prices changes suddenly, there is nothing
-that keeps it from selling below buying price or vice versa.
-
-
-
-
-
- 
-
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
