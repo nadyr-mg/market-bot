@@ -11,15 +11,13 @@ Always paste the Done todo above the last Done todo.
 
 27) Restarting the Bot, will it know the selling/buy price of the previous filled orders (the orders executed prior the reboot) ? 
 
-26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
-
-
 
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
 
-## Next done todo paste here (replace this text)
+26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
+
 
 17) ignore for now: Every order that is placed should be logged into a file...
 ==> Is already implemented with todo 23#

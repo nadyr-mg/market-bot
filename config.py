@@ -97,7 +97,7 @@ orders_logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-handler = logging.FileHandler(ORDERS_LOG_FILENAME, 'w')
+handler = logging.FileHandler(ORDERS_LOG_FILENAME)
 handler.setFormatter(formatter)
 orders_logger.addHandler(handler)
 
@@ -112,7 +112,3 @@ FROM_EMAIL = 'crypto.notification.bot@gmail.com'
 LOGIN, PASSW = FROM_EMAIL, "gn123*"  # credentials for authentication in your gmail account
 TO_EMAIL = 'sandro.crypto.work@gmail.com'
 
-# setting initial buy prices for coins
-# initial_buy_prices = {
-#
-# }
