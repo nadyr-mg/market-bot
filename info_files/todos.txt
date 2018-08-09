@@ -3,6 +3,11 @@ Overview: The todos might be related to each other -> Please take a quick look a
 Always paste the Done todo above the last Done todo.
 
 
+28)
+Merge branch for todo#20 back to master. There is no need to keep this branch since the functionality of todo#20 crucial. Please make sure that none of the latest functionalities are lost.
+
+
+
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
