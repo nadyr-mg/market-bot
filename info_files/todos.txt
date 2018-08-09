@@ -6,6 +6,47 @@ Always paste the Done todo above the last Done todo.
 28)
 Merge branch for todo#20 back to master. There is no need to keep this branch since the functionality of todo#20 crucial. Please make sure that none of the latest functionalities are lost.
 
+29)
+If order cannot be on top, then at least second, or third. But always place the order, don't keep it canceled.
+
+30) Should be implemented after the merge.
+New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough tested we merge it back to master.
+Please make sure that this branch is always up-to-date with latest changes from master.
+Functionality description:
+ 
+The amount to buy and to sell should be splitted in chunks and then spread out.
+For example:
+We specify if we want to use this type of bot or the default: 2 (bot_type_config file)
+We specify the total trade amount: 15 000 WAX (chunk_order_bot_config)
+Chunk size: 5 000 WAX (chunk_order_bot_config)
+Spread : 10% (chunk_order_bot_config)
+Start price: The price to begin with should be determined as usual. 
+For every pair we should be able to specify which type of bot we want to use. For that we should have a new config file:
+Pair: Bot Type
+WAX/USD: 2
+Also a new config file for the new type of Bot is needed (for this bot type: chunk_order_bot_config).
+
+
+After evaluating the ref market and checking the appropriate derivation, place the order for the first chunk at the same price we already do right now.
+The second chunk should be placed 10% above the first.
+The third chunk should be placed 10% above the second.
+For Example the price for WAX is 0,100 USD in the ref market
+The derivation is 20%
+The the sell orders should be placed as follow:
+Sell 5000 WAX at 0,120 USD
+Sell 5000 WAX at 0,132 USD
+Sell 5000 WAX at 0,145 USD
+
+Same for the buying:
+The price for WAX is 0,100 USD in the ref market
+The derivation is 20%
+Buy 5000 WAX at 0,080 USD
+Buy 5000 WAX at 0,072 USD
+Buy 5000 WAX at 0,0648 USD
+
+The first chunk (in our example:Buy 5000 WAX at 0,080 USD and Sell 5000 WAX at 0,120 USD)
+Should have the same behaviour as before, meaning, it should always try to be on top.
+
 
 
 ###########
