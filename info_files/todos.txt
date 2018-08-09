@@ -6,8 +6,27 @@ Always paste the Done todo above the last Done todo.
 28)
 Merge branch for todo#20 back to master. There is no need to keep this branch since the functionality of todo#20 crucial. Please make sure that none of the latest functionalities are lost.
 
-29)
+29) This is a new functionality whether or not it should be used should be specified in a config file (config file for every pair)
 If order cannot be on top, then at least second, or third. But always place the order, don't keep it canceled.
+For example:
+WAX Sell orders are as follow:
+Sell 200 WAX at 0.5 USD
+Sell 500 WAX at 0.49 USD <-- This is our order
+
+Now somebody puts an order that is too low for us to beat.
+Sell 200 WAX at 0.5 USD
+Sell 500 WAX at 0.49 USD <-- This is our order
+Sell 100 WAX at 0.1 USD
+
+-> The bot cancels our order
+Sell 200 WAX at 0.5 USD
+Sell 100 WAX at 0.1 USD
+
+-> The bot checks the best price, finds out that 0.1 USD is too low => puts the order back at 0.49 USD
+Sell 200 WAX at 0.5 USD
+Sell 500 WAX at 0.49 USD <-- This is our order
+Sell 100 WAX at 0.1 USD
+
 
 30) Should be implemented after the merge.
 New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough tested we merge it back to master.
