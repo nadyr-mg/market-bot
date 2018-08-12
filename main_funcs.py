@@ -86,6 +86,10 @@ highest_bid_price, lowest_ask_price = get_best_prices(main_book, ref_book, pair)
 info("Current best bid at: {:.8f}".format(highest_bid_price))
 info("Current best ask at: {:.8f}".format(lowest_ask_price))
 
+if highest_bid_price is None or lowest_ask_price is None:
+    info("No orders in main order book and order book for reference market is missing, will try next iteration")
+    return
+
 is_orders_at_best = is_last_order_at_best(main_book, ref_book, pair)
 info("Is current orders at best: {}".format(is_orders_at_best))
 
@@ -95,7 +99,7 @@ info('Checking whether bid and ask are better then ref market: {}'.format(orders
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
 is_some_order_cancelled = handle_placed_orders(market, cur_orders, orders_relevancy, is_orders_at_best,
-                                               tracked_prices, highest_bid_price, lowest_ask_price)
+                                               tracked_prices, main_book, highest_bid_price, lowest_ask_price)
 if is_some_order_cancelled:
     # better get back to a main loop and recalculate balance
     return
@@ -106,7 +110,8 @@ coins = pair.split("/")
 # first amount is what you spend to sell, second - what you spend to buy
 sell_amount, buy_amount = coins_spend_amount[coins[0]], coins_spend_amount[coins[1]]
 for order_type in ("bid", "ask"):
-    if not orders_relevancy[order_type] or not cur_orders[order_type].is_placing_available():
+    if (orders_relevancy is not None and not orders_relevancy[order_type]) or \
+            not cur_orders[order_type].is_placing_available():
         continue
 
     if cur_orders[order_type].is_empty():
@@ -130,6 +135,7 @@ for order_type in ("bid", "ask"):
     amount = get_adjusted_amount(tracked_prices, order_type, amount, price)
     if is_above_min_size(pair, amount):
         info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
+        orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
         order_id = create_order(pair, amount, price)['info']
         cur_orders[order_type].add(order_id)
@@ -146,7 +152,7 @@ for order_type in ("bid", "ask"):
 def handle_placed_orders(market: Market, cur_orders
 
 : Dict[str, Orders], orders_relevancy: Dict[str, bool],
-                                       is_orders_at_best: Dict[str, bool], tracked_prices,
+                                       is_orders_at_best: Dict[str, bool], tracked_prices, order_book,
                                                           highest_bid_price: float, lowest_ask_price: float) -> bool:
 is_some_order_cancelled = False  # is some order was cancelled during handling
 if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
@@ -180,15 +186,33 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
             best_price = highest_bid_price if order_type == "bid" else lowest_ask_price
             info("checking current {} status '{}': {}".format(order_type, status, order.id))
             if status == "open":
-                relevant_value = order.is_relevant(order_info["price"], best_price)
-                if not orders_relevancy[order_type] or not is_orders_at_best[order_type] or not relevant_value:
+                relevant_value = order.is_relevant(order_info["price"], best_price, order_book)
+                if NO_CANCEL in BOT_TYPE:
+                    # this condition is redundant if this feature is on
+                    is_orders_at_best[order_type] = True
+
+                if (orders_relevancy is not None and not orders_relevancy[order_type]) or \
+                        not is_orders_at_best[order_type] or not relevant_value:
+                    if orders_relevancy is not None:
                         info("orders_relevancy[order_type] : {}".format(orders_relevancy[order_type]))
+
                         info("relevant_value: {}".format(relevant_value))
                         info("is_orders_at_best[order_type] : {}".format(is_orders_at_best[order_type]))
                         info("Order is opened and irrelevant. Cancellation...")
 
+                    cancel_reasons = 'Prices deviate from ref market much?: {}\n' \
+                        .format(orders_relevancy is not None and not orders_relevancy[order_type])
+                    cancel_reasons += 'Difference between two last orders prices is too big?: {}\n' \
+                        .format(not is_orders_at_best[order_type])
+                    cancel_reasons += 'Order price is not better or equal to best_price?: {}\n' \
+                        .format(not relevant_value)
+
+                    orders_logger.info('canceled {} order; Reasons:\n{}'.format(order_type, cancel_reasons))
+
                         # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
                         order.cancel(market)
+                    if NO_CANCEL not in BOT_TYPE:
+                        # not keeping orders cancelled if this feature is on
                         cur_orders[order_type].set_wait_time()
 
                         is_some_order_cancelled = True

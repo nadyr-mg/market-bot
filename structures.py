@@ -3,11 +3,11 @@ from random import randint
 from sys import maxsize
 from time import sleep
 from timeit import default_timer
-from typing import Callable, List, Dict, Tuple
+from typing import Callable, List, Tuple
 
 from ccxt.base.exchange import Exchange
 
-from config import AFTER_CANCEL_WAIT_BOUNDS
+from config import *
 
 
 class Market:
@@ -44,12 +44,26 @@ class Order:
 
 def is_relevant(self, price: float, best_price
 
-: float) -> bool:
+: float, order_book: dict) -> bool:
+def _check_prices(price1, price2):
+    if self.order_type == "bid":
+        return price1 >= price2
+    else:
+        return price1 <= price2
+
+
 info('checking whether {} price: {:.8f} is relevant'.format(self.order_type, price))
-if self.order_type == "bid":
-    return price >= best_price
+
+if NO_CANCEL in BOT_TYPE:
+    order_book = order_book[self.order_type]
+
+    if len(order_book) <= NO_CANCEL_ORDERS_LIMIT:
+        return True
+    else:
+        last_limit_order = order_book[NO_CANCEL_ORDERS_LIMIT - 1]
+        return _check_prices(price, last_limit_order[0])
 else:
-    return price <= best_price
+    return _check_prices(price, best_price)
 
 
 def cancel(self, market: Market

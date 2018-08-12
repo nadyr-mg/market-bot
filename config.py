@@ -23,6 +23,12 @@ COIN_IDS = {
 MIN_SPREAD = 10
 PERIOD = 15
 
+NO_CANCEL = 2
+NO_CANCEL_ORDERS_LIMIT = 20
+
+# empty list means default type
+BOT_TYPE = []
+
 # This variable defines distribution of coins balances. Don't exceed 100% for coin's balance
 # e.g.: for 'WAX/ETH': {'WAX': 1, 'ETH': 0.5}, 'CVC/ETH': {'CVC': 1, 'ETH': 0.6}, got 110% for ETH
 USED_BALANCE_PAIRS = {
