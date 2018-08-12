@@ -3,9 +3,6 @@ Overview: The todos might be related to each other -> Please take a quick look a
 Always paste the Done todo above the last Done todo.
 
 
-28)
-Merge branch for todo#20 back to master. There is no need to keep this branch since the functionality of todo#20 crucial. Please make sure that none of the latest functionalities are lost.
-
 29) This is a new functionality whether or not it should be used should be specified in a config file (config file for every pair)
 If order cannot be on top, then at least second, or third. But always place the order, don't keep it canceled.
 For example:
@@ -74,6 +71,10 @@ Should have the same behaviour as before, meaning, it should always try to be on
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
+
+28)
+Merge branch for todo#20 back to master. There is no need to keep this branch since the functionality of todo#20 crucial. Please make sure that none of the latest functionalities are lost.
+
 
 26) Just append the new logs into the order log file. The current implementation is overriding the file every time we run the bot.
 
