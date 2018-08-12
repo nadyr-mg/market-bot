@@ -29,10 +29,12 @@ Sell 100 WAX at 0.1 USD
 
 
 30) Should be implemented after the merge.
-New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough tested we merge it back to master.
+New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough
+tested we merge it back to master.
 Please make sure that this branch is always up-to-date with latest changes from master.
+
 Functionality description:
- 
+
 The amount to buy and to sell should be splitted in chunks and then spread out.
 For example:
 We specify if we want to use this type of bot or the default: 2 (bot_type_config file)
@@ -46,7 +48,8 @@ WAX/USD: 2
 Also a new config file for the new type of Bot is needed (for this bot type: chunk_order_bot_config).
 
 
-After evaluating the ref market and checking the appropriate derivation, place the order for the first chunk at the same price we already do right now.
+After evaluating the ref market and checking the appropriate derivation, place the order for the first chunk at the same
+price we already do right now.
 The second chunk should be placed 10% above the first.
 The third chunk should be placed 10% above the second.
 For Example the price for WAX is 0,100 USD in the ref market
