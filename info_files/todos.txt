@@ -2,6 +2,9 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 Always paste the Done todo above the last Done todo.
 
+###########
+#DONE TODOS - Finished todo goes here - Latest Todo on top
+###########
 30) Should be implemented after the merge.
 New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough
 tested we merge it back to master.
@@ -15,7 +18,7 @@ We specify if we want to use this type of bot or the default: 2 (bot_type_config
 We specify the total trade amount: 15 000 WAX (chunk_order_bot_config)
 Chunk size: 5 000 WAX (chunk_order_bot_config)
 Spread : 10% (chunk_order_bot_config)
-Start price: The price to begin with should be determined as usual. 
+Start price: The price to begin with should be determined as usual.
 For every pair we should be able to specify which type of bot we want to use. For that we should have a new config file:
 Pair: Bot Type
 WAX/USD: 2
@@ -43,11 +46,6 @@ Buy 5000 WAX at 0,0648 USD
 The first chunk (in our example:Buy 5000 WAX at 0,080 USD and Sell 5000 WAX at 0,120 USD)
 Should have the same behaviour as before, meaning, it should always try to be on top.
 
-
-
-###########
-#DONE TODOS - Finished todo goes here - Latest Todo on top
-###########
 
 29) This is a new functionality whether or not it should be used should be specified in a config file (config file for every pair)
 If order cannot be on top, then at least second, or third. But always place the order, don't keep it canceled.

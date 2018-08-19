@@ -26,6 +26,17 @@ PERIOD = 15
 NO_CANCEL = 2
 NO_CANCEL_ORDERS_LIMIT = 20
 
+CHUNKS_FEATURE = 3
+# specify your parameters
+# if pair is not specified, feature will not be used for it
+CHUNKS_INFO = {
+    'WAX/USD': {
+        'total': 15000,
+        'chunk': 5000,
+        'spread': 0.1,
+    }
+}
+
 # empty list means default type
 BOT_TYPE = []
 
