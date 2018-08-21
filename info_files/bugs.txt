@@ -1,3 +1,33 @@
+Bug: Error occurs when price the bot has to cancel and replace an order.
+Error Msg:
+
+ amount: 0, price: 0.03533
+ ask - f8827216-b901-4ba8-a92a-f1e09fb33444:
+ amount: 0, price: 0.03255 
+bid - f63c4425-cd11-40b5-8017-c245e0011976:
+2018-08-21 19:07:57,132 - INFO - Found opposite orders: 
+ amount: 87.54000000000019, price: 0.03541
+ ask - 013f5ca3-742a-4f7f-8b87-4fee465c95d9:
+ amount: 0, price: 0.03255 
+bid - f63c4425-cd11-40b5-8017-c245e0011976:
+2018-08-21 19:07:57,131 - INFO - Found opposite orders: 
+2018-08-21 19:07:57,131 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
+2018-08-21 19:07:57,131 - INFO - checking current ask status 'canceled': f8827216-b901-4ba8-a92a-f1e09fb33444
+2018-08-21 19:07:56,897 - INFO - checking whether bid price: 0.03255000 is relevant
+2018-08-21 19:07:56,897 - INFO - checking current bid status 'open': f63c4425-cd11-40b5-8017-c245e0011976
+
+
+Traceback (most recent call last):
+  File "main.py", line 50, in <module>
+    iterate_pairs(placing_objects, fail_wait_infos, coins_spend_amount)
+  File "/home/said/bots/market_bot/main_funcs.py", line 54, in iterate_pairs
+    place_orders(placing_objects, coins_spend_amount[pair], pair)
+  File "/home/said/bots/market_bot/main_funcs.py", line 99, in place_orders
+    remove_empty_prices(tracked_prices)
+  File "/home/said/bots/market_bot/main_funcs.py", line 260, in remove_empty_prices
+    for opp_key, opp_tracked_price in tracked_prices[opposite_order_type].items():
+RuntimeError: dictionary changed size during iteration
+
 
 
 
