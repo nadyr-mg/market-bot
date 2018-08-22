@@ -1,3 +1,16 @@
+Wrong Behaviour:
+- Spread is no longer being checked.
+- All the trade amount is used up even if it is specified not to:
+	- If in USED_BALANCE_PAIRS the balance for one coin is set to 0.5
+		-> The bot will place the first order with exact that amount
+			but in the second, third, forth ... try he will always add the rest amount.
+	
+
+
+
+
+
+
 Bug: Error occurs when price the bot has to cancel and replace an order.
 Error Msg:
 
@@ -32,7 +45,7 @@ RuntimeError: dictionary changed size during iteration
 
 
 ________________________________________________________________________________________________
-///// Fixed
+############# Fixed
 ______________________________________________________________________________________________________________________
 
 Bug: Wrong Cancellation of good orders
