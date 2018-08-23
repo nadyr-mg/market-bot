@@ -8,6 +8,20 @@ Wrong Behaviour:
 
 
 
+Bug: What does this error mean :
+unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
+Logs:
+
+2018-08-23 07:44:28,964 - INFO - pair: LKK1Y/LYKKE, coin: LKK1Y, order size: 500.00000000
+2018-08-23 07:44:28,964 - INFO - pair: LKK1Y/LYKKE, coin: LYKKE, order size: 4523.35000000
+2018-08-23 07:44:28,964 - INFO - pair: ZEC/USD, coin: ZEC, order size: 1.00000000
+2018-08-23 07:44:28,965 - INFO - pair: ZEC/USD, coin: USD, order size: 3.12290000
+2018-08-23 07:44:28,965 - INFO - 
+2018-08-23 07:44:28,965 - INFO - Entering place_orders function...
+2018-08-23 07:44:30,142 - ERROR - unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
+2018-08-23 07:44:30,142 - INFO - going to sleep for: 15 seconds
+
+
 
 
 
