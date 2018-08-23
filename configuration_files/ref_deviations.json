@@ -206,5 +206,21 @@
   "LYKKE/EUR": {
     "bid": 0.00,
     "ask": 0.00
+  },
+  "LKK1Y/LYKKE": {
+    "bid": 0.00,
+    "ask": 0.00
+  },
+  "LKK1Y/LYKKE": {
+    "bid": 0.00,
+    "ask": 0.00
+  },
+  "ZEC/USD": {
+    "bid": 0.05,
+    "ask": 0.01
+  },
+  "ZEC/BTC": {
+    "bid": 0.08,
+    "ask": 0.08
   }
 }

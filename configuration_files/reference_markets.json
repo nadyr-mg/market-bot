@@ -50,8 +50,11 @@
   "LYKKE/EUR": null,
   "LYKKE/JPY": null,
   "LYKKE/GBP": null,
+  "LKK1Y/LYKKE": null,
   "HCP/ETH": "lykke",
   "HGT/ETH": "lykke",
   "HGT/BTC": "lykke",
-  "LC/ETH": "lykke"
+  "LC/ETH": "lykke",
+  "ZEC/BTC": "binance",
+  "ZEC/USD": "bitfinex"
 }
