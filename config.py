@@ -7,7 +7,8 @@ from configuration_files import config_dir
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 
-PAIRS = ['LYKKE/USD']
+## for this pair "LKK1Y/LKK" LKK is used not LYKKE
+PAIRS = ['ZEC/USD', "LKK1Y/LKK"]
 # PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 COIN_IDS = {
     "ETH": "ETH",
@@ -18,6 +19,9 @@ COIN_IDS = {
     # "PPT": "98385941-89b3-45c2-ae8e-b64c6f3bbac9",
     # "CVC": "f9fb5970-2fc4-4b08-900b-870f245e430b",
     "LYKKE": "LKK",
+    "LKK": "LKK",
+    "LKK1Y": "LKK1Y",
+    "ZEC": "b2c591a2-6c2d-4130-89cd-71813481bb76",
 
 }
 MIN_SPREAD = 10
@@ -47,9 +51,13 @@ USED_BALANCE_PAIRS = {
         'WAX': 1,
         'ETH': 1,
     },
-    'LYKKE/USD': {
-        'LYKKE': 1,
+    'ZEC/USD': {
+        'ZEC': 1,
         'USD': 1,
+    },
+    'LKK1Y/LKK': {
+        'LKK1Y': 1,
+        'LKK': 1,
     }
 
 }
