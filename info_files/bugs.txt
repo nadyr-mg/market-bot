@@ -1,10 +1,27 @@
 Wrong Behaviour:
-- Spread is no longer being checked.
+- Spread is no longer being checked. The Spread should be checked if there is no reference Market.
+- Bot is stuck sometimes in placing and canceling orders, pls check the logs placed_orders.logs
+	->		...
+			2018-08-23 14:59:44,601 - INFO - Placing ask order, price: 0.983499, amount: 525.0
+			2018-08-23 15:00:01,291 - INFO - canceled ask order; Reasons:
+			Prices deviate from ref market much?: False
+			Difference between two last orders prices is too big?: True
+			Order price is not better or equal to best_price?: False
+
+			2018-08-23 15:03:18,625 - INFO - Placing ask order, price: 0.983499, amount: 525.0
+			2018-08-23 15:03:35,333 - INFO - canceled ask order; Reasons:
+			Prices deviate from ref market much?: False
+			Difference between two last orders prices is too big?: True
+			Order price is not better or equal to best_price?: False
+			...
+
+
+- Too many log entries are produced, pls check the logs placed_orders.log
 - All the trade amount is used up even if it is specified not to:
 	- If in USED_BALANCE_PAIRS the balance for one coin is set to 0.5
 		-> The bot will place the first order with exact that amount
 			but in the second, third, forth ... try he will always add the rest amount.
-	
+
 
 
 
@@ -16,7 +33,7 @@ Logs:
 2018-08-23 07:44:28,964 - INFO - pair: LKK1Y/LYKKE, coin: LYKKE, order size: 4523.35000000
 2018-08-23 07:44:28,964 - INFO - pair: ZEC/USD, coin: ZEC, order size: 1.00000000
 2018-08-23 07:44:28,965 - INFO - pair: ZEC/USD, coin: USD, order size: 3.12290000
-2018-08-23 07:44:28,965 - INFO - 
+2018-08-23 07:44:28,965 - INFO -
 2018-08-23 07:44:28,965 - INFO - Entering place_orders function...
 2018-08-23 07:44:30,142 - ERROR - unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
 2018-08-23 07:44:30,142 - INFO - going to sleep for: 15 seconds
@@ -30,14 +47,14 @@ Error Msg:
 
  amount: 0, price: 0.03533
  ask - f8827216-b901-4ba8-a92a-f1e09fb33444:
- amount: 0, price: 0.03255 
+ amount: 0, price: 0.03255
 bid - f63c4425-cd11-40b5-8017-c245e0011976:
-2018-08-21 19:07:57,132 - INFO - Found opposite orders: 
+2018-08-21 19:07:57,132 - INFO - Found opposite orders:
  amount: 87.54000000000019, price: 0.03541
  ask - 013f5ca3-742a-4f7f-8b87-4fee465c95d9:
- amount: 0, price: 0.03255 
+ amount: 0, price: 0.03255
 bid - f63c4425-cd11-40b5-8017-c245e0011976:
-2018-08-21 19:07:57,131 - INFO - Found opposite orders: 
+2018-08-21 19:07:57,131 - INFO - Found opposite orders:
 2018-08-21 19:07:57,131 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
 2018-08-21 19:07:57,131 - INFO - checking current ask status 'canceled': f8827216-b901-4ba8-a92a-f1e09fb33444
 2018-08-21 19:07:56,897 - INFO - checking whether bid price: 0.03255000 is relevant
@@ -68,7 +85,7 @@ Bug: Wrong Cancellation of good orders
 First a sell order is placed, then immediately after it is placed it is canceled because it is no longer relevant.
 
 
-Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:47:33,152 - INFO - Starting Bot ...
 2018-06-20 12:47:33,661 - INFO - Fetching free balance ...
 2018-06-20 12:47:33,919 - INFO - ETH: Total balance: 0.06191844
@@ -77,7 +94,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:47:33,920 - INFO - WAX: Free balance: 103.72000000
 2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
 2018-06-20 12:47:33,920 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:47:33,920 - INFO - 
+2018-06-20 12:47:33,920 - INFO -
 2018-06-20 12:47:33,920 - INFO - Entering place_orders function...
 2018-06-20 12:47:33,920 - INFO - Getting reference market order book for: WAX/ETH
 2018-06-20 12:47:36,117 - INFO - Current best bid at: 0.00004100
@@ -94,7 +111,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:47:36,375 - INFO - WAX: amount: 0 < 2.5
 2018-06-20 12:47:36,375 - INFO - ------------------  1e-06 addition
 2018-06-20 12:47:36,376 - INFO - Placing ask order, price: 0.038976, amount: 103.72
-2018-06-20 12:47:36,634 - INFO - 
+2018-06-20 12:47:36,634 - INFO -
 2018-06-20 12:47:36,634 - INFO - going to sleep for: 15 seconds
 
 2018-06-20 12:47:51,639 - INFO - Fetching free balance ...
@@ -104,7 +121,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:47:51,894 - INFO - WAX: Free balance: 0.00000000
 2018-06-20 12:47:51,894 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
 2018-06-20 12:47:51,895 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:47:51,895 - INFO - 
+2018-06-20 12:47:51,895 - INFO -
 2018-06-20 12:47:51,895 - INFO - Entering place_orders function...
 2018-06-20 12:47:51,896 - INFO - Getting reference market order book for: WAX/ETH
 2018-06-20 12:47:52,140 - INFO - Current best bid at: 0.00004100
@@ -121,7 +138,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:47:52,646 - INFO - checking whether ask price: 0.03897600 is relevant
 2018-06-20 12:47:52,646 - INFO - Order is opened and irrelevant. Cancellation...
 2018-06-20 12:47:52,646 - INFO - try to cancel ask order: 9ed61583-15ce-4f6a-a175-0e13ffd4476d
-2018-06-20 12:47:52,903 - INFO - 
+2018-06-20 12:47:52,903 - INFO -
 2018-06-20 12:47:52,903 - INFO - going to sleep for: 15 seconds
 
 2018-06-20 12:48:07,905 - INFO - Fetching free balance ...
@@ -131,7 +148,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:48:08,154 - INFO - WAX: Free balance: 103.72000000
 2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: WAX, order size: 103.72000000
 2018-06-20 12:48:08,154 - INFO - pair: WAX/ETH, coin: ETH, order size: 0.00000844
-2018-06-20 12:48:08,155 - INFO - 
+2018-06-20 12:48:08,155 - INFO -
 2018-06-20 12:48:08,155 - INFO - Entering place_orders function...
 2018-06-20 12:48:08,155 - INFO - Getting reference market order book for: WAX/ETH
 2018-06-20 12:48:08,399 - INFO - Current best bid at: 0.00004100
@@ -148,7 +165,7 @@ Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 2018-06-20 12:48:08,897 - INFO - Order is already closed. Deleting from dict 'placed_orders'...
 2018-06-20 12:48:08,897 - INFO - Too small amount to place
 2018-06-20 12:48:08,898 - INFO - WAX: amount: 0 < 2.5
-2018-06-20 12:48:08,898 - INFO - 
+2018-06-20 12:48:08,898 - INFO -
 2018-06-20 12:48:08,898 - INFO - going to sleep for: 15 seconds
 
 
@@ -175,7 +192,7 @@ Bug error msg:
 
 INFO:root:Found placed orders
 INFO:root:checking current bid status a3e6997c-d78c-4908-807f-8a234ee78d98 : canceled
-and ask status f240c0cb-df9a-4982-b8ff-a08145ea2b17 : canceled 
+and ask status f240c0cb-df9a-4982-b8ff-a08145ea2b17 : canceled
 
 INFO:root:Orders are already closed. Deleting from dict 'placed_orders'...
 INFO:root:going to sleep for: 15
@@ -260,7 +277,7 @@ Still getting this error:
 
 INFO:root:Found placed orders on trading market
 INFO:root:checking current bid status 5e5025bc-e544-4eae-84c4-c661b910bbfe : open
-and ask status 9888ff96-6312-4467-b2de-f64c6258244d : open 
+and ask status 9888ff96-6312-4467-b2de-f64c6258244d : open
 
 INFO:root:checking whether bid price:0.000432 and ask price:0.038995 are relevant
 INFO:root:going to sleep for: 15
@@ -352,7 +369,7 @@ ccxt.base.errors.RequestTimeout: bittrex GET https://bittrex.com/api/v1.1/public
 # Fixed: if bid order is placed and ask order is not or vice versa, then that one order is canceled and deleted from dict
 Bug#2:
 Cause: If sell order is already placed -> Then start the program -> it will lead to the following error:
-Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 Traceback (most recent call last):
   File "main.py", line 8, in <module>
     placed_orders = init_placed_orders(lykke)
@@ -362,7 +379,7 @@ KeyError: 'bid'
 
 Cause 2: If buy order is placed:
 
-Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py 
+Saids-MBP:lykke_market_maker said.salem$ python3.6 main.py
 Traceback (most recent call last):
   File "main.py", line 8, in <module>
     placed_orders = init_placed_orders(lykke)
