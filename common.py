@@ -13,12 +13,16 @@ def reverse_enum(iterable):
         yield idx, iterable[idx]
 
 
-def init_placed_orders(market: Market
+def parse_placed_orders(market: Market
 
-) -> Dict[str, Dict[str, Orders]]:
+):
 orders = market.fetch_orders()
+
 placed_orders = {pair: {"bid": Orders("bid"), "ask": Orders("ask")}
                  for pair in PAIRS}  # type: Dict[str, Dict[str, Orders]]
+
+tracked_prices = {pair: {'bid': {}, 'ask': {}} for pair in PAIRS}
+
 for order in orders:
     if order["status"] == "open" or order["info"]["Status"] == "Processing":
         pair = order["symbol"]
@@ -27,9 +31,18 @@ for order in orders:
             continue
 
         order_type = "bid" if order["amount"] > 0 else "ask"
-        placed_orders[pair][order_type].add(order["id"])
+        amount, filled = abs(order['amount']), abs(order['filled'])
 
-return placed_orders
+        placed_orders[pair][order_type].add(order["id"], filled)
+
+        tracked_price = TrackedPrice(order["price"])
+
+        tracked_price.filled = filled
+        tracked_price.is_last_update = amount == filled
+
+        tracked_prices[pair][order_type][order["id"]] = tracked_price
+
+return placed_orders, tracked_prices
 
 
 def get_ref_book(pair: str, opened_ref_markets
@@ -76,11 +89,12 @@ return _get_best_price("bids"), _get_best_price("asks")
 def get_orders_relevancy(ref_book: Dict, highest_bid_price
 
 : float, lowest_ask_price: float, pair: str):
-if ref_book is None:
-    return None
-
 spread = get_change(lowest_ask_price, highest_bid_price)
 info('Spread is about: {0:.2f}%'.format(spread))
+
+if ref_book is None:
+    condition = spread > MIN_SPREAD
+    return {"bid": condition, "ask": condition}
 
 ref_highest_bid_price = ref_book["bids"][0][0]
 ref_lowest_ask_price = ref_book["asks"][0][0]

@@ -2,9 +2,13 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 Always paste the Done todo above the last Done todo.
 
+
+
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
 ###########
+
+# implemented in a new branch
 30) Should be implemented after the merge.
 New functionality: This should first be implemented in a new branch, and later on, after the functionality is well enough
 tested we merge it back to master.
@@ -45,6 +49,7 @@ Buy 5000 WAX at 0,0648 USD
 
 The first chunk (in our example:Buy 5000 WAX at 0,080 USD and Sell 5000 WAX at 0,120 USD)
 Should have the same behaviour as before, meaning, it should always try to be on top.
+
 
 
 29) This is a new functionality whether or not it should be used should be specified in a config file (config file for every pair)

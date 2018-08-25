@@ -1,5 +1,4 @@
 Wrong Behaviour:
-- Spread is no longer being checked. The Spread should be checked if there is no reference Market.
 - Bot is stuck sometimes in placing and canceling orders, pls check the logs placed_orders.logs
 	->		...
 			2018-08-23 14:59:44,601 - INFO - Placing ask order, price: 0.983499, amount: 525.0
@@ -16,15 +15,6 @@ Wrong Behaviour:
 			...
 
 
-- Too many log entries are produced, pls check the logs placed_orders.log
-- All the trade amount is used up even if it is specified not to:
-	- If in USED_BALANCE_PAIRS the balance for one coin is set to 0.5
-		-> The bot will place the first order with exact that amount
-			but in the second, third, forth ... try he will always add the rest amount.
-
-
-
-
 Bug: What does this error mean :
 unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
 Logs:
@@ -38,10 +28,20 @@ Logs:
 2018-08-23 07:44:30,142 - ERROR - unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
 2018-08-23 07:44:30,142 - INFO - going to sleep for: 15 seconds
 
+________________________________________________________________________________________________
+############# Fixed
+______________________________________________________________________________________________________________________
+
+# the problem was that I calculated spend amount based on 'free' balance. Now I'm calculating based on 'total' amount
+- Too many log entries are produced, pls check the logs placed_orders.log
+- All the trade amount is used up even if it is specified not to:
+	- If in USED_BALANCE_PAIRS the balance for one coin is set to 0.5
+		-> The bot will place the first order with exact that amount
+			but in the second, third, forth ... try he will always add the rest amount.
 
 
 
-
+# should be fine now, making copy of a dict to avoid this error
 Bug: Error occurs when price the bot has to cancel and replace an order.
 Error Msg:
 
@@ -73,11 +73,11 @@ Traceback (most recent call last):
 RuntimeError: dictionary changed size during iteration
 
 
+- Spread is no longer being checked. The Spread should be checked if there is no reference Market.
 
 
-________________________________________________________________________________________________
-############# Fixed
-______________________________________________________________________________________________________________________
+
+
 
 Bug: Wrong Cancellation of good orders
 # Wrong behaviour:

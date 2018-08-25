@@ -26,25 +26,24 @@ for coin, coin_id in COIN_IDS.items():
 return coins_balances
 
 
-def update_spend_amounts(coins_spend_amount, coins_balances: Dict[str, Dict[str, float]],
-                                                             last_coins_balances
+def update_spend_amounts(coins_spend_amount, coins_balances, last_coins_balances):
+    for pair in PAIRS:
+        coins = pair.split('/')
+        for coin in coins:
+            threshold = last_coins_balances[coin]['total'] * AMOUNT_THRESHOLD
+            freed_amount = last_coins_balances[coin]['total'] * FREED_AMOUNT_PERCENTAGE
+            if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold or \
+                            coins_balances[coin]['free'] >= freed_amount:
+                restricted_ratio = 1 - USED_BALANCE_PAIRS[pair][coin]
+                total_amount = coins_balances[coin]['total']
 
-: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
-for pair in PAIRS:
-    coins = pair.split('/')
-    for coin in coins:
-        threshold = last_coins_balances[coin]['total'] * AMOUNT_THRESHOLD
-        freed_amount = last_coins_balances[coin]['total'] * FREED_AMOUNT_PERCENTAGE
-        if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold or \
-                        coins_balances[coin]['free'] >= freed_amount:
-            coins_spend_amount[pair][coin] = coins_balances[coin]['free'] * USED_BALANCE_PAIRS[pair][coin]
+                allowed_to_spend = coins_balances[coin]['free'] - restricted_ratio * total_amount
+                coins_spend_amount[pair][coin] = min(0, allowed_to_spend)
 
-            last_coins_balances[coin]['total'] = coins_balances[coin]['total']
+                last_coins_balances[coin]['total'] = total_amount
 
-        order_size = coins_spend_amount[pair].get(coin, 0)
-        info('pair: {}, coin: {}, order size: {:.8f}'.format(pair, coin, order_size))
-
-return coins_spend_amount
+            order_size = coins_spend_amount[pair].get(coin, 0)
+            info('pair: {}, coin: {}, order size: {:.8f}'.format(pair, coin, order_size))
 
 
 def iterate_pairs(placing_objects: ObjectsForPlacing, fail_wait_infos
@@ -133,42 +132,20 @@ for order_type in ("bid", "ask"):
         create_order = market.create_limit_sell_order
 
     amount = get_adjusted_amount(tracked_prices, order_type, amount, price)
+    if is_above_min_size(pair, amount):
+        info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
+        orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
-
-    def _place_order(_amount, _price):
-        if is_above_min_size(pair, _amount):
-            info("Placing {} order, price: {}, amount: {}".format(order_type, _price, _amount))
-            orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, _price, _amount))
-
-            order_id = create_order(pair, _amount, _price)['info']
+        order_id = create_order(pair, amount, price)['info']
             cur_orders[order_type].add(order_id)
 
             # keeping track of to-be-bought/to-be-sold amount
-            tracked_prices[order_type][order_id] = TrackedPrice(_price)
+        tracked_prices[order_type][order_id] = TrackedPrice(price)
 
             if order_type == "bid":
-                coins_spend_amount[coins[1]] -= _amount * _price
+                coins_spend_amount[coins[1]] -= amount * price
             else:
-                coins_spend_amount[coins[0]] -= _amount
-
-
-    if CHUNKS_FEATURE in BOT_TYPE and CHUNKS_INFO.get(pair):
-        # splitting total amount into chunks
-        total_amount = min(CHUNKS_INFO[pair]['total'], amount)
-        chunk, spread = CHUNKS_INFO[pair]['chunk'], CHUNKS_INFO[pair]['spread']
-        add_sign = -1 if order_type == "bid" else 1
-
-        orders_amount = (total_amount + chunk - 1) // chunk
-        next_price = price
-        for _ in range(orders_amount):
-            amount = min(total_amount, chunk)
-
-            _place_order(amount, next_price)
-
-            next_price += next_price * spread * add_sign
-            total_amount -= amount
-    else:
-        _place_order(amount, price)
+                coins_spend_amount[coins[0]] -= amount
 
 
 def handle_placed_orders(market: Market, cur_orders
@@ -213,7 +190,7 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                     # this condition is redundant if this feature is on
                     is_orders_at_best[order_type] = True
 
-                if (orders_relevancy is not None and not orders_relevancy[order_type]) or \
+                if (not orders_relevancy[order_type]) or \
                         not is_orders_at_best[order_type] or not relevant_value:
                     if orders_relevancy is not None:
                         info("orders_relevancy[order_type] : {}".format(orders_relevancy[order_type]))
@@ -284,9 +261,9 @@ def remove_empty_prices(tracked_prices):
     order_type = 'bid'
     opposite_order_type = 'ask'
 
-    for key, tracked_price in tracked_prices[order_type].items():
+    for key, tracked_price in list(tracked_prices[order_type].items()):
         amount, price = tracked_price.filled, tracked_price.price
-        for opp_key, opp_tracked_price in tracked_prices[opposite_order_type].items():
+        for opp_key, opp_tracked_price in list(tracked_prices[opposite_order_type].items()):
             opp_amount, opp_price = opp_tracked_price.filled, opp_tracked_price.price
 
             if order_type == 'bid' and price <= opp_price or \
