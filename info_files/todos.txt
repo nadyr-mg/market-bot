@@ -2,7 +2,9 @@
 Overview: The todos might be related to each other -> Please take a quick look at ALL todos and then start implementing a solution.
 Always paste the Done todo above the last Done todo.
 
-
+31)
+The logs for all pairs are currently written in one file ( placed orders and filled orders).
+-> Every pair should have its own log file e.g ZEC_USD_filled_orders.log and ZEC_placed_orders.log 
 
 ###########
 #DONE TODOS - Finished todo goes here - Latest Todo on top
