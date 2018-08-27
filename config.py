@@ -7,12 +7,12 @@ from configuration_files import config_dir
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 
-## for this pair "LKK1Y/LKK" LKK is used not LYKKE
-PAIRS = ['ZEC/USD', "LKK1Y/LKK"]
+PAIRS = ['LKK1Y/LKK', 'ZEC/USD']
 # PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 COIN_IDS = {
     "ETH": "ETH",
     "USD": "USD",
+    "EUR": "EUR",
     "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
     # "LOC": "572475a4-8fef-4e39-909e-85f6bbbc10c4",
     # "WTC": "168f13bf-bfea-4931-91ff-e449850d694e",
@@ -24,22 +24,11 @@ COIN_IDS = {
     "ZEC": "b2c591a2-6c2d-4130-89cd-71813481bb76",
 
 }
-MIN_SPREAD = 10
+MIN_SPREAD = 5
 PERIOD = 15
 
 NO_CANCEL = 2
 NO_CANCEL_ORDERS_LIMIT = 20
-
-CHUNKS_FEATURE = 3
-# specify your parameters
-# if pair is not specified, feature will not be used for it
-CHUNKS_INFO = {
-    'WAX/USD': {
-        'total': 15000,
-        'chunk': 5000,
-        'spread': 0.1,
-    }
-}
 
 # empty list means default type
 BOT_TYPE = []
@@ -50,11 +39,23 @@ USED_BALANCE_PAIRS = {
     'WAX/ETH': {
         'WAX': 1,
         'ETH': 1,
-    },
+    }
+    ,
+    'LYKKE/EUR': {
+        'LYKKE': 0.5,
+        'EUR': 1,
+    }
+    ,
+    'LYKKE/USD': {
+        'LYKKE': 0.5,
+        'USD': 0.3,
+    }
+    ,
     'ZEC/USD': {
         'ZEC': 1,
         'USD': 1,
-    },
+    }
+    ,
     'LKK1Y/LKK': {
         'LKK1Y': 1,
         'LKK': 1,
@@ -134,6 +135,5 @@ FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
 LINES_TO_SEND = 15
 
 FROM_EMAIL = 'crypto.notification.bot@gmail.com'
-LOGIN, PASSW = FROM_EMAIL, "gn123*"  # credentials for authentication in your gmail account
-TO_EMAIL = 'sandro.crypto.work@gmail.com'
-
+LOGIN, PASSW = 'crypto.notification.bot@gmail.com', "g123*"  # credentials for authentication in your gmail account
+TO_EMAIL = 'sandro.crypto.test@gmail.com'
