@@ -7,10 +7,12 @@ from configuration_files import config_dir
 
 API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
 
-PAIRS = ['LKK1Y/LKK', 'ZEC/USD']
+## for this pair "LKK1Y/LKK" LKK is used not LYKKE
+PAIRS = ['ZEC/USD', "ZRX/ETH", "ZRX/BTC"]
 # PAIRS = ['LOC/ETH', 'WAX/ETH', 'CVC/ETH']
 COIN_IDS = {
     "ETH": "ETH",
+    "BTC": "BTC",
     "USD": "USD",
     "EUR": "EUR",
     "WAX": "6e25e8ab-5779-4543-855b-71f4857b47d5",
@@ -22,6 +24,7 @@ COIN_IDS = {
     "LKK": "LKK",
     "LKK1Y": "LKK1Y",
     "ZEC": "b2c591a2-6c2d-4130-89cd-71813481bb76",
+    "ZRX": "14cc3c2d-9b96-4e78-8674-b6dc60dd1d99",
 
 }
 MIN_SPREAD = 5
@@ -60,7 +63,16 @@ USED_BALANCE_PAIRS = {
         'LKK1Y': 1,
         'LKK': 1,
     }
-
+    ,
+    'ZRX/BTC': {
+        'ZRX': 0.45,
+        'BTC': 0.45,
+    }
+    ,
+    'ZRX/ETH': {
+        'ZRX': 0.45,
+        'ETH': 0.45,
+    }
 }
 AMOUNT_THRESHOLD = 0.03  # Balance should go below/above this threshold to change order sizes for coins
 # how much money should be freed to recalculate order sizes
@@ -137,3 +149,4 @@ LINES_TO_SEND = 15
 FROM_EMAIL = 'crypto.notification.bot@gmail.com'
 LOGIN, PASSW = 'crypto.notification.bot@gmail.com', "g123*"  # credentials for authentication in your gmail account
 TO_EMAIL = 'sandro.crypto.test@gmail.com'
+
