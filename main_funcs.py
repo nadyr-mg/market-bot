@@ -142,16 +142,41 @@ for order_type in ("bid", "ask"):
         info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
         orders_loggers[pair].info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
-        order_id = create_order(pair, amount, price)['info']
+
+    def _place_order(_amount, _price):
+        if is_above_min_size(pair, _amount):
+            info("Placing {} order, price: {}, amount: {}".format(order_type, _price, _amount))
+            orders_loggers[pair].info("Placing {} order, price: {}, amount: {}".format(order_type, _price, _amount))
+
+            order_id = create_order(pair, _amount, _price)['info']
             cur_orders[order_type].add(order_id)
 
             # keeping track of to-be-bought/to-be-sold amount
-        tracked_prices[order_type][order_id] = TrackedPrice(price)
+            tracked_prices[order_type][order_id] = TrackedPrice(_price)
 
             if order_type == "bid":
-                coins_spend_amount[coins[1]] -= amount * price
+                coins_spend_amount[coins[1]] -= _amount * _price
             else:
-                coins_spend_amount[coins[0]] -= amount
+                coins_spend_amount[coins[0]] -= _amount
+
+
+    if CHUNKS_FEATURE in BOT_TYPE and CHUNKS_INFO.get(pair):
+        # splitting total amount into chunks
+        total_amount = min(CHUNKS_INFO[pair]['total'], amount)
+        chunk, spread = CHUNKS_INFO[pair]['chunk'], CHUNKS_INFO[pair]['spread']
+        add_sign = -1 if order_type == "bid" else 1
+
+        orders_amount = (total_amount + chunk - 1) // chunk
+        next_price = price
+        for _ in range(orders_amount):
+            amount = min(total_amount, chunk)
+
+            _place_order(amount, next_price)
+
+            next_price += next_price * spread * add_sign
+            total_amount -= amount
+    else:
+        _place_order(amount, price)
 
 
 def handle_placed_orders(pair, market: Market, cur_orders
