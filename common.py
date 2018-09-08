@@ -3,6 +3,7 @@ from email.message import EmailMessage
 from traceback import format_exc
 from json import dump
 from numpy import isclose
+from os.path import exists
 
 from structures import *
 from config import *
@@ -261,8 +262,14 @@ def construct_order_dict(order_info):
 
 
 def log_filled_order(order_info):
-    with open(FILLED_ORDERS_FILE) as file:
-        filled_orders = load(file)  # type: Dict[str, List]
+    pair = order_info['symbol']
+    filename = FILLED_ORDERS_FILE.format(pair.replace('/', '_'))
+
+    if exists(filename):
+        with open(filename) as file:
+            filled_orders = load(file)  # type: Dict[str, List]
+    else:
+        filled_orders = {}
 
     created_at = order_info['info']['CreatedAt']
     if created_at not in filled_orders:
@@ -275,11 +282,17 @@ def log_filled_order(order_info):
     coin1, coin2 = order_info['symbol'].split('/')
     order_type = "bid" if order_info["amount"] > 0 else "ask"
     template = 'Filled {order_type} of {filled} on {amount} {coin1}, price at {price} {coin2}, cost {cost} {coin2}'
-    orders_logger.info(template.format(order_type=order_type, filled=order_info['filled'],
-                                       amount=order_info['amount'], coin1=coin1, coin2=coin2,
-                                       price=order_info['price'], cost=order_info['cost']))
 
-    with open(FILLED_ORDERS_FILE, 'w') as out:
+    to_log = template.format(order_type=order_type, filled=order_info['filled'],
+                             amount=order_info['amount'], coin1=coin1, coin2=coin2,
+                             price=order_info['price'], cost=order_info['cost'])
+    if pair in orders_loggers:
+        orders_loggers[pair].info(to_log)
+    else:
+        logger.warning('{} was not found in orders_loggers, using default logger')
+        logger.info(to_log)
+
+    with open(filename, 'w') as out:
         dump(filled_orders, out)
 
 

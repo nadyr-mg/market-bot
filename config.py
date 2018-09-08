@@ -25,13 +25,17 @@ COIN_IDS = {
     "LKK1Y": "LKK1Y",
     "ZEC": "b2c591a2-6c2d-4130-89cd-71813481bb76",
     "ZRX": "14cc3c2d-9b96-4e78-8674-b6dc60dd1d99",
-
 }
 MIN_SPREAD = 5
 PERIOD = 15
 
 NO_CANCEL = 2
 NO_CANCEL_ORDERS_LIMIT = 20
+
+DONT_USE_THRESHOLD = 4  # feature for not using specifications from todo #15
+AMOUNT_THRESHOLD = 0.03  # Balance should go below/above this threshold to change order sizes for coins
+# how much money should be freed to recalculate order sizes
+FREED_AMOUNT_PERCENTAGE = 0.1
 
 # empty list means default type
 BOT_TYPE = []
@@ -74,9 +78,6 @@ USED_BALANCE_PAIRS = {
         'ETH': 0.45,
     }
 }
-AMOUNT_THRESHOLD = 0.03  # Balance should go below/above this threshold to change order sizes for coins
-# how much money should be freed to recalculate order sizes
-FREED_AMOUNT_PERCENTAGE = 0.2
 
 ACCEPTABLE_PROFIT_DEVIATION = 0.05
 
@@ -107,8 +108,6 @@ with open(join(config_dir, "ref_deviations.json")) as file:
 # Logging
 LOG_FILENAME = 'log_files/info.log'
 
-ORDERS_LOG_FILENAME = 'log_files/placed_orders.log'
-
 # save logs to the file if True
 # if False, unexpected error will be send by email only with traceback (no logs)
 DEBUG = True
@@ -130,17 +129,24 @@ if DEBUG:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-orders_logger = logging.getLogger('placed_orders')
-orders_logger.setLevel(logging.INFO)
+ORDERS_LOG_FILENAME = 'log_files/{}_placed_orders.log'
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+orders_loggers = {}  # type: Dict[str, logging.Logger]
+for pair in PAIRS:
+    pair_prefix = pair.replace('/', '_')
 
-handler = logging.FileHandler(ORDERS_LOG_FILENAME)
-handler.setFormatter(formatter)
-orders_logger.addHandler(handler)
+    orders_logger = logging.getLogger('{}_placed_orders'.format(pair_prefix))
+    orders_logger.setLevel(logging.INFO)
 
+    formatter = logging.Formatter('{}: %(asctime)s - %(levelname)s - %(message)s'.format(pair))
 
-FILLED_ORDERS_FILE = 'log_files/filled_orders.json'
+    handler = logging.FileHandler(ORDERS_LOG_FILENAME.format(pair_prefix))
+    handler.setFormatter(formatter)
+    orders_logger.addHandler(handler)
+
+    orders_loggers[pair] = orders_logger
+
+FILLED_ORDERS_FILE = 'log_files/{}_filled_orders.json'
 
 # Email
 # how many lines of logs to send by an email if unexpected error occurs
@@ -149,4 +155,3 @@ LINES_TO_SEND = 15
 FROM_EMAIL = 'crypto.notification.bot@gmail.com'
 LOGIN, PASSW = 'crypto.notification.bot@gmail.com', "g123*"  # credentials for authentication in your gmail account
 TO_EMAIL = 'sandro.crypto.test@gmail.com'
-

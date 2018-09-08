@@ -103,7 +103,7 @@ info('Checking whether bid and ask are better then ref market: {}'.format(orders
 
 cur_orders = placed_orders[pair]  # type: Dict[str, Orders]
 
-is_some_order_cancelled = handle_placed_orders(market, cur_orders, orders_relevancy, is_orders_at_best,
+is_some_order_cancelled = handle_placed_orders(pair, market, cur_orders, orders_relevancy, is_orders_at_best,
                                                tracked_prices, main_book, highest_bid_price, lowest_ask_price)
 if is_some_order_cancelled:
     # better get back to a main loop and recalculate balance
@@ -140,7 +140,7 @@ for order_type in ("bid", "ask"):
     amount = get_adjusted_amount(tracked_prices, order_type, amount, price)
     if is_above_min_size(pair, amount):
         info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
-        orders_logger.info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
+        orders_loggers[pair].info("Placing {} order, price: {}, amount: {}".format(order_type, price, amount))
 
         order_id = create_order(pair, amount, price)['info']
             cur_orders[order_type].add(order_id)
@@ -154,7 +154,7 @@ for order_type in ("bid", "ask"):
                 coins_spend_amount[coins[0]] -= amount
 
 
-def handle_placed_orders(market: Market, cur_orders
+def handle_placed_orders(pair, market: Market, cur_orders
 
 : Dict[str, Orders], orders_relevancy: Dict[str, bool],
                                        is_orders_at_best: Dict[str, bool], tracked_prices, order_book,
@@ -212,7 +212,7 @@ if not cur_orders["bid"].is_empty() or not cur_orders["ask"].is_empty():
                     cancel_reasons += 'Order price is not better or equal to best_price?: {}\n' \
                         .format(not relevant_value)
 
-                    orders_logger.info('canceled {} order; Reasons:\n{}'.format(order_type, cancel_reasons))
+                    orders_loggers[pair].info('canceled {} order; Reasons:\n{}'.format(order_type, cancel_reasons))
 
                         # All opened orders have the same price, hence if one is irrelevant -> all are irrelevant
                         order.cancel(market)
