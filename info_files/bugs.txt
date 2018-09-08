@@ -95,6 +95,11 @@ Wrong Behaviour:
 			...
 
 
+________________________________________________________________________________________________
+############# Fixed
+______________________________________________________________________________________________________________________
+
+Fix: Change LYKKE with LKK
 Bug: What does this error mean :
 unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
 Logs:
@@ -108,9 +113,7 @@ Logs:
 2018-08-23 07:44:30,142 - ERROR - unexpected error occurred: lykke No market symbol LKK1Y/LYKKE
 2018-08-23 07:44:30,142 - INFO - going to sleep for: 15 seconds
 
-________________________________________________________________________________________________
-############# Fixed
-______________________________________________________________________________________________________________________
+
 
 # the problem was that I calculated spend amount based on 'free' balance. Now I'm calculating based on 'total' amount
 - Too many log entries are produced, pls check the logs placed_orders.log
