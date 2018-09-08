@@ -32,15 +32,21 @@ def update_spend_amounts(coins_spend_amount, coins_balances, last_coins_balances
         for coin in coins:
             threshold = last_coins_balances[coin]['total'] * AMOUNT_THRESHOLD
             freed_amount = last_coins_balances[coin]['total'] * FREED_AMOUNT_PERCENTAGE
-            if abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold or \
-                            coins_balances[coin]['free'] >= freed_amount:
-                restricted_ratio = 1 - USED_BALANCE_PAIRS[pair][coin]
-                total_amount = coins_balances[coin]['total']
 
-                allowed_to_spend = coins_balances[coin]['free'] - restricted_ratio * total_amount
+            if DONT_USE_THRESHOLD in BOT_TYPE:
+                condition = True
+            else:
+                condition = abs(last_coins_balances[coin]['total'] - coins_balances[coin]['total']) >= threshold or \
+                            coins_balances[coin]['free'] >= freed_amount
+
+            if condition:
+                restricted_ratio = 1 - USED_BALANCE_PAIRS[pair][coin]
+                free_amount = coins_balances[coin]['free']
+
+                allowed_to_spend = coins_balances[coin]['free'] - restricted_ratio * free_amount
                 coins_spend_amount[pair][coin] = min(0, allowed_to_spend)
 
-                last_coins_balances[coin]['total'] = total_amount
+                last_coins_balances[coin]['total'] = free_amount
 
             order_size = coins_spend_amount[pair].get(coin, 0)
             info('pair: {}, coin: {}, order size: {:.8f}'.format(pair, coin, order_size))

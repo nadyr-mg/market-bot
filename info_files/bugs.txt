@@ -1,6 +1,9 @@
+________________________________________________________________________________________________
+############# Fixed
+______________________________________________________________________________________________________________________
+# calculating order sizes based on 'free' balance. Feature from todo #15 now can be turned off (default: on)
 Bug:
 - Bot is no longer placing any order. Order size is always 0. Always saying:Too small amount to place
-
 
 2018-08-27 16:53:05,839 - INFO - Fetching free balance ...
 2018-08-27 16:53:06,074 - INFO - ETH: Total balance: 0.06463944
@@ -29,7 +32,7 @@ Bug:
 2018-08-27 16:53:06,076 - INFO - pair: ZRX/ETH, coin: ETH, order size: 0.00000000
 2018-08-27 16:53:06,076 - INFO - pair: ZRX/BTC, coin: ZRX, order size: 0.00000000
 2018-08-27 16:53:06,076 - INFO - pair: ZRX/BTC, coin: BTC, order size: 0.00000000
-2018-08-27 16:53:06,076 - INFO - 
+2018-08-27 16:53:06,076 - INFO -
 2018-08-27 16:53:06,076 - INFO - Entering place_orders function...
 2018-08-27 16:53:06,076 - INFO - Getting reference market order book for: ZEC/USD
 2018-08-27 16:53:06,309 - INFO - Current best bid at: 127.23500000
@@ -42,7 +45,7 @@ Bug:
 2018-08-27 16:53:06,311 - INFO - ------------------  1e-05 addition
 2018-08-27 16:53:06,311 - INFO - Too small amount to place
 2018-08-27 16:53:06,311 - INFO - ZEC: amount: 0 < 0.005
-2018-08-27 16:53:06,311 - INFO - 
+2018-08-27 16:53:06,311 - INFO -
 2018-08-27 16:53:06,311 - INFO - Entering place_orders function...
 2018-08-27 16:53:06,311 - INFO - Getting reference market order book for: ZRX/ETH
 2018-08-27 16:53:06,554 - INFO - Current best bid at: 0.00196000
@@ -58,7 +61,7 @@ Bug:
 2018-08-27 16:53:06,555 - INFO - ------------------  1e-06 addition
 2018-08-27 16:53:06,555 - INFO - Too small amount to place
 2018-08-27 16:53:06,556 - INFO - ZRX: amount: 0 < 1
-2018-08-27 16:53:06,556 - INFO - 
+2018-08-27 16:53:06,556 - INFO -
 2018-08-27 16:53:06,556 - INFO - Entering place_orders function...
 2018-08-27 16:53:06,556 - INFO - Getting reference market order book for: ZRX/BTC
 2018-08-27 16:53:06,785 - INFO - Current best bid at: 0.00009685
@@ -71,13 +74,12 @@ Bug:
 2018-08-27 16:53:06,786 - INFO - ------------------  1e-06 addition
 2018-08-27 16:53:06,786 - INFO - Too small amount to place
 2018-08-27 16:53:06,787 - INFO - ZRX: amount: 0 < 1
-2018-08-27 16:53:06,787 - INFO - 
+2018-08-27 16:53:06,787 - INFO -
 2018-08-27 16:53:06,787 - INFO - going to sleep for: 15 seconds
 
 
 
-
-
+# This behaviour is defined by todo #5, bot is waiting for a random time after cancellation
 Wrong Behaviour:
 - Bot is stuck sometimes in placing and canceling orders, pls check the logs placed_orders.logs
 	->		...
@@ -94,10 +96,6 @@ Wrong Behaviour:
 			Order price is not better or equal to best_price?: False
 			...
 
-
-________________________________________________________________________________________________
-############# Fixed
-______________________________________________________________________________________________________________________
 
 Fix: Change LYKKE with LKK
 Bug: What does this error mean :
