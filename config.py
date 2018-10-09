@@ -152,6 +152,6 @@ FILLED_ORDERS_FILE = 'log_files/{}_filled_orders.json'
 # how many lines of logs to send by an email if unexpected error occurs
 LINES_TO_SEND = 15
 
-FROM_EMAIL = 'crypto.notification.bot@gmail.com'
-LOGIN, PASSW = 'crypto.notification.bot@gmail.com', "g123*"  # credentials for authentication in your gmail account
-TO_EMAIL = 'sandro.crypto.test@gmail.com'
+FROM_EMAIL = ''
+LOGIN, PASSW = '', ""  # credentials for authentication in your gmail account
+TO_EMAIL = ''
