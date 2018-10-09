@@ -5,7 +5,7 @@ from os.path import join
 
 from configuration_files import config_dir
 
-API_KEY = "1c15115b-b5b6-4920-9629-4c444e346613"
+API_KEY = ""
 
 ## for this pair "LKK1Y/LKK" LKK is used not LYKKE
 PAIRS = ['ZEC/USD', "ZRX/ETH", "ZRX/BTC"]
